@@ -5,10 +5,13 @@ import com.boardadmin.user.model.User;
 import com.boardadmin.user.service.UserService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -81,23 +84,35 @@ public class UserController {
     }
 
     @PostMapping("/update/{userIndex}")
-    public String updateUser(@PathVariable Integer userIndex, User user) {
+    public String updateUser(@PathVariable Integer userIndex, User user, @RequestParam(required = false) String newPassword) {
         User existingUser = userService.getUserByUserId(user.getUserId());
         if (existingUser != null) {
             existingUser.setEmail(user.getEmail());
             existingUser.setActive(user.isActive());
 
-            // 비밀번호를 변경하지 않음
+            // 비밀번호를 변경할 때만 업데이트
+            if (newPassword != null && !newPassword.isEmpty()) {
+                existingUser.setPassword(newPassword);
+            } else {
+                // 비밀번호 변경 없을 시 기존 비밀번호 유지
+                user.setPassword(existingUser.getPassword());
+            }
 
             userService.updateUser(existingUser);
         }
         return "redirect:/user-management";
     }
 
-
-    @GetMapping("/delete/{userIndex}")
+    @DeleteMapping("/delete/{userIndex}")
     public String deleteUser(@PathVariable Integer userIndex) {
         userService.deleteUserByUserIndex(userIndex);
         return "redirect:/user-management";
     }
+    
+    
+    @GetMapping("/notadmin")
+    public String notAdmin() {
+        return "notadmin";
+    }
+
 }

@@ -26,12 +26,20 @@ public class SecurityConfig {
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
             .authorizeHttpRequests((requests) -> requests
-                .requestMatchers("/login",  "/adminlte/**", "/css/**", "/js/**").permitAll()//security에서 허용하는 파일 경로 추가
+                .requestMatchers("/login",  "/adminlte/**", "/css/**", "/js/**", "/notadmin").permitAll()//security에서 허용하는 파일 경로 추가
+                .requestMatchers("/user-management/**").hasRole("ADMIN") // 관리자계정일때만 접근가능하게 수정
                 .anyRequest().authenticated()
             )
             .formLogin((form) -> form
                 .loginPage("/login")
-                .defaultSuccessUrl("/user-management", true)
+                .successHandler((request, response, authentication) -> {
+                    // 로그인 성공 후 권한에 따라 리디렉션 설정
+                    if (authentication.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"))) {
+                        response.sendRedirect("/user-management");
+                    } else {
+                        response.sendRedirect("/notadmin");
+                    }
+                })
                 .permitAll()
             )
             .logout((logout) -> logout

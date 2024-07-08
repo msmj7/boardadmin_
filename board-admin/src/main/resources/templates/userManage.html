@@ -102,7 +102,7 @@
                                 <thead>
                                     <tr>
                                         <th>ID</th>
-										<th>Password</th>
+                                        <th>Password</th>
                                         <th>Email</th>
                                         <th>Active</th>
                                         <th>Created At</th>
@@ -113,14 +113,14 @@
                                 <tbody id="adminTableBody">
                                     <tr th:each="admin : ${admins}">
                                         <td th:text="${admin.userId}"></td>
-                                        <td>******</td>
-										<td th:text="${admin.email}"></td>
+                                        <td>****</td>
+                                        <td th:text="${admin.email}"></td>
                                         <td th:text="${admin.active}"></td>
                                         <td th:text="${#temporals.format(admin.createdAt, 'yyyy-MM-dd HH:mm:ss')}"></td>
                                         <td th:text="${#temporals.format(admin.updatedAt, 'yyyy-MM-dd HH:mm:ss')}"></td>
                                         <td>
                                             <button class="btn btn-warning editBtn">Edit</button>
-                                            <button class="btn btn-danger deleteBtn" th:attr="onclick='deleteAdmin(' + ${admin.userIndex} + ')'">Delete</button>
+                                            <button class="btn btn-danger deleteBtn" th:onclick="'deleteAdmin(' + ${admin.userIndex} + ')'">Delete</button>
                                         </td>
                                     </tr>
                                 </tbody>
@@ -132,7 +132,6 @@
         </section>
         <!-- /.content -->
     </div>
-    <!-- /.content-wrapper -->
 
     <!-- Main Footer -->
     <footer class="main-footer">
@@ -186,7 +185,7 @@
 
     function getAdminEditRow(userId, email, active) {
         return '<td><input type="text" class="form-control" name="userId" value="' + userId + '" readonly></td>' +
-        		'<td>******</td>' +
+               '<td><input type="password" class="form-control" name="newPassword" placeholder="New Password"></td>' +
                '<td><input type="email" class="form-control" name="email" value="' + email + '"></td>' +
                '<td><input type="checkbox" class="form-control" name="active" ' + (active ? 'checked' : '') + '></td>' +
                '<td></td>' +
@@ -196,7 +195,17 @@
 
     function deleteAdmin(userIndex) {
         if (confirm('Are you sure you want to delete this admin?')) {
-            window.location.href = '/user-management/delete/' + userIndex;
+            fetch('/user-management/delete/' + userIndex, {
+                method: 'DELETE'
+            }).then(response => {
+                if (response.ok) {
+                    window.location.href = '/user-management';
+                } else {
+                    alert('Error deleting admin');
+                }
+            }).catch(error => {
+                alert('Error deleting admin');
+            });
         }
     }
 </script>

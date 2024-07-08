@@ -65,7 +65,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         }
         return new org.springframework.security.core.userdetails.User(user.getUserId(), user.getPassword(), getAuthorities(user));
     }
-
+    //일단은 안쓰임
     private List<org.springframework.security.core.authority.SimpleGrantedAuthority> getAuthorities(User user) {
         return user.getRoles().stream()
                 .map(role -> new org.springframework.security.core.authority.SimpleGrantedAuthority(role.getRoleName()))
@@ -86,18 +86,15 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     @Override
     public User updateUser(User user) {
         User existingUser = userRepository.findById(user.getUserIndex())
-                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+            .orElseThrow(() -> new IllegalArgumentException("User not found"));
 
-        updateUserInfo(existingUser, user);
-        return userRepository.save(existingUser);
-    }
-
-    private void updateUserInfo(User existingUser, User user) {
         existingUser.setEmail(user.getEmail());
         existingUser.setActive(user.isActive());
 
         if (user.getPassword() != null && !user.getPassword().isEmpty()) {
-            existingUser.setPassword(PasswordUtil.encodePassword(passwordEncoder, user.getPassword()));
+            existingUser.setPassword(passwordEncoder.encode(user.getPassword()));
         }
+
+        return userRepository.save(existingUser);
     }
 }
