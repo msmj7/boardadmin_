@@ -3,7 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <title>사용자관리-회원</title>
-    <!-- CSRF Token -->
     <!-- Font Awesome Icons -->
     <link rel="stylesheet" th:href="@{/adminlte/plugins/fontawesome-free/css/all.min.css}">
     <!-- Theme style -->
@@ -123,7 +122,7 @@
 										        <td th:text="${#temporals.format(user.updatedAt, 'yyyy-MM-dd HH:mm:ss')}"></td>
 										        <td>
 										            <button class="btn btn-warning editBtn">Edit</button>
-										            <button class="btn btn-danger deleteBtn" th:attr="onclick='deleteUser(' + ${user.userIndex} + ')'">Delete</button>
+										            <button class="btn btn-danger deleteBtn" th:onclick="'deleteAdmin(' + ${user.userIndex} + ')'">Delete</button>
 										        </td>                                    </tr>
                                 </tbody>
                             </table>
@@ -186,8 +185,7 @@ $(document).ready(function() {
     $(document).on('click', '.cancelNewRowBtn', function() {
         $(this).closest('tr').remove();
         isUserRowAdded = false;
-    });
-    
+    }); 
 });
 
 function addUserRow() {
@@ -239,8 +237,6 @@ function deleteAdmin(userIndex) {
         });
     }
 }
-
-
 </script>
 </body>
 </html>
