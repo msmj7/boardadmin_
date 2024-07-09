@@ -16,6 +16,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -27,23 +30,25 @@ public class UserController {
     private static final Logger logger = LoggerFactory.getLogger(UserController.class);
 
     private final UserService userService;
+    private final PasswordEncoder passwordEncoder;
 
     public UserController(UserService userService, PasswordEncoder passwordEncoder) {
-        this.userService = userService;    
+        this.userService = userService;  
+        this.passwordEncoder = passwordEncoder;
     }
 
     @GetMapping
     public String getUserManagePage(Model model) {
-        logger.info("getUserManagePage called");
+        //logger.info("getUserManagePage called");
 
         List<User> allUsers = userService.getAllUsers();
-        logger.info("All Users: " + allUsers);
+        //logger.info("All Users: " + allUsers);
 
         List<User> admins = allUsers.stream()
                 .filter(user -> userService.hasRole(user, "ADMIN"))
                 .collect(Collectors.toList());
 
-        logger.info("Admins: " + admins);
+        //logger.info("Admins: " + admins);
 
         model.addAttribute("admins", admins);
 
@@ -52,13 +57,13 @@ public class UserController {
 
     @GetMapping("/users")
     public String getUsersPage(Model model) {
-        logger.info("getUsersPage called");
+        //logger.info("getUsersPage called");
 
         List<User> users = userService.getAllUsers().stream()
                 .filter(user -> userService.hasRole(user, "USER"))
                 .collect(Collectors.toList());
         
-        logger.info("Users: " + users);
+        //logger.info("Users: " + users);
         
         model.addAttribute("users", users);
 
@@ -76,9 +81,11 @@ public class UserController {
 
     @PostMapping("/create/user")
     public String createUser(User user) {
+    	
         Set<Role> roles = new HashSet<>();
         roles.add(userService.getRoleByName("USER"));
         user.setRoles(roles);
+        
         userService.saveUser(user);
         return "redirect:/user-management/users";
     }
@@ -92,10 +99,7 @@ public class UserController {
 
             // 비밀번호를 변경할 때만 업데이트
             if (newPassword != null && !newPassword.isEmpty()) {
-                existingUser.setPassword(newPassword);
-            } else {
-                // 비밀번호 변경 없을 시 기존 비밀번호 유지
-                user.setPassword(existingUser.getPassword());
+                existingUser.setPassword(passwordEncoder.encode(newPassword));
             }
 
             userService.updateUser(existingUser);
@@ -104,15 +108,11 @@ public class UserController {
     }
 
     @DeleteMapping("/delete/{userIndex}")
-    public String deleteUser(@PathVariable Integer userIndex) {
+    public ResponseEntity<String> deleteUser(@PathVariable Integer userIndex) {
+        logger.info("Delete request received for userIndex: {}", userIndex);
         userService.deleteUserByUserIndex(userIndex);
-        return "redirect:/user-management";
+        return ResponseEntity.ok("User deleted successfully");
     }
-    
-    
-    @GetMapping("/notadmin")
-    public String notAdmin() {
-        return "notadmin";
-    }
+
 
 }

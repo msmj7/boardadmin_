@@ -1,10 +1,10 @@
 package com.boardadmin.user.service;
 
-import com.boardadmin.common.util.PasswordUtil;
 import com.boardadmin.user.model.Role;
 import com.boardadmin.user.model.User;
 import com.boardadmin.user.repository.RoleRepository;
 import com.boardadmin.user.repository.UserRepository;
+import com.boardadmin.common.util.PasswordUtil;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -37,25 +37,38 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     @Override
     public List<User> getAllUsers() {
         List<User> users = userRepository.findAll();
-        logger.info("Fetched Users: {}", users);
         return users;
     }
 
     @Override
     public User getUserByUserId(String userId) {
-        return userRepository.findByUserId(userId);
+        User user = userRepository.findByUserId(userId);
+        if (user != null) {
+            logger.info("Fetched User: {}", user);
+        }
+        return user;
     }
 
     @Override
     public User saveUser(User user) {
-        user.setPassword(PasswordUtil.encodePassword(passwordEncoder, user.getPassword()));
+        user.setPassword(PasswordUtil.encodePassword(passwordEncoder, user.getPassword())); // Password encoding
         return userRepository.save(user);
     }
 
     @Override
     public void deleteUserByUserIndex(Integer userIndex) {
-        userRepository.deleteById(userIndex);
+        User user = userRepository.findById(userIndex).orElse(null);
+        if (user != null) {
+            logger.info("Deleting user: {}", user);
+            if (user.getPassword() == null) {
+                logger.warn("User password is null for user: {}", user);
+            }
+            userRepository.deleteById(userIndex);
+        } else {
+            logger.warn("User not found for userIndex: {}", userIndex);
+        }
     }
+
 
     @Override
     public UserDetails loadUserByUsername(String userId) throws UsernameNotFoundException {
@@ -65,10 +78,12 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         }
         return new org.springframework.security.core.userdetails.User(user.getUserId(), user.getPassword(), getAuthorities(user));
     }
-    //일단은 안쓰임
+
     private List<org.springframework.security.core.authority.SimpleGrantedAuthority> getAuthorities(User user) {
         return user.getRoles().stream()
-                .map(role -> new org.springframework.security.core.authority.SimpleGrantedAuthority(role.getRoleName()))
+                .map(role -> {
+                    return new org.springframework.security.core.authority.SimpleGrantedAuthority("ROLE_" + role.getRoleName());
+                })
                 .collect(Collectors.toList());
     }
 
@@ -92,7 +107,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         existingUser.setActive(user.isActive());
 
         if (user.getPassword() != null && !user.getPassword().isEmpty()) {
-            existingUser.setPassword(passwordEncoder.encode(user.getPassword()));
+            existingUser.setPassword(PasswordUtil.encodePassword(passwordEncoder, user.getPassword())); // Password encoding
         }
 
         return userRepository.save(existingUser);
