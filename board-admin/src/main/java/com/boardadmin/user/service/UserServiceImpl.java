@@ -4,7 +4,6 @@ import com.boardadmin.user.model.Role;
 import com.boardadmin.user.model.User;
 import com.boardadmin.user.repository.RoleRepository;
 import com.boardadmin.user.repository.UserRepository;
-import com.boardadmin.common.util.PasswordUtil;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -12,14 +11,15 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Service
-@Transactional
 public class UserServiceImpl implements UserService, UserDetailsService {
 
     private static final Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
@@ -35,56 +35,69 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<User> getAllUsers() {
-        List<User> users = userRepository.findAll();
-        return users;
+        return userRepository.findAll();
     }
 
     @Override
-    public User getUserByUserId(String userId) {
-        User user = userRepository.findByUserId(userId);
-        if (user != null) {
-            logger.info("Fetched User: {}", user);
-        }
-        return user;
+    @Transactional(readOnly = true)
+    public User getUserByUserIndex(Integer userIndex) {
+        return userRepository.findByUserIndex(userIndex)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
     }
 
     @Override
+    @Transactional
     public User saveUser(User user) {
-        user.setPassword(PasswordUtil.encodePassword(passwordEncoder, user.getPassword())); // Password encoding
+        user.setPassword(encodePassword(user.getPassword()));
         return userRepository.save(user);
     }
 
     @Override
-    public void deleteUserByUserIndex(Integer userIndex) {
-        User user = userRepository.findById(userIndex).orElse(null);
-        if (user != null) {
-            logger.info("Deleting user: {}", user);
-            if (user.getPassword() == null) {
-                logger.warn("User password is null for user: {}", user);
-            }
-            userRepository.deleteById(userIndex);
-        } else {
-            logger.warn("User not found for userIndex: {}", userIndex);
+    @Transactional
+    public User updateUser(User user) {
+        User existingUser = userRepository.findById(user.getUserIndex()).orElseThrow(() -> new IllegalArgumentException("User not found"));
+        existingUser.setEmail(user.getEmail());
+        existingUser.setActive(user.isActive());
+        if (user.getPassword() != null && !user.getPassword().isEmpty()) {
+            existingUser.setPassword(encodePassword(user.getPassword()));
         }
+        return userRepository.save(existingUser);
     }
-
 
     @Override
-    public UserDetails loadUserByUsername(String userId) throws UsernameNotFoundException {
-        User user = userRepository.findByUserId(userId);
-        if (user == null) {
-            throw new UsernameNotFoundException("User not found");
-        }
-        return new org.springframework.security.core.userdetails.User(user.getUserId(), user.getPassword(), getAuthorities(user));
+    @Transactional
+    public void deleteUserByUserIndex(Integer userIndex) {
+        userRepository.findByUserIndex(userIndex)
+                .ifPresent(user -> userRepository.deleteById(userIndex));
     }
 
-    private List<org.springframework.security.core.authority.SimpleGrantedAuthority> getAuthorities(User user) {
-        return user.getRoles().stream()
-                .map(role -> {
-                    return new org.springframework.security.core.authority.SimpleGrantedAuthority("ROLE_" + role.getRoleName());
-                })
-                .collect(Collectors.toList());
+    @Override
+    @Transactional
+    public User createUserWithRole(User user, String roleName) {
+        Set<Role> roles = new HashSet<>();
+        roles.add(getRoleByName(roleName));
+        user.setRoles(roles);
+        user.setPassword(encodePassword(user.getPassword()));
+        return saveUser(user);
+    }
+
+    @Override
+    @Transactional
+    public User updateUserDetails(Integer userIndex, User updatedUser, String newPassword) {
+        User user = getUserByUserIndex(userIndex);
+        user.setEmail(updatedUser.getEmail());
+        user.setActive(updatedUser.isActive());
+        if (newPassword != null && !newPassword.isEmpty()) {
+            user.setPassword(encodePassword(newPassword));
+        }
+        return userRepository.save(user);
+    }
+
+    @Override
+    public Role getRoleByName(String roleName) {
+        return roleRepository.findByRoleName(roleName);
     }
 
     @Override
@@ -94,22 +107,43 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     }
 
     @Override
-    public Role getRoleByName(String roleName) {
-        return roleRepository.findByRoleName(roleName);
+    public List<User> getAdmins() {
+        return getAllUsers().stream()
+                .filter(user -> hasRole(user, "ADMIN"))
+                .collect(Collectors.toList());
     }
 
     @Override
-    public User updateUser(User user) {
-        User existingUser = userRepository.findById(user.getUserIndex())
-            .orElseThrow(() -> new IllegalArgumentException("User not found"));
-
-        existingUser.setEmail(user.getEmail());
-        existingUser.setActive(user.isActive());
-
-        if (user.getPassword() != null && !user.getPassword().isEmpty()) {
-            existingUser.setPassword(PasswordUtil.encodePassword(passwordEncoder, user.getPassword())); // Password encoding
-        }
-
-        return userRepository.save(existingUser);
+    public List<User> getUsers() {
+        return getAllUsers().stream()
+                .filter(user -> hasRole(user, "USER"))
+                .collect(Collectors.toList());
     }
+
+    public String encodePassword(String rawPassword) {
+        if (!rawPassword.startsWith("$2a$")) {
+            return passwordEncoder.encode(rawPassword);
+        }
+        return rawPassword;
+    }
+
+    private List<org.springframework.security.core.authority.SimpleGrantedAuthority> getAuthorities(User user) {
+        return user.getRoles().stream()
+                .map(role -> new org.springframework.security.core.authority.SimpleGrantedAuthority("ROLE_" + role.getRoleName()))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public User loadUserByUserIndex(Integer userIndex) throws UsernameNotFoundException {
+        return userRepository.findByUserIndex(userIndex)
+                             .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+    }
+
+	@Override
+	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

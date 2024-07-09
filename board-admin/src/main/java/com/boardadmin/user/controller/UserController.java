@@ -27,89 +27,46 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @RequestMapping("/user-management")
 public class UserController {
 
-    private static final Logger logger = LoggerFactory.getLogger(UserController.class);
+    //private static final Logger logger = LoggerFactory.getLogger(UserController.class);
 
     private final UserService userService;
-    private final PasswordEncoder passwordEncoder;
-
+    
     public UserController(UserService userService, PasswordEncoder passwordEncoder) {
-        this.userService = userService;  
-        this.passwordEncoder = passwordEncoder;
+        this.userService = userService;
     }
 
     @GetMapping
     public String getUserManagePage(Model model) {
-        //logger.info("getUserManagePage called");
-
-        List<User> allUsers = userService.getAllUsers();
-        //logger.info("All Users: " + allUsers);
-
-        List<User> admins = allUsers.stream()
-                .filter(user -> userService.hasRole(user, "ADMIN"))
-                .collect(Collectors.toList());
-
-        //logger.info("Admins: " + admins);
-
-        model.addAttribute("admins", admins);
-
-        return "userManage"; 
+        model.addAttribute("admins", userService.getAdmins());
+        return "userManage";
     }
 
     @GetMapping("/users")
     public String getUsersPage(Model model) {
-        //logger.info("getUsersPage called");
-
-        List<User> users = userService.getAllUsers().stream()
-                .filter(user -> userService.hasRole(user, "USER"))
-                .collect(Collectors.toList());
-        
-        //logger.info("Users: " + users);
-        
-        model.addAttribute("users", users);
-
-        return "user"; 
+        model.addAttribute("users", userService.getUsers());
+        return "user";
     }
 
     @PostMapping("/create/admin")
     public String createAdmin(User user) {
-        Set<Role> roles = new HashSet<>();
-        roles.add(userService.getRoleByName("ADMIN"));
-        user.setRoles(roles);
-        userService.saveUser(user);
+        userService.createUserWithRole(user, "ADMIN");
         return "redirect:/user-management";
     }
 
     @PostMapping("/create/user")
     public String createUser(User user) {
-    	
-        Set<Role> roles = new HashSet<>();
-        roles.add(userService.getRoleByName("USER"));
-        user.setRoles(roles);
-        
-        userService.saveUser(user);
+        userService.createUserWithRole(user, "USER");
         return "redirect:/user-management/users";
     }
 
     @PostMapping("/update/{userIndex}")
     public String updateUser(@PathVariable Integer userIndex, User user, @RequestParam(required = false) String newPassword) {
-        User existingUser = userService.getUserByUserId(user.getUserId());
-        if (existingUser != null) {
-            existingUser.setEmail(user.getEmail());
-            existingUser.setActive(user.isActive());
-
-            // 비밀번호를 변경할 때만 업데이트
-            if (newPassword != null && !newPassword.isEmpty()) {
-                existingUser.setPassword(passwordEncoder.encode(newPassword));
-            }
-
-            userService.updateUser(existingUser);
-        }
+        userService.updateUserDetails(userIndex, user, newPassword);
         return "redirect:/user-management";
     }
 
     @DeleteMapping("/delete/{userIndex}")
     public ResponseEntity<String> deleteUser(@PathVariable Integer userIndex) {
-        logger.info("Delete request received for userIndex: {}", userIndex);
         userService.deleteUserByUserIndex(userIndex);
         return ResponseEntity.ok("User deleted successfully");
     }
