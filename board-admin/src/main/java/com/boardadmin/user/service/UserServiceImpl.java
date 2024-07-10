@@ -48,13 +48,20 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         }
         return user;
     }
+    
+    @Override
+    public User getUserByUserIndex(Integer userIndex) {
+        return userRepository.findById(userIndex)
+            .orElseThrow(() -> new IllegalArgumentException("User not found for index: " + userIndex));
+    }
+
 
     @Override
     public User saveUser(User user) {
         user.setPassword(PasswordUtil.encodePassword(passwordEncoder, user.getPassword())); // Password encoding
         return userRepository.save(user);
     }
-
+    
     @Override
     public void deleteUserByUserIndex(Integer userIndex) {
         User user = userRepository.findById(userIndex).orElse(null);
@@ -109,7 +116,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         if (user.getPassword() != null && !user.getPassword().isEmpty()) {
             existingUser.setPassword(PasswordUtil.encodePassword(passwordEncoder, user.getPassword())); // Password encoding
         }
-
+        
         return userRepository.save(existingUser);
     }
 }

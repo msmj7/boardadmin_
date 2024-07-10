@@ -92,16 +92,14 @@ public class UserController {
 
     @PostMapping("/update/{userIndex}")
     public String updateUser(@PathVariable Integer userIndex, User user, @RequestParam(required = false) String newPassword) {
-        User existingUser = userService.getUserByUserId(user.getUserId());
+        User existingUser = userService.getUserByUserIndex(userIndex);
         if (existingUser != null) {
             existingUser.setEmail(user.getEmail());
             existingUser.setActive(user.isActive());
-
             // 비밀번호를 변경할 때만 업데이트
             if (newPassword != null && !newPassword.isEmpty()) {
                 existingUser.setPassword(passwordEncoder.encode(newPassword));
             }
-
             userService.updateUser(existingUser);
         }
         return "redirect:/user-management";
