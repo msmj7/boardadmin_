@@ -8,13 +8,13 @@ public class PasswordUtil { // 중복인코딩방지 분리
         throw new IllegalStateException("Utility class");
     }
 
-    public static String encodePassword(PasswordEncoder passwordEncoder, String rawPassword) {
-        //if (rawPassword == null) {
+    //public static String encodePassword(PasswordEncoder passwordEncoder, String Password) {
+        //if (Password == null) {
         //    throw new IllegalArgumentException("Password cannot be null");
        // }
-        if (!rawPassword.startsWith("$2a$")) {
-            return passwordEncoder.encode(rawPassword);
-        }
-        return rawPassword;
-    }
+      //  if (!Password.startsWith("$2a$")) {
+        //    return passwordEncoder.encode(Password);
+       // }
+       // return Password;
+   // }
 }

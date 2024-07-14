@@ -48,7 +48,7 @@ public class BoardAdminApplication implements CommandLineRunner {
             Role adminRole = roleRepository.findByRoleName("ADMIN");
             User adminUser = new User();
             adminUser.setUserId("pangpany");
-            adminUser.setPassword(PasswordUtil.encodePassword(passwordEncoder, "pangpany2024"));
+            adminUser.setPassword(passwordEncoder.encode("pangpany2024"));
             adminUser.setEmail("admin@pangpany.com");
             adminUser.setActive(true);
             adminUser.getRoles().add(adminRole); //역할 추가해줌

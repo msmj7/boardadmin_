@@ -7,6 +7,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,7 +28,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @RequestMapping("/user-management")
 public class UserController {
 
-    private static final Logger logger = LoggerFactory.getLogger(UserController.class);
+    //private static final Logger logger = LoggerFactory.getLogger(UserController.class);
 
     private final UserService userService;
     private final PasswordEncoder passwordEncoder;
@@ -38,26 +39,22 @@ public class UserController {
     }
 
     @GetMapping
-    public String getUserManagePage(Model model) {
-        //logger.info("getUserManagePage called");
+    public String getAdminsPage(Model model) {
 
         List<User> allUsers = userService.getAllUsers();
-        //logger.info("All Users: " + allUsers);
 
         List<User> admins = allUsers.stream()
                 .filter(user -> userService.hasRole(user, "ADMIN"))
                 .collect(Collectors.toList());
 
-        //logger.info("Admins: " + admins);
 
         model.addAttribute("admins", admins);
 
-        return "userManage"; 
+        return "admins"; 
     }
 
     @GetMapping("/users")
     public String getUsersPage(Model model) {
-        //logger.info("getUsersPage called");
 
         List<User> users = userService.getAllUsers().stream()
                 .filter(user -> userService.hasRole(user, "USER"))
@@ -67,7 +64,7 @@ public class UserController {
         
         model.addAttribute("users", users);
 
-        return "user"; 
+        return "users"; 
     }
 
     @PostMapping("/create/admin")
@@ -81,33 +78,30 @@ public class UserController {
 
     @PostMapping("/create/user")
     public String createUser(User user) {
-    	
         Set<Role> roles = new HashSet<>();
         roles.add(userService.getRoleByName("USER"));
-        user.setRoles(roles);
-        
+        user.setRoles(roles); 
         userService.saveUser(user);
         return "redirect:/user-management/users";
     }
 
     @PostMapping("/update/{userIndex}")
-    public String updateUser(@PathVariable Integer userIndex, User user, @RequestParam(required = false) String newPassword) {
+    public String updateUser(@PathVariable Integer userIndex, @ModelAttribute User user) {
         User existingUser = userService.getUserByUserIndex(userIndex);
         if (existingUser != null) {
             existingUser.setEmail(user.getEmail());
             existingUser.setActive(user.isActive());
-            // 비밀번호를 변경할 때만 업데이트
-            if (newPassword != null && !newPassword.isEmpty()) {
-                existingUser.setPassword(passwordEncoder.encode(newPassword));
+            if (user.getPassword() != null && !user.getPassword().isEmpty()) {
+                existingUser.setPassword(user.getPassword());
             }
             userService.updateUser(existingUser);
         }
         return "redirect:/user-management";
     }
 
+
     @DeleteMapping("/delete/{userIndex}")
     public ResponseEntity<String> deleteUser(@PathVariable Integer userIndex) {
-        logger.info("Delete request received for userIndex: {}", userIndex);
         userService.deleteUserByUserIndex(userIndex);
         return ResponseEntity.ok("User deleted successfully");
     }

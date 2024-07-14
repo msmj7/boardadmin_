@@ -22,7 +22,7 @@ import org.slf4j.LoggerFactory;
 @Transactional
 public class UserServiceImpl implements UserService, UserDetailsService {
 
-    private static final Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
+    //private static final Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
 
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
@@ -43,9 +43,9 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     @Override
     public User getUserByUserId(String userId) {
         User user = userRepository.findByUserId(userId);
-        if (user != null) {
-            logger.info("Fetched User: {}", user);
-        }
+        //if (user != null) {
+            //logger.info("Fetched User: {}", user);
+        //}
         return user;
     }
     
@@ -58,41 +58,25 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
     @Override
     public User saveUser(User user) {
-        user.setPassword(PasswordUtil.encodePassword(passwordEncoder, user.getPassword())); // Password encoding
-        return userRepository.save(user);
+        //user.setPassword(PasswordUtil.encodePassword(passwordEncoder, user.getPassword())); // Password encoding
+    	user.setPassword(passwordEncoder.encode(user.getPassword()));
+    	return userRepository.save(user);
     }
     
     @Override
     public void deleteUserByUserIndex(Integer userIndex) {
         User user = userRepository.findById(userIndex).orElse(null);
-        if (user != null) {
-            logger.info("Deleting user: {}", user);
-            if (user.getPassword() == null) {
-                logger.warn("User password is null for user: {}", user);
-            }
+        //if (user != null) {
+            //logger.info("Deleting user: {}", user);
+            //if (user.getPassword() == null) {
+                //logger.warn("User password is null for user: {}", user);
+            //}
             userRepository.deleteById(userIndex);
-        } else {
-            logger.warn("User not found for userIndex: {}", userIndex);
-        }
+        //} else {
+            //logger.warn("User not found for userIndex: {}", userIndex);
+        //}
     }
 
-
-    @Override
-    public UserDetails loadUserByUsername(String userId) throws UsernameNotFoundException {
-        User user = userRepository.findByUserId(userId);
-        if (user == null) {
-            throw new UsernameNotFoundException("User not found");
-        }
-        return new org.springframework.security.core.userdetails.User(user.getUserId(), user.getPassword(), getAuthorities(user));
-    }
-
-    private List<org.springframework.security.core.authority.SimpleGrantedAuthority> getAuthorities(User user) {
-        return user.getRoles().stream()
-                .map(role -> {
-                    return new org.springframework.security.core.authority.SimpleGrantedAuthority("ROLE_" + role.getRoleName());
-                })
-                .collect(Collectors.toList());
-    }
 
     @Override
     public boolean hasRole(User user, String roleName) {
@@ -114,9 +98,30 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         existingUser.setActive(user.isActive());
 
         if (user.getPassword() != null && !user.getPassword().isEmpty()) {
-            existingUser.setPassword(PasswordUtil.encodePassword(passwordEncoder, user.getPassword())); // Password encoding
+            existingUser.setPassword(passwordEncoder.encode(user.getPassword()));
         }
-        
+
         return userRepository.save(existingUser);
+    }
+
+
+    
+    
+    
+    @Override
+    public UserDetails loadUserByUsername(String userId) throws UsernameNotFoundException {
+        User user = userRepository.findByUserId(userId);
+        if (user == null) {
+            throw new UsernameNotFoundException("User not found");
+        }
+        return new org.springframework.security.core.userdetails.User(user.getUserId(), user.getPassword(), getAuthorities(user));
+    }
+
+    private List<org.springframework.security.core.authority.SimpleGrantedAuthority> getAuthorities(User user) {
+        return user.getRoles().stream()
+                .map(role -> {
+                    return new org.springframework.security.core.authority.SimpleGrantedAuthority("ROLE_" + role.getRoleName());
+                })
+                .collect(Collectors.toList());
     }
 }

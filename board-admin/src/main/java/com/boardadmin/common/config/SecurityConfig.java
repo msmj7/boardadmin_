@@ -40,6 +40,7 @@ public class SecurityConfig {
                 .requestMatchers("/login",  "/adminlte/**", "/css/**", "/js/**").permitAll()//security에서 허용하는 파일 경로 추가
                 //.anyRequest().authenticated()
                 .requestMatchers(HttpMethod.DELETE, "/user-management/**").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.PUT, "/user-management/**").hasRole("ADMIN")
                 .anyRequest().hasRole("ADMIN")//관리자 계정일때만 사용가능하게
             )
             .formLogin((form) -> form
@@ -51,11 +52,10 @@ public class SecurityConfig {
             	.logoutUrl("/logout")
                 .logoutSuccessUrl("/login?logout")	
                 .permitAll()
-            );
-            //예외 처리 추가
-        	//.exceptionHandling((exceptions)-> exceptions
-        	//	.accessDeniedHandler(accessDeniedHandler())
-        	//	);
+            )
+            .exceptionHandling((exceptions)-> exceptions
+        		.accessDeniedHandler(accessDeniedHandler())
+        		);
         
 
         return http.build();
@@ -66,7 +66,7 @@ public class SecurityConfig {
         auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder);
     }
 
-    //회원 계정으로 로그인 시 접근 거부 추가
+    //회원 계정으로 로그인 시 접근 거부 추가 (자동 로그아웃)
     @Bean
     public AccessDeniedHandler accessDeniedHandler() {
         return new AccessDeniedHandler() {
