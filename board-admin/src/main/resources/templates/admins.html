@@ -178,6 +178,7 @@ $(document).ready(function() {
 	        var active = row.find('td').eq(3).text().trim() === "true";
 	        var userIndex = $(this).closest('tr').find('.deleteBtn').attr('onclick').match(/\d+/)[0]; // userIndex 가져오기
 
+	        
 	        row.html(getAdminEditRow(userId, password, email, active, userIndex));
 	        $('#adminForm').attr('action', '/user-management/update/' + userIndex); // 폼의 action 설정
 
@@ -211,7 +212,7 @@ function addAdminRow() {
 
 function getAdminEditRow(userId, password, email, active, userIndex) {
     return '<td><input type="text" class="form-control" name="userId" value="' + userId + '" readonly></td>' +
-           '<td><input type="password" class="form-control" name="password" value="' + password + '" readonly></td>' +
+           '<td><input type="password" class="form-control" name="newpassword" placeholder="New Password"></td>' +
            '<td><input type="email" class="form-control" name="email" value="' + email + '"></td>' +
            '<td><input type="checkbox" class="form-control" name="active" ' + (active ? 'checked' : '') + '></td>' +
            '<td></td>' +
