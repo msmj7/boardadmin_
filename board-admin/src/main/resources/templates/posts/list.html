@@ -103,4 +103,39 @@
                                 </tr>
                             </tbody>
                         </table>
-                   
+                    </div>
+                    <div class="card-footer">
+                        <nav>
+                            <ul class="pagination">
+                                <li class="page-item" th:classappend="${currentPage == 1} ? 'disabled'" th:unless="${currentPage == null}">
+                                    <a class="page-link" th:href="@{'/posts/board/' + ${boardId} + '?page=' + (${currentPage - 1})}">Previous</a>
+                                </li>
+                                <li class="page-item" th:each="i : ${#numbers.sequence(1, totalPages)}" th:classappend="${currentPage == i} ? 'active'" th:unless="${currentPage == null}">
+                                    <a class="page-link" th:href="@{'/posts/board/' + ${boardId} + '?page=' + ${i}}" th:text="${i}">1</a>
+                                </li>
+                                <li class="page-item" th:classappend="${currentPage == totalPages} ? 'disabled'" th:unless="${currentPage == null}">
+                                    <a class="page-link" th:href="@{'/posts/board/' + ${boardId} + '?page=' + (${currentPage + 1})}">Next</a>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+            </div><!-- /.container-fluid -->
+        </div>
+        <!-- /.content -->
+    </div>
+    <!-- /.content-wrapper -->
+    <footer class="main-footer">
+        <div class="float-right d-none d-sm-inline">
+            Anything you want
+        </div>
+        <strong>Copyright &copy; 2023 <a href="#">Company</a>.</strong> All rights reserved.
+    </footer>
+</div>
+<!-- ./wrapper -->
+
+<script th:src="@{/adminlte/plugins/jquery/jquery.min.js}"></script>
+<script th:src="@{/adminlte/plugins/bootstrap/js/bootstrap.bundle.min.js}"></script>
+<script th:src="@{/adminlte/dist/js/adminlte.min.js}"></script>
+</body>
+</html>

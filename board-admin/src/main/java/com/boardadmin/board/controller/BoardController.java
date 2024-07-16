@@ -40,7 +40,7 @@ public class BoardController {
         model.addAttribute("boardId", id);
         // Fetch posts for the board and add pagination logic here
         // ...
-        return "posts/list";
+        return "boards/detail"; // 이 템플릿은 board의 세부 정보를 보여주도록 합니다.
     }
 
     @PostMapping("/delete/{id}")

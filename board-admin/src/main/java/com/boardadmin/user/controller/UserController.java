@@ -31,11 +31,9 @@ public class UserController {
     //private static final Logger logger = LoggerFactory.getLogger(UserController.class);
 
     private final UserService userService;
-    private final PasswordEncoder passwordEncoder;
 
     public UserController(UserService userService, PasswordEncoder passwordEncoder) {
         this.userService = userService;  
-        this.passwordEncoder = passwordEncoder;
     }
 
     @GetMapping
@@ -66,6 +64,20 @@ public class UserController {
 
         return "useradmin/users"; 
     }
+    
+    @GetMapping("/admin/{userIndex}")
+    public String getAdminDetailPage(@PathVariable Integer userIndex, Model model) {
+        User admin = userService.getUserByUserIndex(userIndex);
+        model.addAttribute("user", admin);
+        return "useradmin/adminDetail";
+    }
+
+    @GetMapping("/user/{userIndex}")
+    public String getUserDetailPage(@PathVariable Integer userIndex, Model model) {
+        User user = userService.getUserByUserIndex(userIndex);
+        model.addAttribute("user", user);
+        return "useradmin/userDetail";
+    }
 
     @PostMapping("/create/admin")
     public String createAdmin(User user) {
@@ -86,7 +98,7 @@ public class UserController {
     }
 
     @PostMapping("/update/{userIndex}")
-    public String updateUser(@PathVariable Integer userIndex, @ModelAttribute User user) {
+    public ResponseEntity<String> updateUser(@PathVariable Integer userIndex, @ModelAttribute User user) {
         User existingUser = userService.getUserByUserIndex(userIndex);
         if (existingUser != null) {
             existingUser.setEmail(user.getEmail());
@@ -96,7 +108,7 @@ public class UserController {
             }
             userService.updateUser(existingUser);
         }
-        return "redirect:/user-management";
+        return ResponseEntity.ok("User updated successfully");
     }
 
 
