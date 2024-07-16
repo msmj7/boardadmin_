@@ -128,7 +128,9 @@ public class UserController {
     @PostMapping("/create/admin")
     public String createAdmin(@ModelAttribute User user, Model model) {
         if (userService.userExists(user.getUserId())) {
-            model.addAttribute("error", "User ID already exists");
+            model.addAttribute("error", "이미 존재하는 아이디입니다.");
+            user.setUserId(""); // 사용자 ID 필드를 비웁니다.
+            model.addAttribute("user", user); // 나머지 입력값을 유지합니다.
             return "useradmin/newAdmin";
         }
         Set<Role> roles = new HashSet<>();
@@ -141,7 +143,7 @@ public class UserController {
     @PostMapping("/create/user")
     public String createUser(@ModelAttribute User user, Model model) {
         if (userService.userExists(user.getUserId())) {
-            model.addAttribute("error", "User ID already exists");
+            model.addAttribute("error", "이미 존재하는 아이디입니다.");
             return "useradmin/newUser";
         }
 
@@ -180,14 +182,13 @@ public class UserController {
     }
 
     @DeleteMapping("/delete/admin/{userIndex}")
-    public String deleteAdmin(@PathVariable Integer userIndex, @RequestParam(required = false) Long boardId) {
+    public String deleteAdmin(@PathVariable Integer userIndex, @RequestParam(required = false) Long boardId, Model model) {
         userService.deleteUserByUserIndex(userIndex);
 
         if (boardId != null) {
-            return "redirect:/user-management?boardId=" + boardId;
-        } else {
-            return "redirect:/user-management";
+            model.addAttribute("boardId", boardId);
         }
+        return "redirect:/user-management";
     }
 
     
@@ -220,13 +221,12 @@ public class UserController {
     }
 
     @DeleteMapping("/delete/user/{userIndex}")
-    public String deleteUser(@PathVariable Integer userIndex, @RequestParam(required = false) Long boardId) {
+    public String deleteUser(@PathVariable Integer userIndex, @RequestParam(required = false) Long boardId, Model model) {
         userService.deleteUserByUserIndex(userIndex);
 
         if (boardId != null) {
-            return "redirect:/user-management/users?boardId=" + boardId;
-        } else {
-            return "redirect:/user-management/users";
+            model.addAttribute("boardId", boardId);
         }
+        return "redirect:/user-management/users";
     }
 }

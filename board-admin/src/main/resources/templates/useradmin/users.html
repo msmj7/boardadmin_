@@ -157,7 +157,7 @@ function deleteUser(userIndex) {
             }
         }).then(response => {
             if (response.ok) {
-                window.location.href = '/user-management/users';
+                window.location.reload(); 
             } else {
                 alert('Error deleting user');
             }
