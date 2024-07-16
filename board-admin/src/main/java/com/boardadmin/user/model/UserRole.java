@@ -5,18 +5,21 @@ import lombok.Data;
 
 @Entity
 @Data
-@Table(name = "user_role")
+@Table(name = "user_role", uniqueConstraints = {
+       @UniqueConstraint(columnNames = {"user_index", "role_id"})
+})
 public class UserRole {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer ur_index;
+       @Column(name = "user_index")
+       private Integer userIndex;
 
-    @ManyToOne
-    @JoinColumn(name = "user_index", referencedColumnName = "userIndex")
-    private User user;
+       @ManyToOne
+       @MapsId
+       @JoinColumn(name = "user_index", referencedColumnName = "userIndex")
+       private User user;
 
-    @ManyToOne
-    @JoinColumn(name = "role_id", referencedColumnName = "roleId")
-    private Role role;
+       @ManyToOne
+       @JoinColumn(name = "role_id", referencedColumnName = "roleId")
+       private Role role;
 }

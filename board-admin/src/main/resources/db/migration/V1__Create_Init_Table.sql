@@ -20,15 +20,15 @@ CREATE TABLE user_role (
     UNIQUE (user_index, role_id)
 );
 
--- Boards 테이블 생성
-CREATE TABLE Boards (
+-- Board 테이블 생성
+CREATE TABLE Board (
     board_id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(100) UNIQUE NOT NULL,
     description TEXT
 );
 
--- Posts 테이블 생성
-CREATE TABLE Posts (
+-- Post 테이블 생성
+CREATE TABLE Post (
     post_id INT AUTO_INCREMENT PRIMARY KEY,
     title VARCHAR(255) NOT NULL,
     content TEXT NOT NULL,
@@ -38,8 +38,8 @@ CREATE TABLE Posts (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
--- Comments 테이블 생성
-CREATE TABLE Comments (
+-- Comment 테이블 생성
+CREATE TABLE Comment (
     comment_id INT AUTO_INCREMENT PRIMARY KEY,
     post_id INT NOT NULL,
     author_id INT NOT NULL,
