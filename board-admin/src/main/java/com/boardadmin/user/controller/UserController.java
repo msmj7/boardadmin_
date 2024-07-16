@@ -68,7 +68,7 @@ public class UserController {
     @GetMapping("/admin/{userIndex}")
     public String getAdminDetailPage(@PathVariable Integer userIndex, Model model) {
         User admin = userService.getUserByUserIndex(userIndex);
-        model.addAttribute("user", admin);
+        model.addAttribute("admin", admin);
         return "useradmin/adminDetail";
     }
 
@@ -97,8 +97,8 @@ public class UserController {
         return "redirect:/user-management/users";
     }
 
-    @PostMapping("/update/{userIndex}")
-    public ResponseEntity<String> updateUser(@PathVariable Integer userIndex, @ModelAttribute User user) {
+    @PostMapping("/update/admin/{userIndex}")
+    public String updateAdmin(@PathVariable Integer userIndex, @ModelAttribute User user) {
         User existingUser = userService.getUserByUserIndex(userIndex);
         if (existingUser != null) {
             existingUser.setEmail(user.getEmail());
@@ -108,14 +108,34 @@ public class UserController {
             }
             userService.updateUser(existingUser);
         }
-        return ResponseEntity.ok("User updated successfully");
+        return "redirect:/user-management";
+    }
+
+    @DeleteMapping("/delete/admin/{userIndex}")
+    public String deleteAdmin(@PathVariable Integer userIndex) {
+        userService.deleteUserByUserIndex(userIndex);
+        return "redirect:/user-management";
+    }
+    
+    @PostMapping("/update/user/{userIndex}")
+    public String updateUser(@PathVariable Integer userIndex, @ModelAttribute User user) {
+        User existingUser = userService.getUserByUserIndex(userIndex);
+        if (existingUser != null) {
+            existingUser.setEmail(user.getEmail());
+            existingUser.setActive(user.isActive());
+            if (user.getPassword() != null && !user.getPassword().isEmpty()) {
+                existingUser.setPassword(user.getPassword());
+            }
+            userService.updateUser(existingUser);
+        }
+        return "redirect:/user-management/users";
     }
 
 
-    @DeleteMapping("/delete/{userIndex}")
-    public ResponseEntity<String> deleteUser(@PathVariable Integer userIndex) {
+    @DeleteMapping("/delete/user/{userIndex}")
+    public String deleteUser(@PathVariable Integer userIndex) {
         userService.deleteUserByUserIndex(userIndex);
-        return ResponseEntity.ok("User deleted successfully");
+        return "redirect:/user-management/users";
     }
 
 
