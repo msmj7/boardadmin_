@@ -96,7 +96,7 @@ public class UserController {
     public String createAdmin(@ModelAttribute User user, Model model) {
     	if (userService.userExists(user.getUserId())) {
             model.addAttribute("error", "User ID already exists");
-            return "useradmin/create";
+            return "useradmin/newAdmin";
         }
         Set<Role> roles = new HashSet<>();
         roles.add(userService.getRoleByName("ADMIN"));
@@ -109,7 +109,7 @@ public class UserController {
     public String createUser(@ModelAttribute User user, Model model) {
         if (userService.userExists(user.getUserId())) {
             model.addAttribute("error", "User ID already exists");
-            return "useradmin/create";
+            return "useradmin/newUser";
         }
     	
         Set<Role> roles = new HashSet<>();
@@ -117,6 +117,13 @@ public class UserController {
         user.setRoles(roles); 
         userService.saveUser(user);
         return "redirect:/user-management/users";
+    }
+    
+    @GetMapping("/updatepage/admin/{userIndex}")
+    public String getAdminEditPage(@PathVariable Integer userIndex, Model model) {
+        User admin = userService.getUserByUserIndex(userIndex);
+        model.addAttribute("admin", admin);
+        return "useradmin/adminEdit";
     }
 
     @PostMapping("/update/admin/{userIndex}")
@@ -138,6 +145,13 @@ public class UserController {
     public String deleteAdmin(@PathVariable Integer userIndex) {
         userService.deleteUserByUserIndex(userIndex);
         return "redirect:/user-management";
+    }
+    
+    @GetMapping("/updatepage/user/{userIndex}")
+    public String getUserEditPage(@PathVariable Integer userIndex, Model model) {
+        User user = userService.getUserByUserIndex(userIndex);
+        model.addAttribute("user", user);
+        return "useradmin/userEdit";
     }
     
     @PostMapping("/update/user/{userIndex}")
