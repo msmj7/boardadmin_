@@ -31,11 +31,9 @@ public class UserController {
     //private static final Logger logger = LoggerFactory.getLogger(UserController.class);
 
     private final UserService userService;
-    private final PasswordEncoder passwordEncoder;
 
     public UserController(UserService userService, PasswordEncoder passwordEncoder) {
         this.userService = userService;  
-        this.passwordEncoder = passwordEncoder;
     }
 
     @GetMapping
@@ -50,7 +48,7 @@ public class UserController {
 
         model.addAttribute("admins", admins);
 
-        return "admins"; 
+        return "useradmin/admins"; 
     }
 
     @GetMapping("/users")
@@ -64,11 +62,42 @@ public class UserController {
         
         model.addAttribute("users", users);
 
-        return "users"; 
+        return "useradmin/users"; 
+    }
+    
+    @GetMapping("/admin/{userIndex}")
+    public String getAdminDetailPage(@PathVariable Integer userIndex, Model model) {
+        User admin = userService.getUserByUserIndex(userIndex);
+        model.addAttribute("admin", admin);
+        return "useradmin/adminDetail";
     }
 
+    @GetMapping("/user/{userIndex}")
+    public String getUserDetailPage(@PathVariable Integer userIndex, Model model) {
+        User user = userService.getUserByUserIndex(userIndex);
+        model.addAttribute("user", user);
+        return "useradmin/userDetail";
+    }
+    
+    @GetMapping("/newAdmin")
+    public String getAdminCreatePage(Model model) {
+        model.addAttribute("user", new User());
+        return "useradmin/newAdmin";
+    }
+
+    @GetMapping("/newUser")
+    public String getUserCreatePage(Model model) {
+        model.addAttribute("user", new User());
+        return "useradmin/newUser";
+    }
+
+    
     @PostMapping("/create/admin")
-    public String createAdmin(User user) {
+    public String createAdmin(@ModelAttribute User user, Model model) {
+    	if (userService.userExists(user.getUserId())) {
+            model.addAttribute("error", "User ID already exists");
+            return "useradmin/create";
+        }
         Set<Role> roles = new HashSet<>();
         roles.add(userService.getRoleByName("ADMIN"));
         user.setRoles(roles);
@@ -77,7 +106,12 @@ public class UserController {
     }
 
     @PostMapping("/create/user")
-    public String createUser(User user) {
+    public String createUser(@ModelAttribute User user, Model model) {
+        if (userService.userExists(user.getUserId())) {
+            model.addAttribute("error", "User ID already exists");
+            return "useradmin/create";
+        }
+    	
         Set<Role> roles = new HashSet<>();
         roles.add(userService.getRoleByName("USER"));
         user.setRoles(roles); 
@@ -85,10 +119,11 @@ public class UserController {
         return "redirect:/user-management/users";
     }
 
-    @PostMapping("/update/{userIndex}")
-    public String updateUser(@PathVariable Integer userIndex, @ModelAttribute User user) {
+    @PostMapping("/update/admin/{userIndex}")
+    public String updateAdmin(@PathVariable Integer userIndex, @ModelAttribute User user) {
         User existingUser = userService.getUserByUserIndex(userIndex);
         if (existingUser != null) {
+        	existingUser.setUserId(user.getUserId());
             existingUser.setEmail(user.getEmail());
             existingUser.setActive(user.isActive());
             if (user.getPassword() != null && !user.getPassword().isEmpty()) {
@@ -99,11 +134,32 @@ public class UserController {
         return "redirect:/user-management";
     }
 
-
-    @DeleteMapping("/delete/{userIndex}")
-    public ResponseEntity<String> deleteUser(@PathVariable Integer userIndex) {
+    @DeleteMapping("/delete/admin/{userIndex}")
+    public String deleteAdmin(@PathVariable Integer userIndex) {
         userService.deleteUserByUserIndex(userIndex);
-        return ResponseEntity.ok("User deleted successfully");
+        return "redirect:/user-management";
+    }
+    
+    @PostMapping("/update/user/{userIndex}")
+    public String updateUser(@PathVariable Integer userIndex, @ModelAttribute User user) {
+        User existingUser = userService.getUserByUserIndex(userIndex);
+        if (existingUser != null) {
+        	existingUser.setUserId(user.getUserId());
+            existingUser.setEmail(user.getEmail());
+            existingUser.setActive(user.isActive());
+            if (user.getPassword() != null && !user.getPassword().isEmpty()) {
+                existingUser.setPassword(user.getPassword());
+            }
+            userService.updateUser(existingUser);
+        }
+        return "redirect:/user-management/users";
+    }
+
+
+    @DeleteMapping("/delete/user/{userIndex}")
+    public String deleteUser(@PathVariable Integer userIndex) {
+        userService.deleteUserByUserIndex(userIndex);
+        return "redirect:/user-management/users";
     }
 
 
