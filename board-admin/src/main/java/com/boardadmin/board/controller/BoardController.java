@@ -8,6 +8,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @Controller
 @RequestMapping("/boards")
@@ -26,6 +27,7 @@ public class BoardController {
     @GetMapping("/new")
     public String createBoardForm(Model model) {
         model.addAttribute("board", new Board());
+        model.addAttribute("boards", boardService.getAllBoards()); 
         return "boards/create";
     }
 
@@ -40,6 +42,13 @@ public class BoardController {
         model.addAttribute("boardId", id);
         // Fetch posts for the board and add pagination logic here
         // ...
+        Optional<Board> board = boardService.getBoardById(id);
+        if (board.isPresent()) {
+            model.addAttribute("board", board.get());
+            model.addAttribute("boards", boardService.getAllBoards());  // 추가
+        } else {
+            return "error/404"; // 존재하지 않는 게시판 ID일 경우 404 페이지로 리다이렉트합니다.
+        }
         return "boards/detail"; // 이 템플릿은 board의 세부 정보를 보여주도록 합니다.
     }
 

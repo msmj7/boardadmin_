@@ -30,30 +30,53 @@
     <!-- Main Sidebar Container -->
     <aside class="main-sidebar sidebar-dark-primary elevation-4">
         <!-- Brand Logo -->
-        <a href="#" class="brand-link">
-            <span class="brand-text font-weight-light">Board Management</span>
+        <a href="#" class="brand-link text-center">
+            <span class="brand-text font-weight-light">board-admin</span>
         </a>
         <!-- Sidebar -->
         <div class="sidebar">
             <!-- Sidebar Menu -->
             <nav class="mt-2">
                 <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
-                    <li class="nav-item">
-                        <a href="#" class="nav-link">
-                            <i class="nav-icon fas fa-tachometer-alt"></i>
-                            <p>
-                                Dashboard
-                            </p>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="/boards" class="nav-link">
-                            <i class="nav-icon fas fa-table"></i>
-                            <p>
-                                Board Management
-                            </p>
-                        </a>
-                    </li>
+					<li class="nav-item menu-close">
+					                        <a href="#" class="nav-link ">
+					                            <p>
+					                                사용자 관리
+					                                <i class="right fas fa-angle-left"></i>
+					                            </p>
+					                        </a>
+					                        <ul class="nav nav-treeview">
+					                            <li class="nav-item">
+					                                <a href="/user-management" class="nav-link active">
+					                                    <i class="far fa-circle nav-icon"></i>
+					                                    <p>관리자</p>
+					                                </a>
+					                            </li>
+					                            <li class="nav-item">
+					                                <a href="/user-management/users" class="nav-link">
+					                                    <i class="far fa-circle nav-icon"></i>
+					                                    <p>회원</p>
+					                                </a>
+					                            </li>
+					                        </ul>
+					</li>
+					<li class="nav-item menu-open">
+						<a href="#" class="nav-link active">
+							<p>
+							게시판 관리
+							<i class="right fas fa-angle-left"></i>
+							</p>
+							 </a>
+						 	<ul class="nav nav-treeview">
+									<li class="nav-item" th:each="board : ${boards}">
+											<a th:href="@{'/posts/board/' + ${board.boardId}}" class="btn  btn-sm nav-link  text-left">
+												<i class="far fa-circle nav-icon"></i>
+												<p th:text="${board.name}"></p>
+											</a>
+									</li>
+							</ul>
+					</li>
+
                 </ul>
             </nav>
             <!-- /.sidebar-menu -->
