@@ -124,4 +124,11 @@ public class UserServiceImpl implements UserService, UserDetailsService {
                 })
                 .collect(Collectors.toList());
     }
+    
+    
+    @Override
+    public boolean userExists(String userId) {
+        return userRepository.findByUserId(userId) != null;
+    }
+
 }

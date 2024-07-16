@@ -2,10 +2,14 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>관리자 상세</title>
+    <title>사용자 생성</title>
+    <!-- Font Awesome Icons -->
     <link rel="stylesheet" th:href="@{/adminlte/plugins/fontawesome-free/css/all.min.css}">
+    <!-- Theme style -->
     <link rel="stylesheet" th:href="@{/adminlte/dist/css/adminlte.min.css}">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+    <!-- Google Font: Source Sans Pro -->
+    <link rel="stylesheet"
+          href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
     <meta name="_csrf" th:content="${_csrf.token}"/>
     <style>
         .form-container {
@@ -40,10 +44,10 @@
             margin: 0 5px;
             font-size: 0.9em;
         }
-        .list-button {
-            display: flex;
-            justify-content: center;
-            margin-top: 10px;
+        .error-message {
+            color: red;
+            text-align: center;
+            margin-bottom: 10px;
         }
     </style>
 </head>
@@ -72,17 +76,27 @@
         <div class="sidebar">
             <nav class="mt-2">
                 <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
-                    <li class="nav-item">
-                        <a href="/user-management" class="nav-link">
-                            <i class="far fa-circle nav-icon"></i>
-                            <p>관리자 목록</p>
+                    <li class="nav-item menu-open">
+                        <a href="#" class="nav-link active">
+                            <p>
+                                사용자 관리
+                                <i class="right fas fa-angle-left"></i>
+                            </p>
                         </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="/user-management/users" class="nav-link">
-                            <i class="far fa-circle nav-icon"></i>
-                            <p>회원 목록</p>
-                        </a>
+                        <ul class="nav nav-treeview">
+                            <li class="nav-item">
+                                <a href="/user-management" class="nav-link">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>관리자 목록</p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="/user-management/users" class="nav-link active">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>회원 목록</p>
+                                </a>
+                            </li>
+                        </ul>
                     </li>
                 </ul>
             </nav>
@@ -93,7 +107,7 @@
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-6">
-                        <h1>관리자 상세</h1>
+                        <h1>회원 생성</h1>
                     </div>
                 </div>
             </div>
@@ -102,51 +116,28 @@
             <div class="container-fluid">
                 <div class="card">
                     <div class="card-body">
-                        <div id="view-form" class="form-container">
-                            <div class="form-group">
-                                <label for="userId">User ID</label>
-                                <input type="text" class="form-control" id="userId" th:value="${admin.userId}" readonly>
-                            </div>
-                            <div class="form-group">
-                                <label for="email">Email</label>
-                                <input type="email" class="form-control" id="email" th:value="${admin.email}" readonly>
-                            </div>
-                            <div class="form-group">
-                                <label for="active">Active</label>
-                                <input type="checkbox" class="form-control" id="active" th:checked="${admin.active}" disabled>
-                            </div>
-                        </div>
-                        <div class="buttons" id="action-buttons">
-                            <button class="btn btn-primary" onclick="showEditForm()">Edit</button>
-                            <form th:action="@{/user-management/delete/admin/{userIndex}(userIndex=${admin.userIndex})}" method="post" style="display:inline;">
-                                <input type="hidden" name="_csrf" th:value="${_csrf.token}"/>
-                                <button type="submit" class="btn btn-danger">Delete</button>
-                            </form>
-                        </div>
-                        <div class="list-button" id="list-button">
-                            <a href="/user-management" class="btn btn-secondary">목록</a>
-                        </div>
-                        <form id="edit-form" th:action="@{/user-management/update/admin/{userIndex}(userIndex=${admin.userIndex})}" method="post" class="form-container" style="display:none;">
+                        <div class="error-message" th:if="${error}" th:text="${error}"></div>
+                        <form th:action="@{/user-management/create/user}" method="post" class="form-container">
                             <input type="hidden" name="_csrf" th:value="${_csrf.token}"/>
                             <div class="form-group">
                                 <label for="userId">User ID</label>
-                                <input type="text" class="form-control" id="userId" name="userId" th:value="${admin.userId}">
+                                <input type="text" class="form-control" id="userId" name="userId" required>
                             </div>
                             <div class="form-group">
                                 <label for="email">Email</label>
-                                <input type="email" class="form-control" id="email" name="email" th:value="${admin.email}">
+                                <input type="email" class="form-control" id="email" name="email" required>
                             </div>
                             <div class="form-group">
                                 <label for="password">Password</label>
-                                <input type="password" class="form-control" id="password" name="password">
+                                <input type="password" class="form-control" id="password" name="password" required>
                             </div>
                             <div class="form-group">
                                 <label for="active">Active</label>
-                                <input type="checkbox" class="form-control" id="active" name="active" th:checked="${admin.active}">
+                                <input type="checkbox" class="form-control" id="active" name="active">
                             </div>
                             <div class="buttons">
-                                <button type="submit" class="btn btn-success">Save</button>
-                                <button type="button" class="btn btn-secondary" onclick="hideEditForm()">Cancel</button>
+                                <button type="submit" class="btn btn-success">Create</button>
+                                <button type="button" class="btn btn-secondary" onclick="window.location.href='/user-management/users'">Cancel</button>
                             </div>
                         </form>
                     </div>
@@ -164,20 +155,5 @@
 <script th:src="@{/adminlte/plugins/jquery/jquery.min.js}"></script>
 <script th:src="@{/adminlte/plugins/bootstrap/js/bootstrap.bundle.min.js}"></script>
 <script th:src="@{/adminlte/dist/js/adminlte.min.js}"></script>
-<script>
-function showEditForm() {
-    document.getElementById('view-form').style.display = 'none';
-    document.getElementById('edit-form').style.display = 'flex';
-    document.getElementById('action-buttons').style.display = 'none';
-    document.getElementById('list-button').style.display = 'none';
-}
-
-function hideEditForm() {
-    document.getElementById('edit-form').style.display = 'none';
-    document.getElementById('view-form').style.display = 'flex';
-    document.getElementById('action-buttons').style.display = 'flex';
-    document.getElementById('list-button').style.display = 'flex';
-}
-</script>
 </body>
 </html>

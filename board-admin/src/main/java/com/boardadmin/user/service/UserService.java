@@ -13,4 +13,5 @@ public interface UserService {
     void deleteUserByUserIndex(Integer userIndex);
     boolean hasRole(User user, String roleName);
     Role getRoleByName(String roleName);
+    boolean userExists(String userId);
 }

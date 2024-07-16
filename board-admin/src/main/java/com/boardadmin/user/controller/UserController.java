@@ -78,9 +78,26 @@ public class UserController {
         model.addAttribute("user", user);
         return "useradmin/userDetail";
     }
+    
+    @GetMapping("/newAdmin")
+    public String getAdminCreatePage(Model model) {
+        model.addAttribute("user", new User());
+        return "useradmin/newAdmin";
+    }
 
+    @GetMapping("/newUser")
+    public String getUserCreatePage(Model model) {
+        model.addAttribute("user", new User());
+        return "useradmin/newUser";
+    }
+
+    
     @PostMapping("/create/admin")
-    public String createAdmin(User user) {
+    public String createAdmin(@ModelAttribute User user, Model model) {
+    	if (userService.userExists(user.getUserId())) {
+            model.addAttribute("error", "User ID already exists");
+            return "useradmin/create";
+        }
         Set<Role> roles = new HashSet<>();
         roles.add(userService.getRoleByName("ADMIN"));
         user.setRoles(roles);
@@ -89,7 +106,12 @@ public class UserController {
     }
 
     @PostMapping("/create/user")
-    public String createUser(User user) {
+    public String createUser(@ModelAttribute User user, Model model) {
+        if (userService.userExists(user.getUserId())) {
+            model.addAttribute("error", "User ID already exists");
+            return "useradmin/create";
+        }
+    	
         Set<Role> roles = new HashSet<>();
         roles.add(userService.getRoleByName("USER"));
         user.setRoles(roles); 
@@ -101,6 +123,7 @@ public class UserController {
     public String updateAdmin(@PathVariable Integer userIndex, @ModelAttribute User user) {
         User existingUser = userService.getUserByUserIndex(userIndex);
         if (existingUser != null) {
+        	existingUser.setUserId(user.getUserId());
             existingUser.setEmail(user.getEmail());
             existingUser.setActive(user.isActive());
             if (user.getPassword() != null && !user.getPassword().isEmpty()) {
@@ -121,6 +144,7 @@ public class UserController {
     public String updateUser(@PathVariable Integer userIndex, @ModelAttribute User user) {
         User existingUser = userService.getUserByUserIndex(userIndex);
         if (existingUser != null) {
+        	existingUser.setUserId(user.getUserId());
             existingUser.setEmail(user.getEmail());
             existingUser.setActive(user.isActive());
             if (user.getPassword() != null && !user.getPassword().isEmpty()) {

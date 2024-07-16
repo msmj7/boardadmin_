@@ -91,7 +91,7 @@
                         <h1>사용자 관리 - 관리자</h1>
                     </div>
                     <div class="col-sm-6">
-                        <a th:href="@{/user-management/admin/new}" class="btn btn-primary float-right">Add Admin</a>
+                        <a th:href="@{/user-management/newAdmin}" class="btn btn-primary float-right">Add Admin</a>
                     </div>
                 </div>
             </div>
@@ -108,16 +108,16 @@
                         <table class="table table-bordered">
                             <thead>
                                 <tr>
+                                    <th>NO</th>
                                     <th>ID</th>
-                                    <th>Email</th>
                                     <th>Active</th>
                                     <th>Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr th:each="admin : ${admins}" th:data-href="@{/user-management/admin/{userIndex}(userIndex=${admin.userIndex})}" onclick="window.location.href = this.getAttribute('data-href');" style="cursor: pointer;">
+                                <tr th:each="admin, iterStat : ${admins}" th:data-href="@{/user-management/admin/{userIndex}(userIndex=${admin.userIndex})}" onclick="window.location.href = this.getAttribute('data-href');" style="cursor: pointer;">
+                                    <td th:text="${iterStat.count}"></td>
                                     <td th:text="${admin.userId}"></td>
-                                    <td th:text="${admin.email}"></td>
                                     <td th:text="${admin.active}"></td>
                                     <td>
                                         <button class="btn btn-danger deleteBtn" th:onclick="'deleteAdmin(' + ${admin.userIndex} + ')'">Delete</button>
