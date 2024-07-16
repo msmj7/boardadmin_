@@ -8,8 +8,7 @@
     <!-- Theme style -->
     <link rel="stylesheet" th:href="@{/adminlte/dist/css/adminlte.min.css}">
     <!-- Google Font: Source Sans Pro -->
-    <link rel="stylesheet"
-          href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
     <meta name="_csrf" th:content="${_csrf.token}"/>
 </head>
 <body class="hold-transition sidebar-mini">
@@ -45,6 +44,7 @@
         <!-- Sidebar -->
         <div class="sidebar">
             <!-- Sidebar Menu -->
+<<<<<<< HEAD
             <nav class="mt-2">
                 <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
                     <li class="nav-item menu-open">
@@ -87,6 +87,51 @@
                     </li>
                 </ul>
             </nav>
+=======
+            			<nav class="mt-2">
+			                <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+								<li class="nav-item menu-open">
+								                        <a href="#" class="nav-link active">
+								                            <p>
+								                                사용자 관리
+								                                <i class="right fas fa-angle-left"></i>
+								                            </p>
+								                        </a>
+								                        <ul class="nav nav-treeview">
+								                            <li class="nav-item">
+								                                <a href="/user-management" class="nav-link active">
+								                                    <i class="far fa-circle nav-icon"></i>
+								                                    <p>관리자 목록</p>
+								                                </a>
+								                            </li>
+								                            <li class="nav-item">
+								                                <a href="/user-management/users" class="nav-link">
+								                                    <i class="far fa-circle nav-icon"></i>
+								                                    <p>회원 목록</p>
+								                                </a>
+								                            </li>
+								                        </ul>
+								</li>
+								<li class="nav-item menu-open">
+									<a href="#" class="nav-link">
+										<p>
+										게시판 관리
+										<i class="right fas fa-angle-left"></i>
+										</p>
+										 </a>
+									 	<ul class="nav nav-treeview">
+												<li class="nav-item" th:each="board : ${boards}">
+														<a th:href="@{'/posts/board/' + ${board.boardId}}" class="btn  btn-sm nav-link  text-left">
+															<i class="far fa-circle nav-icon"></i>
+															<p th:text="${board.name}"></p>
+														</a>
+												</li>
+										</ul>
+								</li>
+
+			                </ul>
+			            </nav>
+>>>>>>> branch 'main' of https://github.com/seongsik082/boardadmin.git
             <!-- /.sidebar-menu -->
         </div>
         <!-- /.sidebar -->
@@ -125,12 +170,14 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr th:each="admin, iterStat : ${admins}" th:data-href="@{/user-management/admin/{userIndex}(userIndex=${admin.userIndex})}" onclick="window.location.href = this.getAttribute('data-href');" style="cursor: pointer;">
+                                <tr th:each="admin, iterStat : ${admins}">
                                     <td th:text="${iterStat.count}"></td>
                                     <td th:text="${admin.userId}"></td>
                                     <td th:text="${admin.active}"></td>
                                     <td>
-                                        <button class="btn btn-danger deleteBtn" th:onclick="'deleteAdmin(' + ${admin.userIndex} + ')'">Delete</button>
+                                        <a th:href="@{/user-management/admin/{userIndex}(userIndex=${admin.userIndex})}" class="btn btn-info">View</a>
+                                        <a th:href="@{/user-management/updatepage/admin/{userIndex}(userIndex=${admin.userIndex})}" class="btn btn-primary">Edit</a>
+                                        <button class="btn btn-danger" th:onclick="'deleteAdmin(' + ${admin.userIndex} + ')'">Delete</button>
                                     </td>
                                 </tr>
                             </tbody>

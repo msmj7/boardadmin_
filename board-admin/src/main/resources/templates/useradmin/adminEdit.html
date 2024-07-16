@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>회원 상세</title>
+    <title>회원 수정</title>
     <link rel="stylesheet" th:href="@{/adminlte/plugins/fontawesome-free/css/all.min.css}">
     <link rel="stylesheet" th:href="@{/adminlte/dist/css/adminlte.min.css}">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
@@ -12,8 +12,6 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            max-width: 400px;
-            margin: 0 auto;
         }
         .form-group {
             display: flex;
@@ -67,9 +65,7 @@
             </li>
         </ul>
     </nav>
-    <!-- Main Sidebar Container -->
     <aside class="main-sidebar sidebar-dark-primary elevation-4">
-        <!-- Brand Logo -->
         <a href="#" class="brand-link text-center">
             <span class="brand-text font-weight-light">board-admin</span>
         </a>
@@ -87,22 +83,16 @@
                         </a>
                         <ul class="nav nav-treeview">
                             <li class="nav-item">
-                                <a href="/user-management" class="nav-link">
+                                <a href="/user-management" class="nav-link active">
                                     <i class="far fa-circle nav-icon"></i>
                                     <p>관리자 목록</p>
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a href="/user-management/users" class="nav-link active">
+                                <a href="/user-management/users" class="nav-link">
                                     <i class="far fa-circle nav-icon"></i>
                                     <p>회원 목록</p>
                                 </a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="/boards" class="nav-link">
-                                    <i class="nav-icon fas fa-table"></i>
-                                    <p>Board Management</p>
-                               </a>
                             </li>
                         </ul>
                     </li>
@@ -117,7 +107,7 @@
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-6">
-                        <h1>회원 상세</h1>
+                        <h1>관리자 수정</h1>
                     </div>
                 </div>
             </div>
@@ -126,30 +116,29 @@
             <div class="container-fluid">
                 <div class="card">
                     <div class="card-body">
-                        <div id="view-form" class="form-container">
+                        <form id="edit-form" th:action="@{/user-management/update/admin/{userIndex}(userIndex=${admin.userIndex})}" method="post" class="form-container">
+                            <input type="hidden" name="_csrf" th:value="${_csrf.token}"/>
                             <div class="form-group">
                                 <label for="userId">User ID</label>
-                                <input type="text" class="form-control" id="userId" th:value="${user.userId}" readonly>
+                                <input type="text" class="form-control" id="userId" name="userId" th:value="${admin.userId}">
                             </div>
                             <div class="form-group">
                                 <label for="email">Email</label>
-                                <input type="email" class="form-control" id="email" th:value="${user.email}" readonly>
+                                <input type="email" class="form-control" id="email" name="email" th:value="${admin.email}">
+                            </div>
+                            <div class="form-group">
+                                <label for="password">Password</label>
+                                <input type="password" class="form-control" id="password" name="password">
                             </div>
                             <div class="form-group">
                                 <label for="active">Active</label>
-                                <input type="checkbox" class="form-control" id="active" th:checked="${user.active}" disabled>
+                                <input type="checkbox" class="form-control" id="active" name="active" th:checked="${admin.active}">
                             </div>
-                        </div>
-                        <div class="buttons" id="action-buttons">
-                            <a th:href="@{/user-management/updatepage/user/{userIndex}(userIndex=${user.userIndex})}" class="btn btn-primary">Edit</a>
-                            <form th:action="@{/user-management/delete/user/{userIndex}(userIndex=${user.userIndex})}" method="post" style="display:inline;">
-                                <input type="hidden" name="_csrf" th:value="${_csrf.token}"/>
-                                <button type="submit" class="btn btn-danger">Delete</button>
-                            </form>
-                        </div>
-                        <div class="list-button" id="list-button">
-                            <a href="/user-management/users" class="btn btn-secondary">목록</a>
-                        </div>
+                            <div class="buttons">
+                                <button type="submit" class="btn btn-success">Save</button>
+                                <a href="/user-management" class="btn btn-secondary">Cancel</a>
+                            </div>
+                        </form>
                     </div>
                 </div>
             </div>

@@ -85,7 +85,7 @@
                         <h1>사용자 관리 - 회원</h1>
                     </div>
                     <div class="col-sm-6">
-                        <a th:href="@{/user-management/newuser}" class="btn btn-primary float-right">Add User</a>
+                        <a th:href="@{/user-management/newUser}" class="btn btn-primary float-right">Add User</a>
                     </div>
                 </div>
             </div>
@@ -114,7 +114,9 @@
                                     <td th:text="${user.userId}"></td>
                                     <td th:text="${user.active}"></td>
                                     <td>
-                                        <button class="btn btn-danger" th:onclick="'deleteUser(' + ${user.userIndex} + ')'">Delete</button>
+                                        <a th:href="@{/user-management/user/{userIndex}(userIndex=${user.userIndex})}" class="btn btn-info">View</a>
+                                        <a th:href="@{/user-management/updatepage/user/{userIndex}(userIndex=${user.userIndex})}" class="btn btn-primary">Edit</a>
+                                        <button class="btn btn-danger deleteBtn" th:onclick="'deleteUser(' + ${user.userIndex} + ')'">Delete</button>
                                     </td>
                                 </tr>
                             </tbody>
