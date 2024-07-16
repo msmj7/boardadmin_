@@ -22,26 +22,22 @@ public class PostService {
         return postRepository.findById(id);
     }
 
-    public Post createPost(Post post) {
-        return postRepository.save(post);
+    public List<Post> getPostsByBoardId(Long boardId) {
+        return postRepository.findByBoardId(boardId);
     }
 
-    public Optional<Post> updatePost(Long id, Post postDetails) {
-        return postRepository.findById(id).map(post -> {
-            post.setTitle(postDetails.getTitle());
-            post.setContent(postDetails.getContent());
-            post.setBoardId(postDetails.getBoardId());
-            post.setAuthorId(postDetails.getAuthorId());
-            return postRepository.save(post);
-        });
+    public void createPost(Post post) {
+        postRepository.save(post);
     }
 
-    public boolean deletePost(Long id) {
+    public void updatePost(Long id, Post post) {
         if (postRepository.existsById(id)) {
-            postRepository.deleteById(id);
-            return true;
-        } else {
-            return false;
+            post.setPostId(id);
+            postRepository.save(post);
         }
+    }
+
+    public void deletePost(Long id) {
+        postRepository.deleteById(id);
     }
 }

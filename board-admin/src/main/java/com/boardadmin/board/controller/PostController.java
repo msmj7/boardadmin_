@@ -16,10 +16,13 @@ public class PostController {
     @Autowired
     private PostService postService;
 
-    @GetMapping
-    public String getAllPosts(Model model) {
-        List<Post> posts = postService.getAllPosts();
+    @GetMapping("/board/{boardId}")
+    public String getPostsByBoardId(@PathVariable Long boardId, @RequestParam(defaultValue = "1") int page, Model model) {
+        List<Post> posts = postService.getPostsByBoardId(boardId);
         model.addAttribute("posts", posts);
+        model.addAttribute("boardId", boardId);
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", 1); // 임시로 1페이지로 설정. 실제로는 페이지네이션 로직을 추가하세요.
         return "posts/list";
     }
 
@@ -28,13 +31,14 @@ public class PostController {
         Post post = new Post();
         post.setBoardId(boardId);
         model.addAttribute("post", post);
+        model.addAttribute("boardId", boardId);
         return "posts/create";
     }
 
     @PostMapping
     public String createPost(@ModelAttribute Post post) {
         postService.createPost(post);
-        return "redirect:/boards/" + post.getBoardId();
+        return "redirect:/posts/board/" + post.getBoardId();
     }
 
     @GetMapping("/edit/{id}")
@@ -47,13 +51,13 @@ public class PostController {
     @PostMapping("/edit/{id}")
     public String updatePost(@PathVariable Long id, @ModelAttribute Post post) {
         postService.updatePost(id, post);
-        return "redirect:/boards/" + post.getBoardId();
+        return "redirect:/posts/board/" + post.getBoardId();
     }
 
     @GetMapping("/delete/{id}")
     public String deletePost(@PathVariable Long id) {
         Long boardId = postService.getPostById(id).map(Post::getBoardId).orElse(null);
         postService.deletePost(id);
-        return "redirect:/boards/" + (boardId != null ? boardId : "");
+        return "redirect:/posts/board/" + (boardId != null ? boardId : "");
     }
 }
