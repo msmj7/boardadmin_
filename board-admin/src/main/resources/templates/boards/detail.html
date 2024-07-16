@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Edit Post</title>
+    <title>Board Detail</title>
     <link rel="stylesheet" th:href="@{/adminlte/plugins/fontawesome-free/css/all.min.css}">
     <link rel="stylesheet" th:href="@{/adminlte/dist/css/adminlte.min.css}">
 </head>
@@ -41,17 +41,13 @@
                     <li class="nav-item">
                         <a href="#" class="nav-link">
                             <i class="nav-icon fas fa-tachometer-alt"></i>
-                            <p>
-                                Dashboard
-                            </p>
+                            <p>Dashboard</p>
                         </a>
                     </li>
                     <li class="nav-item">
                         <a href="/boards" class="nav-link">
                             <i class="nav-icon fas fa-table"></i>
-                            <p>
-                                Board Management
-                            </p>
+                            <p>Board Management</p>
                         </a>
                     </li>
                     <li class="nav-header">BOARDS</li>
@@ -73,7 +69,7 @@
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-6">
-                        <h1 class="m-0">Edit Post</h1>
+                        <h1 class="m-0" th:text="${board.name}">Board Detail</h1>
                     </div><!-- /.col -->
                 </div><!-- /.row -->
             </div><!-- /.container-fluid -->
@@ -83,24 +79,12 @@
             <div class="container-fluid">
                 <div class="card">
                     <div class="card-header">
-                        <h3 class="card-title">Edit Post</h3>
+                        <h3 class="card-title">Board Detail</h3>
                     </div>
                     <div class="card-body">
-                        <form th:action="@{'/posts/edit/' + ${post.postId}}" th:object="${post}" method="post">
-                            <div class="form-group">
-                                <label for="title">Title</label>
-                                <input type="text" id="title" class="form-control" th:field="*{title}" />
-                            </div>
-                            <div class="form-group">
-                                <label for="content">Content</label>
-                                <textarea id="content" class="form-control" th:field="*{content}"></textarea>
-                            </div>
-                            <input type="hidden" th:field="*{authorId}" />  <!-- hidden 필드 추가 -->
-                            <input type="hidden" th:field="*{boardId}" />  <!-- hidden 필드 추가 -->
-                            <div class="form-group">
-                                <button type="submit" class="btn btn-primary">Save</button>
-                            </div>
-                        </form>
+                        <p><strong>ID:</strong> <span th:text="${board.boardId}"></span></p>
+                        <p><strong>Name:</strong> <span th:text="${board.name}"></span></p>
+                        <p><strong>Description:</strong> <span th:text="${board.description}"></span></p>
                     </div>
                 </div>
             </div><!-- /.container-fluid -->

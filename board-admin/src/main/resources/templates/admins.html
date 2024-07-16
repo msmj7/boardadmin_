@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>사용자관리-관리자</title>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" th:href="@{/adminlte/plugins/fontawesome-free/css/all.min.css}">
+    <!-- Theme style -->
+    <link rel="stylesheet" th:href="@{/adminlte/dist/css/adminlte.min.css}">
+    <!-- Google Font: Source Sans Pro -->
+    <link rel="stylesheet"
+          href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+</head>
+<body class="hold-transition sidebar-mini">
+<div class="wrapper">
+    <!-- Navbar -->
+    <nav class="main-header navbar navbar-expand navbar-white navbar-light">
+        <!-- Left navbar links -->
+        <ul class="navbar-nav">
+            <li class="nav-item">
+                <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
+            </li>
+        </ul>
+        <!-- Right navbar links -->
+        <ul class="navbar-nav ml-auto">
+            <li class="nav-item">
+                <form th:action="@{/logout}" method="post" style="display: inline;">
+                    <button type="submit" class="nav-link btn btn-link">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </button>
+                </form>
+            </li>
+        </ul>
+    </nav>
+    <!-- /.navbar -->
+
+    <!-- Main Sidebar Container -->
+    <aside class="main-sidebar sidebar-dark-primary elevation-4">
+        <!-- Brand Logo -->
+        <a href="#" class="brand-link text-center">
+            <span class="brand-text font-weight-light">board-admin</span>
+        </a>
+
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <!-- Sidebar Menu -->
+			<nav class="mt-2">
+			                <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+								<li class="nav-item menu-close">
+								                        <a href="#" class="nav-link ">
+								                            <p>
+								                                사용자 관리
+								                                <i class="right fas fa-angle-left"></i>
+								                            </p>
+								                        </a>
+								                        <ul class="nav nav-treeview">
+								                            <li class="nav-item">
+								                                <a href="/user-management" class="nav-link active">
+								                                    <i class="far fa-circle nav-icon"></i>
+								                                    <p>관리자</p>
+								                                </a>
+								                            </li>
+								                            <li class="nav-item">
+								                                <a href="/user-management/users" class="nav-link">
+								                                    <i class="far fa-circle nav-icon"></i>
+								                                    <p>회원</p>
+								                                </a>
+								                            </li>
+								                        </ul>
+								</li>
+								<li class="nav-item menu-open">
+									<a href="#" class="nav-link active">
+										<p>
+										게시판 관리
+										<i class="right fas fa-angle-left"></i>
+										</p>
+										 </a>
+									 	<ul class="nav nav-treeview">
+												<li class="nav-item" th:each="board : ${boards}">
+														<a th:href="@{'/posts/board/' + ${board.boardId}}" class="btn  btn-sm nav-link  text-left">
+															<i class="far fa-circle nav-icon"></i>
+															<p th:text="${board.name}"></p>
+														</a>
+												</li>
+										</ul>
+								</li>
+
+			                </ul>
+			            </nav>
+            <!-- /.sidebar-menu -->
+        </div>
+        <!-- /.sidebar -->
+    </aside>
+
+    <!-- Content Wrapper. Contains page content -->
+    <div class="content-wrapper">
+        <!-- Content Header (Page header) -->
+        <section class="content-header">
+            <div class="container-fluid">
+                <div class="row mb-2">
+                    <div class="col-sm-6">
+                        <h1>사용자 관리 - 관리자</h1>
+                    </div>
+                </div>
+            </div><!-- /.container-fluid -->
+        </section>
+
+        <!-- Main content -->
+        <section class="content">
+            <div class="container-fluid">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">관리자 목록</h3>
+                        <button id="addAdminBtn" class="btn btn-primary float-right">Add Admin</button>
+                    </div>
+                    <div class="card-body">
+                        <form id="adminForm" th:action="@{/user-management/create/admin}" method="post">
+                            <input type="hidden" name="_csrf" th:value="${_csrf.token}"/> <!-- CSRF token -->
+							<input type="hidden" id="userIndex" name="userIndex" value=""/>
+							<table class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Password</th>
+                                        <th>Email</th>
+                                        <th>Active</th>
+                                        <th>Created At</th>
+                                        <th>Updated At</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="adminTableBody">
+                                    <tr th:each="admin : ${admins}">
+                                        <td th:text="${admin.userId}"></td>
+										<td>
+										        <input type="hidden" th:value="${admin.password}" /> <!-- 실제 비밀번호를 숨기기 위한 input -->
+										        <span>******</span> <!-- 화면에 보이는 부분 -->
+										</td>
+                                        <td th:text="${admin.email}"></td>
+                                        <td th:text="${admin.active}"></td>
+                                        <td th:text="${#temporals.format(admin.createdAt, 'yyyy-MM-dd HH:mm:ss')}"></td>
+                                        <td th:text="${#temporals.format(admin.updatedAt, 'yyyy-MM-dd HH:mm:ss')}"></td>
+                                        <td>
+                                            <button class="btn btn-warning editBtn">Edit</button>
+                                            <button class="btn btn-danger deleteBtn" th:onclick="'deleteAdmin(' + ${admin.userIndex} + ')'">Delete</button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- /.content -->
+    </div>
+
+    <!-- Main Footer -->
+    <footer class="main-footer">
+        <!-- To the right -->
+        <div class="float-right d-none d-sm-inline">
+            boardproject
+        </div>
+        <!-- Default to the left -->
+        <strong>Copyright &copy; 2024 <a href="#">Pangpany</a>.</strong> All rights reserved.
+    </footer>
+</div>
+<!-- ./wrapper -->
+
+<!-- REQUIRED SCRIPTS -->
+<!-- jQuery -->
+<script th:src="@{/adminlte/plugins/jquery/jquery.min.js}"></script>
+<!-- Bootstrap 4 -->
+<script th:src="@{/adminlte/plugins/bootstrap/js/bootstrap.bundle.min.js}"></script>
+<!-- AdminLTE App -->
+<script th:src="@{/adminlte/dist/js/adminlte.min.js}"></script>
+<script>
+let isAdminRowAdded = false;
+
+$(document).ready(function() {
+    $('#addAdminBtn').on('click', function() {
+        if (!isAdminRowAdded) {
+            addAdminRow();
+            isAdminRowAdded = true;
+        }
+    });
+
+	$(document).on('click', '.editBtn', function() {
+	        var row = $(this).closest('tr');
+	        var originalContent = row.html();
+	        var userId = row.find('td').eq(0).text().trim();
+	        var password = row.find('td').eq(1).find('input').val();
+	        var email = row.find('td').eq(2).text().trim();
+	        var active = row.find('td').eq(3).text().trim() === "true";
+	        var userIndex = $(this).closest('tr').find('.deleteBtn').attr('onclick').match(/\d+/)[0]; // userIndex 가져오기
+
+	        
+	        row.html(getAdminEditRow(userId, password, email, active, userIndex));
+	        $('#adminForm').attr('action', '/user-management/update/' + userIndex); // 폼의 action 설정
+
+	        $(document).on('click', '.cancelBtn', function() {
+	            row.html(originalContent);
+	        });
+	    });
+
+    $(document).on('click', '.cancelNewRowBtn', function() {
+        $(this).closest('tr').remove();
+        isAdminRowAdded = false;
+    });
+});
+
+function addAdminRow() {
+    $('#adminTableBody').prepend(
+        '<tr>' +
+        '<td><input type="text" class="form-control" name="userId" placeholder="Username" required></td>' +
+        '<td><input type="password" class="form-control" name="password" placeholder="Password" required></td>' +
+        '<td><input type="email" class="form-control" name="email" placeholder="Email" required></td>' +
+        '<td><input type="checkbox" class="form-control" name="active" checked></td>' +
+        '<td></td>' +
+        '<td></td>' +
+        '<td>' +
+        '<button type="submit" class="btn btn-success">Save</button>' +
+        '<button type="button" class="btn btn-danger cancelNewRowBtn">Cancel</button>' +
+        '</td>' +
+        '</tr>'
+    );
+}
+
+function getAdminEditRow(userId, password, email, active, userIndex) {
+    return '<td><input type="text" class="form-control" name="userId" value="' + userId + '" readonly></td>' +
+           '<td><input type="password" class="form-control" name="newpassword" placeholder="New Password"></td>' +
+           '<td><input type="email" class="form-control" name="email" value="' + email + '"></td>' +
+           '<td><input type="checkbox" class="form-control" name="active" ' + (active ? 'checked' : '') + '></td>' +
+           '<td></td>' +
+           '<td></td>' +
+           '<td>' +
+		   '<input type="hidden" name="userIndex" value="' + userIndex + '">' +
+           '<button type="submit" class="btn btn-success">Save</button>' +
+           '<button type="button" class="btn btn-danger cancelBtn">Cancel</button>' +
+           '</td>';
+}
+
+function deleteAdmin(userIndex) {
+    if (confirm('Are you sure you want to delete this admin?')) {
+        fetch('/user-management/delete/' + userIndex, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="_csrf"]').getAttribute('content')
+            }
+        }).then(response => {
+            if (response.ok) {
+                window.location.href = '/user-management';
+            } else {
+                alert('Error deleting admin');
+            }
+        }).catch(error => {
+            alert('Error deleting admin');
+        });
+    }
+}
+
+</script>
+</body>
+</html>
