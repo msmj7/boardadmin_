@@ -50,7 +50,7 @@ public class UserController {
 
         model.addAttribute("admins", admins);
 
-        return "admins"; 
+        return "useradmin/admins"; 
     }
 
     @GetMapping("/users")
@@ -64,7 +64,7 @@ public class UserController {
         
         model.addAttribute("users", users);
 
-        return "users"; 
+        return "useradmin/users"; 
     }
 
     @PostMapping("/create/admin")
