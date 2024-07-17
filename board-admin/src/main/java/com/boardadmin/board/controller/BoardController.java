@@ -52,7 +52,7 @@ public class BoardController {
         return "boards/detail"; // 이 템플릿은 board의 세부 정보를 보여주도록 합니다.
     }
 
-    @PostMapping("/delete/{id}")
+    @GetMapping("/delete/{id}")
     public String deleteBoard(@PathVariable Long id) {
         boardService.deleteBoard(id);
         return "redirect:/boards";
