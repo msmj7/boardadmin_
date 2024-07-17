@@ -3,8 +3,9 @@ package com.boardadmin.board.service;
 import com.boardadmin.board.model.Post;
 import com.boardadmin.board.repository.PostRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
 import java.util.Optional;
 
@@ -22,10 +23,9 @@ public class PostService {
         return postRepository.findById(id);
     }
 
-    public List<Post> getPostsByBoardId(Long boardId) {
-        return postRepository.findByBoardId(boardId);
+    public Page<Post> getPostsByBoardId(Long boardId, Pageable pageable) {
+        return postRepository.findByBoardId(boardId, pageable);
     }
-
     public void createPost(Post post) {
         postRepository.save(post);
     }
