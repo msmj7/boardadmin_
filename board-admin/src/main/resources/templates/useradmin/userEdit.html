@@ -129,6 +129,7 @@
 							<form id="edit-form"
 								th:action="@{/user-management/update/user/{userIndex}(userIndex=${user.userIndex})}"
 								method="post" class="form-container">
+								<div class="error-message" th:if="${error}" th:text="${error}"></div>
 								<input type="hidden" name="_csrf" th:value="${_csrf.token}" />
 								<div class="form-group">
 									<label for="userId">User ID</label>

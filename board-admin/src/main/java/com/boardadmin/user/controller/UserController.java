@@ -145,6 +145,8 @@ public class UserController {
     public String createUser(@ModelAttribute User user, Model model) {
         if (userService.userExists(user.getUserId())) {
             model.addAttribute("error", "이미 존재하는 아이디입니다.");
+            user.setUserId("");
+            model.addAttribute("user", user);
             return "useradmin/newUser";
         }
 
@@ -166,9 +168,18 @@ public class UserController {
     public String updateAdmin(@PathVariable Integer userIndex, @ModelAttribute User user, @RequestParam(required = false) Long boardId, Model model) {
         User existingUser = userService.getUserByUserIndex(userIndex);
         if (existingUser != null) {
-            existingUser.setUserId(user.getUserId());
-            existingUser.setEmail(user.getEmail());
-            existingUser.setActive(user.isActive());
+            // Check if the userId already exists and it's not the same as the current user's userId
+            if (!existingUser.getUserId().equals(user.getUserId()) && userService.userExists(user.getUserId())) {
+                model.addAttribute("error", "이미 존재하는 아이디입니다.");
+                existingUser.setUserId("");
+                model.addAttribute("admin", user); 
+                return "useradmin/adminEdit";
+            } else {
+                existingUser.setUserId(user.getUserId());
+                existingUser.setEmail(user.getEmail());
+                existingUser.setActive(user.isActive());
+            }
+
             if (user.getPassword() != null && !user.getPassword().isEmpty()) {
                 existingUser.setPassword(user.getPassword());
             }
@@ -200,9 +211,17 @@ public class UserController {
     public String updateUser(@PathVariable Integer userIndex, @ModelAttribute User user, @RequestParam(required = false) Long boardId, Model model) {
         User existingUser = userService.getUserByUserIndex(userIndex);
         if (existingUser != null) {
-            existingUser.setUserId(user.getUserId());
-            existingUser.setEmail(user.getEmail());
-            existingUser.setActive(user.isActive());
+            if (!existingUser.getUserId().equals(user.getUserId()) && userService.userExists(user.getUserId())) {
+                model.addAttribute("error", "이미 존재하는 아이디입니다.");
+                existingUser.setUserId("");
+                model.addAttribute("user", user); 
+                return "useradmin/userEdit";
+            } else {
+                existingUser.setUserId(user.getUserId());
+                existingUser.setEmail(user.getEmail());
+                existingUser.setActive(user.isActive());
+            }
+            
             if (user.getPassword() != null && !user.getPassword().isEmpty()) {
                 existingUser.setPassword(user.getPassword());
             }
@@ -214,6 +233,7 @@ public class UserController {
         } else {
             return "redirect:/user-management/users";
         }
+        
     }
 
     @PostMapping("/delete/user/{userIndex}")
