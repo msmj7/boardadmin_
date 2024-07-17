@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -144,6 +145,8 @@ public class UserController {
     public String createUser(@ModelAttribute User user, Model model) {
         if (userService.userExists(user.getUserId())) {
             model.addAttribute("error", "이미 존재하는 아이디입니다.");
+            user.setUserId("");
+            model.addAttribute("user", user);
             return "useradmin/newUser";
         }
 
@@ -165,9 +168,18 @@ public class UserController {
     public String updateAdmin(@PathVariable Integer userIndex, @ModelAttribute User user, @RequestParam(required = false) Long boardId, Model model) {
         User existingUser = userService.getUserByUserIndex(userIndex);
         if (existingUser != null) {
-            existingUser.setUserId(user.getUserId());
-            existingUser.setEmail(user.getEmail());
-            existingUser.setActive(user.isActive());
+            // Check if the userId already exists and it's not the same as the current user's userId
+            if (!existingUser.getUserId().equals(user.getUserId()) && userService.userExists(user.getUserId())) {
+                model.addAttribute("error", "이미 존재하는 아이디입니다.");
+                existingUser.setUserId("");
+                model.addAttribute("admin", user); 
+                return "useradmin/adminEdit";
+            } else {
+                existingUser.setUserId(user.getUserId());
+                existingUser.setEmail(user.getEmail());
+                existingUser.setActive(user.isActive());
+            }
+
             if (user.getPassword() != null && !user.getPassword().isEmpty()) {
                 existingUser.setPassword(user.getPassword());
             }
@@ -181,16 +193,11 @@ public class UserController {
         }
     }
 
-    @DeleteMapping("/delete/admin/{userIndex}")
-    public String deleteAdmin(@PathVariable Integer userIndex, @RequestParam(required = false) Long boardId, Model model) {
+    @PostMapping("/delete/admin/{userIndex}")
+    public String deleteAdmin(@PathVariable Integer userIndex) {
         userService.deleteUserByUserIndex(userIndex);
-
-        if (boardId != null) {
-            model.addAttribute("boardId", boardId);
-        }
         return "redirect:/user-management";
     }
-
     
     @GetMapping("/updatepage/user/{userIndex}")
     public String getUserEditPage(@PathVariable Integer userIndex, Model model) {
@@ -204,9 +211,17 @@ public class UserController {
     public String updateUser(@PathVariable Integer userIndex, @ModelAttribute User user, @RequestParam(required = false) Long boardId, Model model) {
         User existingUser = userService.getUserByUserIndex(userIndex);
         if (existingUser != null) {
-            existingUser.setUserId(user.getUserId());
-            existingUser.setEmail(user.getEmail());
-            existingUser.setActive(user.isActive());
+            if (!existingUser.getUserId().equals(user.getUserId()) && userService.userExists(user.getUserId())) {
+                model.addAttribute("error", "이미 존재하는 아이디입니다.");
+                existingUser.setUserId("");
+                model.addAttribute("user", user); 
+                return "useradmin/userEdit";
+            } else {
+                existingUser.setUserId(user.getUserId());
+                existingUser.setEmail(user.getEmail());
+                existingUser.setActive(user.isActive());
+            }
+            
             if (user.getPassword() != null && !user.getPassword().isEmpty()) {
                 existingUser.setPassword(user.getPassword());
             }
@@ -218,15 +233,12 @@ public class UserController {
         } else {
             return "redirect:/user-management/users";
         }
+        
     }
 
-    @DeleteMapping("/delete/user/{userIndex}")
-    public String deleteUser(@PathVariable Integer userIndex, @RequestParam(required = false) Long boardId, Model model) {
+    @PostMapping("/delete/user/{userIndex}")
+    public String deleteUser(@PathVariable Integer userIndex) {
         userService.deleteUserByUserIndex(userIndex);
-
-        if (boardId != null) {
-            model.addAttribute("boardId", boardId);
-        }
         return "redirect:/user-management/users";
     }
 }
