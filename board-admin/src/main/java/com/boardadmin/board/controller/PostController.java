@@ -18,7 +18,7 @@ import org.slf4j.LoggerFactory;
 @RequestMapping("/posts")
 public class PostController {
 
-    private static final Logger logger = LoggerFactory.getLogger(PostController.class);
+    
 
     @Autowired
     private PostService postService;
@@ -28,14 +28,15 @@ public class PostController {
 
     @GetMapping("/board/{boardId}")
     public String getPostsByBoardId(@PathVariable Long boardId, @RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "10") int size, Model model) {
-        logger.info("Current Page: " + page); // 로그 출력
         Pageable pageable = PageRequest.of(page - 1, size);
         Page<Post> postPage = postService.getPostsByBoardId(boardId, pageable);
+        
+        int totalPages = postPage.getTotalPages() > 0 ? postPage.getTotalPages() : 1; // 최소 1페이지를 유지
         
         model.addAttribute("posts", postPage.getContent());
         model.addAttribute("boardId", boardId);
         model.addAttribute("currentPage", page);
-        model.addAttribute("totalPages", postPage.getTotalPages());
+        model.addAttribute("totalPages", totalPages);
         
         // Board 정보 추가
         Board board = boardService.getBoardById(boardId)

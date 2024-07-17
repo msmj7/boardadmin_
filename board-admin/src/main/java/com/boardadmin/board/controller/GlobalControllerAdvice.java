@@ -7,7 +7,7 @@ import jakarta.servlet.http.HttpServletRequest;
 @ControllerAdvice
 public class GlobalControllerAdvice {
 
-    @ModelAttribute("servletPath")
+    @ModelAttribute("servletPath") // 현재 사이트 url 받아오기
     public String getRequestServletPath(HttpServletRequest request) {
         return request.getServletPath();
     }
