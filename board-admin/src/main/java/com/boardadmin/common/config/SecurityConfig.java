@@ -38,10 +38,12 @@ public class SecurityConfig {
         http
             .authorizeHttpRequests(authorize -> authorize
                 .requestMatchers("/login",  "/adminlte/**", "/css/**", "/js/**").permitAll()//security에서 허용하는 파일 경로 추가
-                //.anyRequest().authenticated()
-                .requestMatchers(HttpMethod.DELETE, "/user-management/**").hasRole("ADMIN")
-                .requestMatchers(HttpMethod.PUT, "/user-management/**").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.POST, "/user-management/delete/**").permitAll() // POST 요청 허용
                 .anyRequest().hasRole("ADMIN")//관리자 계정일때만 사용가능하게
+                //.anyRequest().authenticated()
+                //.requestMatchers(HttpMethod.DELETE, "/user-management/**").hasRole("ADMIN")
+                //.requestMatchers(HttpMethod.PUT, "/user-management/**").hasRole("ADMIN")
+
             )
             .formLogin((form) -> form
                 .loginPage("/login")

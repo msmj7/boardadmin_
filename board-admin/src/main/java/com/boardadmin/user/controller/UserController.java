@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -181,16 +182,11 @@ public class UserController {
         }
     }
 
-    @DeleteMapping("/delete/admin/{userIndex}")
-    public String deleteAdmin(@PathVariable Integer userIndex, @RequestParam(required = false) Long boardId, Model model) {
+    @PostMapping("/delete/admin/{userIndex}")
+    public String deleteAdmin(@PathVariable Integer userIndex) {
         userService.deleteUserByUserIndex(userIndex);
-
-        if (boardId != null) {
-            model.addAttribute("boardId", boardId);
-        }
         return "redirect:/user-management";
     }
-
     
     @GetMapping("/updatepage/user/{userIndex}")
     public String getUserEditPage(@PathVariable Integer userIndex, Model model) {
@@ -220,13 +216,9 @@ public class UserController {
         }
     }
 
-    @DeleteMapping("/delete/user/{userIndex}")
-    public String deleteUser(@PathVariable Integer userIndex, @RequestParam(required = false) Long boardId, Model model) {
+    @PostMapping("/delete/user/{userIndex}")
+    public String deleteUser(@PathVariable Integer userIndex) {
         userService.deleteUserByUserIndex(userIndex);
-
-        if (boardId != null) {
-            model.addAttribute("boardId", boardId);
-        }
         return "redirect:/user-management/users";
     }
 }
