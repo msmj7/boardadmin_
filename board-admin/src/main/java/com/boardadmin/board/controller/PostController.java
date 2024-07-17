@@ -5,15 +5,20 @@ import com.boardadmin.board.model.Post;
 import com.boardadmin.board.service.PostService;
 import com.boardadmin.board.service.BoardService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Controller
 @RequestMapping("/posts")
 public class PostController {
+
+    private static final Logger logger = LoggerFactory.getLogger(PostController.class);
 
     @Autowired
     private PostService postService;
@@ -22,12 +27,15 @@ public class PostController {
     private BoardService boardService;
 
     @GetMapping("/board/{boardId}")
-    public String getPostsByBoardId(@PathVariable Long boardId, @RequestParam(defaultValue = "1") int page, Model model) {
-        List<Post> posts = postService.getPostsByBoardId(boardId);
-        model.addAttribute("posts", posts);
+    public String getPostsByBoardId(@PathVariable Long boardId, @RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "10") int size, Model model) {
+        logger.info("Current Page: " + page); // 로그 출력
+        Pageable pageable = PageRequest.of(page - 1, size);
+        Page<Post> postPage = postService.getPostsByBoardId(boardId, pageable);
+        
+        model.addAttribute("posts", postPage.getContent());
         model.addAttribute("boardId", boardId);
         model.addAttribute("currentPage", page);
-        model.addAttribute("totalPages", 1); // 임시로 1페이지로 설정. 실제로는 페이지네이션 로직을 추가하세요.
+        model.addAttribute("totalPages", postPage.getTotalPages());
         
         // Board 정보 추가
         Board board = boardService.getBoardById(boardId)
