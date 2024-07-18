@@ -2,6 +2,7 @@ package com.boardadmin.board.model;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.Data;
 import java.time.LocalDateTime;
 
@@ -18,8 +19,9 @@ public class Comment {
     private String content;
 
     @NotNull
+    @Size(min = 1, max = 100)
     @Column(nullable = false)
-    private Long authorId; // 추가
+    private String authorName;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id", nullable = false)

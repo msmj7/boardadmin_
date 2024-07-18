@@ -37,12 +37,12 @@ public class CommentController {
     }
 
     @PostMapping("/post/{postId}")
-    public String createComment(@PathVariable Long postId, @RequestParam String content, @RequestParam Long authorId) {
+    public String createComment(@PathVariable Long postId, @RequestParam String content, @RequestParam String authorName) {
         Post post = postService.getPostById(postId).orElseThrow(() -> new IllegalArgumentException("Invalid post Id:" + postId));
         Comment comment = new Comment();
         comment.setPost(post);
         comment.setContent(content);
-        comment.setAuthorId(authorId); // 설정
+        comment.setAuthorName(authorName); // 설정
         commentService.createComment(comment);
         return "redirect:/posts/view/" + postId;
     }

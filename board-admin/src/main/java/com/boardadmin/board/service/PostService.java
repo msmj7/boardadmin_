@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import java.util.List;
+
 import java.util.Optional;
 
 @Service
@@ -15,29 +15,24 @@ public class PostService {
     @Autowired
     private PostRepository postRepository;
 
-    public List<Post> getAllPosts() {
-        return postRepository.findAll();
-    }
-
-    public Optional<Post> getPostById(Long id) {
-        return postRepository.findById(id);
-    }
-
     public Page<Post> getPostsByBoardId(Long boardId, Pageable pageable) {
-        return postRepository.findByBoardId(boardId, pageable);
+        return postRepository.findByBoard_BoardId(boardId, pageable);
     }
-    public void createPost(Post post) {
+
+    public Optional<Post> getPostById(Long postId) {
+        return postRepository.findById(postId);
+    }
+
+    public Post createPost(Post post) {
+        return postRepository.save(post);
+    }
+
+    public void updatePost(Long postId, Post post) {
+        post.setPostId(postId);
         postRepository.save(post);
     }
 
-    public void updatePost(Long id, Post post) {
-        if (postRepository.existsById(id)) {
-            post.setPostId(id);
-            postRepository.save(post);
-        }
-    }
-
-    public void deletePost(Long id) {
-        postRepository.deleteById(id);
+    public void deletePost(Long postId) {
+        postRepository.deleteById(postId);
     }
 }

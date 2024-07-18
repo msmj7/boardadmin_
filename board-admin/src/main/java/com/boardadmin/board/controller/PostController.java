@@ -20,8 +20,6 @@ import java.util.List;
 @RequestMapping("/posts")
 public class PostController {
 
-    
-
     @Autowired
     private PostService postService;
 
@@ -54,39 +52,34 @@ public class PostController {
     }
     
     @GetMapping("/view/{postId}")
-    public String viewPost( @PathVariable Long postId, Model model) {
+    public String viewPost(@PathVariable Long postId, Model model) {
         Post post = postService.getPostById(postId).orElseThrow(() -> new IllegalArgumentException("Invalid post Id:" + postId));
         List<Comment> comments = commentService.getCommentsByPostId(postId);
-        post.setAuthorId(1L);
-        
         
         model.addAttribute("post", post);
         model.addAttribute("comments", comments);
         return "posts/view";
     }
 
-
     @GetMapping("/new")
     public String createPostForm(@RequestParam Long boardId, Model model) {
         Post post = new Post();
-        post.setBoardId(boardId);
+        Board board = boardService.getBoardById(boardId).orElseThrow(() -> new IllegalArgumentException("Invalid board Id:" + boardId));
+        post.setBoard(board);
         model.addAttribute("post", post);
         model.addAttribute("boardId", boardId);
-
-        // Board 정보 추가
-        Board board = boardService.getBoardById(boardId)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid board Id:" + boardId));
         model.addAttribute("board", board);
-
         model.addAttribute("boards", boardService.getAllBoards());
 
         return "posts/create";
     }
 
-    @PostMapping
-    public String createPost(@ModelAttribute Post post) {
+    @PostMapping("/new")
+    public String createPost(@ModelAttribute Post post, @RequestParam Long boardId) {
+        Board board = boardService.getBoardById(boardId).orElseThrow(() -> new IllegalArgumentException("Invalid board Id:" + boardId));
+        post.setBoard(board);
         postService.createPost(post);
-        return "redirect:/posts/board/" + post.getBoardId();
+        return "redirect:/posts/board/" + boardId;
     }
 
     @GetMapping("/edit/{id}")
@@ -94,11 +87,8 @@ public class PostController {
         Post post = postService.getPostById(id).orElseThrow(() -> new IllegalArgumentException("Invalid post Id:" + id));
         model.addAttribute("post", post);
 
-        // Board 정보 추가
-        Board board = boardService.getBoardById(post.getBoardId())
-                .orElseThrow(() -> new IllegalArgumentException("Invalid board Id:" + post.getBoardId()));
+        Board board = post.getBoard();
         model.addAttribute("board", board);
-
         model.addAttribute("boards", boardService.getAllBoards());
 
         return "posts/edit";
@@ -106,13 +96,14 @@ public class PostController {
 
     @PostMapping("/edit/{id}")
     public String updatePost(@PathVariable Long id, @ModelAttribute Post post) {
+        Board board = post.getBoard();
         postService.updatePost(id, post);
-        return "redirect:/posts/board/" + post.getBoardId();
+        return "redirect:/posts/board/" + board.getBoardId();
     }
 
     @GetMapping("/delete/{id}")
     public String deletePost(@PathVariable Long id) {
-        Long boardId = postService.getPostById(id).map(Post::getBoardId).orElse(null);
+        Long boardId = postService.getPostById(id).map(Post::getBoard).map(Board::getBoardId).orElse(null);
         postService.deletePost(id);
         return "redirect:/posts/board/" + (boardId != null ? boardId : "");
     }
