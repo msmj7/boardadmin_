@@ -5,6 +5,9 @@ import com.boardadmin.user.model.User;
 import com.boardadmin.user.repository.RoleRepository;
 import com.boardadmin.user.repository.UserRepository;
 import com.boardadmin.common.util.PasswordUtil;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -125,10 +128,26 @@ public class UserServiceImpl implements UserService, UserDetailsService {
                 .collect(Collectors.toList());
     }
     
+    @Override
+    public Page<User> getUsersByRole(String role, Pageable pageable) {
+        return userRepository.findByRolesRoleName(role, pageable);
+    }
     
     @Override
     public boolean userExists(String userId) {
         return userRepository.findByUserId(userId) != null;
     }
 
+    
+    @Override
+    public Page<User> searchUsers(String search, Pageable pageable) {
+        return userRepository.findByUserIdContainingOrEmailContainingAndRolesRoleName(search, search, "USER", pageable);
+    }
+
+    @Override
+    public Page<User> searchAdmins(String search, Pageable pageable) {
+        return userRepository.findByUserIdContainingOrEmailContainingAndRolesRoleName(search, search, "ADMIN", pageable);
+    }
+
+    	
 }

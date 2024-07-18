@@ -125,6 +125,18 @@
 					<div class="card">
 						<div class="card-header">
 							<h3 class="card-title">관리자 목록</h3>
+							<div class="card-tools">
+                                <form th:action="@{/user-management}" method="get" class="form-inline float-right">
+                                    <div class="input-group input-group-sm">
+                                        <input type="text" name="search" class="form-control" placeholder="아이디, 이메일로 검색" th:value="${search}">
+                                        <div class="input-group-append">
+                                            <button type="submit" class="btn btn-default">
+                                                <i class="fas fa-search"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
 						</div>
 						<div class="card-body">
 							<table class="table table-bordered">
@@ -132,6 +144,7 @@
 									<tr>
 										<th>No.</th>
 										<th>ID</th>
+										<th>Email</th>
 										<th>Active</th>
 										<th>Actions</th>
 									</tr>
@@ -140,6 +153,7 @@
 									<tr th:each="admin, iterStat : ${admins}">
 										<td th:text="${iterStat.count}"></td>
 										<td th:text="${admin.userId}"></td>
+										<td th:text="${admin.email}"></td>
 										<td th:text="${admin.active}"></td>
 										<td>
 											<a th:href="@{/user-management/admin/{userIndex}(userIndex=${admin.userIndex})}"
@@ -158,6 +172,22 @@
 								</tbody>
 							</table>
 						</div>
+						<div class="card-footer">
+                        <nav aria-label="Page navigation">
+                            <ul class="pagination justify-content-center">
+                                <li class="page-item" th:classappend="${currentPage == 1} ? 'disabled'">
+                                    <a class="page-link" th:href="@{'/user-management' + '?page=' + ${currentPage - 1}}">Previous</a>
+                                </li>
+                                <li class="page-item" th:each="i : ${#numbers.sequence(1, totalPages)}" th:classappend="${i == currentPage} ? 'active'">
+                                    <a class="page-link" th:href="@{'/user-management'  + '?page=' + ${i}}" th:text="${i}">1</a>
+                                </li>
+                                <li class="page-item" th:classappend="${currentPage == totalPages} ? 'disabled'">
+                                    <a class="page-link" th:href="@{'/user-management' + '?page=' + ${currentPage + 1}}">Next</a>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
 					</div>
 				</div>
 			</section>

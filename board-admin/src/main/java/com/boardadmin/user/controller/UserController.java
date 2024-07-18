@@ -5,6 +5,7 @@ import com.boardadmin.board.service.BoardService;
 import com.boardadmin.user.model.Role;
 import com.boardadmin.user.model.User;
 import com.boardadmin.user.service.UserService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
@@ -16,6 +17,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 @Controller
 @RequestMapping("/user-management")
@@ -31,13 +36,18 @@ public class UserController {
     }
 
     @GetMapping
-    public String getAdminsPage(@RequestParam(required = false) Long boardId, Model model) {
-        List<User> allUsers = userService.getAllUsers();
-        List<User> admins = allUsers.stream()
-                .filter(user -> userService.hasRole(user, "ADMIN"))
-                .collect(Collectors.toList());
+    public String getAdminsPage(@RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "10") int size, @RequestParam(required = false) Long boardId, @RequestParam(required = false) String search ,Model model) {
+        Pageable pageable = PageRequest.of(page - 1, size);
+        Page<User> adminPage = userService.getUsersByRole("ADMIN", pageable);
 
-        // Board 정보 추가
+        if (search != null && !search.isEmpty()) {
+        	adminPage = userService.searchAdmins(search, pageable);
+        } else {
+        	adminPage = userService.getUsersByRole("ADMIN", pageable);
+        }
+        
+        int totalPages = adminPage.getTotalPages() > 0 ? adminPage.getTotalPages() : 1; // 최소 1페이지를 유지
+
         if (boardId != null) {
             Board board = boardService.getBoardById(boardId)
                     .orElseThrow(() -> new IllegalArgumentException("Invalid board Id:" + boardId));
@@ -45,16 +55,27 @@ public class UserController {
         }
 
         model.addAttribute("boards", boardService.getAllBoards());
-        model.addAttribute("admins", admins);
+        model.addAttribute("admins", adminPage.getContent());
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", totalPages);
+        model.addAttribute("search", search);
 
         return "useradmin/admins";
     }
 
     @GetMapping("/users")
-    public String getUsersPage(@RequestParam(required = false) Long boardId, Model model) {
-        List<User> users = userService.getAllUsers().stream()
-                .filter(user -> userService.hasRole(user, "USER"))
-                .collect(Collectors.toList());
+    public String getUsersPage(@RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "10") int size, @RequestParam(required = false) Long boardId, @RequestParam(required = false) String search, Model model) {
+        Pageable pageable = PageRequest.of(page - 1, size);
+        Page<User> userPage = userService.getUsersByRole("USER", pageable);
+
+        if (search != null && !search.isEmpty()) {
+        	userPage = userService.searchUsers(search, pageable);
+        } else {
+        	userPage = userService.getUsersByRole("USER", pageable);
+        }
+        
+        
+        int totalPages = userPage.getTotalPages() > 0 ? userPage.getTotalPages() : 1; // 최소 1페이지를 유지
 
         if (boardId != null) {
             Board board = boardService.getBoardById(boardId)
@@ -63,10 +84,15 @@ public class UserController {
         }
 
         model.addAttribute("boards", boardService.getAllBoards());
-        model.addAttribute("users", users);
+        model.addAttribute("users", userPage.getContent());
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", totalPages);
+        model.addAttribute("search", search);
 
         return "useradmin/users";
     }
+
+
     
     @GetMapping("/admin/{userIndex}")
     public String getAdminDetailPage(@PathVariable Integer userIndex, @RequestParam(required = false) Long boardId, Model model) {

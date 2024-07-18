@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
@@ -8,54 +7,6 @@
     <link rel="stylesheet" th:href="@{/adminlte/dist/css/adminlte.min.css}">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
     <meta name="_csrf" th:content="${_csrf.token}"/>
-    <style>
-        .form-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            max-width: 400px;
-            margin: 0 auto;
-        }
-        .form-group {
-            display: flex;
-            align-items: center;
-            margin-bottom: 10px;
-            width: 100%;
-            justify-content: center;
-        }
-        .form-group label {
-            width: 100px;
-            text-align: right;
-            margin-top: 10px;
-            margin-right: 10px;
-            font-size: 0.9em;
-        }
-        .form-group input {
-            width: 200px;
-            font-size: 0.9em;
-            text-align: center;
-            border: 1px solid gray;
-            border-radius: 4px;
-            padding: 5px;
-        }
-        .buttons {
-            display: flex;
-            justify-content: center;
-            margin-top: 20px;
-        }
-        .buttons button {
-            margin: 0 5px;
-            font-size: 0.9em;
-        }
-        .list-button {
-            display: flex;
-            justify-content: center;
-            margin-top: 10px;
-        }
-        .form-control:disabled, .form-control[readonly] {
-    	background-color: white;
-		}        
-    </style>
 </head>
 <body class="hold-transition sidebar-mini">
 <div class="wrapper">
@@ -81,66 +32,65 @@
         <a href="#" class="brand-link text-center">
             <span class="brand-text font-weight-light">board-admin</span>
         </a>
-			<!-- Sidebar -->
-			<div class="sidebar">
-				<!-- Sidebar Menu -->
-				<nav class="mt-2">
-					<ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu"
-						data-accordion="false">
-						<li class="nav-item menu-open">
-							<a href="#" class="nav-link active">
-								<i class="fa fa-user nav-icon" ></i>
-								<p>
-									사용자 관리
-									<i class="right fas fa-angle-left"></i>
-								</p>
-							</a>
-							<ul class="nav nav-treeview">
-								<li class="nav-item">
-									<a href="/user-management" class="nav-link">
-										<i class="far  nav-icon"></i>
-										<p>관리자</p>
-									</a>
-								</li>
-								<li class="nav-item">
-									<a href="/user-management/users" class="nav-link active">
-										<i class="far fa-circle nav-icon"></i>
-										<p>회원</p>
-									</a>
-								</li>
-							</ul>
-						</li>
-						<li class="nav-item menu-close">
-							<a href="/boards" class="nav-link">
-								<i class="fa fa-window-maximize nav-icon"></i>
-								<p>
-									게시판 관리
-									<i class="right fas fa-angle-left"></i>
-								</p>
-							</a>
-							<ul class="nav nav-treeview">
-								<li class="nav-item">
-									<a href="/boards" class="nav-link" th:classappend="${servletPath == '/boards'} ? 'active'">
-										<i class="far fa-circle nav-icon"></i>
-										<p>게시판 목록</p>
-									</a>
-								</li>
-								<li class="nav-item" th:each="board : ${boards}">
-									<a th:href="@{'/posts/board/' + ${board.boardId}}"
-										class="btn  btn-sm nav-link  text-left" >
-										<i class="far nav-icon"></i>
-										<p th:text="${board.name}"></p>
-									</a>
-								</li>
-							</ul>
-						</li>
-
-					</ul>
-				</nav>
-				<!-- /.sidebar-menu -->
-			</div>
-			<!-- /.sidebar -->
-		</aside>
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <!-- Sidebar Menu -->
+            <nav class="mt-2">
+                <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu"
+                    data-accordion="false">
+                    <li class="nav-item menu-open">
+                        <a href="#" class="nav-link active">
+                            <i class="fa fa-user nav-icon"></i>
+                            <p>
+                                사용자 관리
+                                <i class="right fas fa-angle-left"></i>
+                            </p>
+                        </a>
+                        <ul class="nav nav-treeview">
+                            <li class="nav-item">
+                                <a href="/user-management" class="nav-link">
+                                    <i class="far nav-icon"></i>
+                                    <p>관리자</p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="/user-management/users" class="nav-link active">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>회원</p>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li class="nav-item menu-close">
+                        <a href="/boards" class="nav-link">
+                            <i class="fa fa-window-maximize nav-icon"></i>
+                            <p>
+                                게시판 관리
+                                <i class="right fas fa-angle-left"></i>
+                            </p>
+                        </a>
+                        <ul class="nav nav-treeview">
+                            <li class="nav-item">
+                                <a href="/boards" class="nav-link" th:classappend="${servletPath == '/boards'} ? 'active'">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>게시판 목록</p>
+                                </a>
+                            </li>
+                            <li class="nav-item" th:each="board : ${boards}">
+                                <a th:href="@{'/posts/board/' + ${board.boardId}}"
+                                   class="btn  btn-sm nav-link  text-left">
+                                    <i class="far nav-icon"></i>
+                                    <p th:text="${board.name}"></p>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </nav>
+            <!-- /.sidebar-menu -->
+        </div>
+        <!-- /.sidebar -->
+    </aside>
     <div class="content-wrapper">
         <section class="content-header">
             <div class="container-fluid">
@@ -156,26 +106,30 @@
                 <div class="card">
                     <div class="card-body">
                         <div id="view-form" class="form-container">
-                            <div class="form-group">
-                                <label for="userId">User ID</label>
-                                <input type="text" class="form-control" id="userId" th:value="${user.userId}" readonly>
-                            </div>
-                            <div class="form-group">
-                                <label for="email">Email</label>
-                                <input type="email" class="form-control" id="email" th:value="${user.email}" readonly>
-                            </div>
-                            <div class="form-group">
-                                <label for="active">Active</label>
-                                <input type="checkbox" class="form-control" id="active" th:checked="${user.active}" disabled>
-                            </div>
-                            <div class="form-group">
-                                <label for="createdAt">Created at</label>
-                                <span id="createdAt" th:text="${user.createdAt}"></span>
-                            </div>
-                            <div class="form-group">
-                                <label for="updatedAt">Updated at</label>
-                                <span id="updatedAt" th:text="${user.updatedAt}"></span>
-                            </div>
+                            <table class="table table-bordered">
+                                <tbody>
+                                <tr>
+                                    <th>User ID</th>
+                                    <td th:text="${user.userId}"></td>
+                                </tr>
+                                <tr>
+                                    <th>Email</th>
+                                    <td th:text="${user.email}"></td>
+                                </tr>
+                                <tr>
+                                    <th>Active</th>
+									<td th:text="${user.active}"></td>
+                                </tr>
+                                <tr>
+                                    <th>Created at</th>
+                                    <td id="createdAt" th:text="${user.createdAt}"></td>
+                                </tr>
+                                <tr>
+                                    <th>Updated at</th>
+                                    <td id="updatedAt" th:text="${user.updatedAt}"></td>
+                                </tr>
+                                </tbody>
+                            </table>
                         </div>
                         <div class="buttons" id="action-buttons">
                             <a th:href="@{/user-management/updatepage/user/{userIndex}(userIndex=${user.userIndex})}" class="btn btn-primary">Edit</a>
@@ -183,8 +137,6 @@
                                 <input type="hidden" name="_csrf" th:value="${_csrf.token}"/>
                                 <button type="button" class="btn btn-danger" th:onclick="'deleteUser(' + ${user.userIndex} + ')'">Delete</button>
                             </form>
-                        </div>
-                        <div class="list-button" id="list-button">
                             <a href="/user-management/users" class="btn btn-secondary">목록</a>
                         </div>
                     </div>
