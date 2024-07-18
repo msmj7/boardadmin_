@@ -60,13 +60,13 @@
 							</a>
 							<ul class="nav nav-treeview">
 								<li class="nav-item">
-									<a href="/user-management" class="nav-link active">
+									<a href="/admin" class="nav-link active">
 										<i class="far fa-circle nav-icon"></i>
 										<p>관리자</p>
 									</a>
 								</li>
 								<li class="nav-item">
-									<a href="/user-management/users" class="nav-link">
+									<a href="/admin/users" class="nav-link">
 										<i class="far nav-icon"></i>
 										<p>회원</p>
 									</a>
@@ -114,7 +114,7 @@
 							<h1>사용자 관리 - 관리자</h1>
 						</div>
 						<div class="col-sm-6">
-							<a th:href="@{/user-management/newAdmin}" class="btn btn-primary float-right">Add Admin</a>
+							<a th:href="@{/admin/newAdmin}" class="btn btn-primary float-right">Add Admin</a>
 						</div>
 					</div>
 				</div>
@@ -126,7 +126,7 @@
 						<div class="card-header">
 							<h3 class="card-title">관리자 목록</h3>
 							<div class="card-tools">
-                                <form th:action="@{/user-management}" method="get" class="form-inline float-right">
+                                <form th:action="@{/admin}" method="get" class="form-inline float-right">
                                     <div class="input-group input-group-sm">
                                         <input type="text" name="search" class="form-control" placeholder="아이디, 이메일로 검색" th:value="${search}">
                                         <div class="input-group-append">
@@ -156,12 +156,12 @@
 										<td th:text="${admin.email}"></td>
 										<td th:text="${admin.active}"></td>
 										<td>
-											<a th:href="@{/user-management/admin/{userIndex}(userIndex=${admin.userIndex})}"
+											<a th:href="@{/admin/admin/{userIndex}(userIndex=${admin.userIndex})}"
 												class="btn btn-info">View</a>
-											<a th:href="@{/user-management/updatepage/admin/{userIndex}(userIndex=${admin.userIndex})}"
+											<a th:href="@{/admin/updatepage/admin/{userIndex}(userIndex=${admin.userIndex})}"
 												class="btn btn-primary">Edit</a>
 											<form th:id="'deleteForm-' + ${admin.userIndex}" method="post"
-												th:action="@{/user-management/delete/admin/{userIndex}(userIndex=${admin.userIndex})}"
+												th:action="@{/admin/delete/admin/{userIndex}(userIndex=${admin.userIndex})}"
 												style="display:inline;">
 												<input type="hidden" name="_csrf" th:value="${_csrf.token}" />
 												<button type="button" class="btn btn-danger"
@@ -176,13 +176,13 @@
                         <nav aria-label="Page navigation">
                             <ul class="pagination justify-content-center">
                                 <li class="page-item" th:classappend="${currentPage == 1} ? 'disabled'">
-                                    <a class="page-link" th:href="@{'/user-management' + '?page=' + ${currentPage - 1}}">Previous</a>
+                                    <a class="page-link" th:href="@{'/admin' + '?page=' + ${currentPage - 1}}">Previous</a>
                                 </li>
                                 <li class="page-item" th:each="i : ${#numbers.sequence(1, totalPages)}" th:classappend="${i == currentPage} ? 'active'">
-                                    <a class="page-link" th:href="@{'/user-management'  + '?page=' + ${i}}" th:text="${i}">1</a>
+                                    <a class="page-link" th:href="@{'/admin'  + '?page=' + ${i}}" th:text="${i}">1</a>
                                 </li>
                                 <li class="page-item" th:classappend="${currentPage == totalPages} ? 'disabled'">
-                                    <a class="page-link" th:href="@{'/user-management' + '?page=' + ${currentPage + 1}}">Next</a>
+                                    <a class="page-link" th:href="@{'/admin' + '?page=' + ${currentPage + 1}}">Next</a>
                                 </li>
                             </ul>
                         </nav>

@@ -56,13 +56,13 @@
 							</a>
 							<ul class="nav nav-treeview">
 								<li class="nav-item">
-									<a href="/user-management" class="nav-link">
+									<a href="/admin" class="nav-link">
 										<i class="far  nav-icon"></i>
 										<p>관리자</p>
 									</a>
 								</li>
 								<li class="nav-item">
-									<a href="/user-management/users" class="nav-link active">
+									<a href="/admin/users" class="nav-link active">
 										<i class="far fa-circle nav-icon"></i>
 										<p>회원</p>
 									</a>
@@ -115,7 +115,7 @@
 					<div class="card">
 						<div class="card-body">
 							<form id="edit-form"
-								th:action="@{/user-management/update/user/{userIndex}(userIndex=${user.userIndex})}"
+								th:action="@{/admin/update/user/{userIndex}(userIndex=${user.userIndex})}"
 								method="post" class="form-container">
 								<div class="error-message" th:if="${error}" th:text="${error}"></div>
 								<input type="hidden" name="_csrf" th:value="${_csrf.token}" />
@@ -140,7 +140,7 @@
 								</div>
 								<div class="buttons">
 									<button type="submit" class="btn btn-success">Save</button>
-									<a th:href="@{/user-management/user/{userIndex}(userIndex=${user.userIndex})}" class="btn btn-secondary">Cancel</a>
+									<a th:href="@{/admin/user/{userIndex}(userIndex=${user.userIndex})}" class="btn btn-secondary">Cancel</a>
 								</div>
 							</form>
 						</div>

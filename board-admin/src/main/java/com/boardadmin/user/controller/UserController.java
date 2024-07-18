@@ -23,7 +23,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
 @Controller
-@RequestMapping("/user-management")
+@RequestMapping("/admin")
 public class UserController {
 
     private final UserService userService;
@@ -164,7 +164,7 @@ public class UserController {
         roles.add(userService.getRoleByName("ADMIN"));
         user.setRoles(roles);
         userService.saveUser(user);
-        return "redirect:/user-management";
+        return "redirect:/admin";
     }
 
     @PostMapping("/create/user")
@@ -180,7 +180,7 @@ public class UserController {
         roles.add(userService.getRoleByName("USER"));
         user.setRoles(roles);
         userService.saveUser(user);
-        return "redirect:/user-management/users";
+        return "redirect:/admin/users";
     }
     
     @GetMapping("/updatepage/admin/{userIndex}")
@@ -213,16 +213,16 @@ public class UserController {
         }
 
         if (boardId != null) {
-            return "redirect:/user-management?boardId=" + boardId;
+            return "redirect:/admin?boardId=" + boardId;
         } else {
-            return "redirect:/user-management";
+            return "redirect:/admin";
         }
     }
 
     @PostMapping("/delete/admin/{userIndex}")
     public String deleteAdmin(@PathVariable Integer userIndex) {
         userService.deleteUserByUserIndex(userIndex);
-        return "redirect:/user-management";
+        return "redirect:/admin";
     }
     
     @GetMapping("/updatepage/user/{userIndex}")
@@ -255,9 +255,9 @@ public class UserController {
         }
 
         if (boardId != null) {
-            return "redirect:/user-management/users?boardId=" + boardId;
+            return "redirect:/admin/users?boardId=" + boardId;
         } else {
-            return "redirect:/user-management/users";
+            return "redirect:/admin/users";
         }
         
     }
@@ -265,6 +265,6 @@ public class UserController {
     @PostMapping("/delete/user/{userIndex}")
     public String deleteUser(@PathVariable Integer userIndex) {
         userService.deleteUserByUserIndex(userIndex);
-        return "redirect:/user-management/users";
+        return "redirect:/admin/users";
     }
 }

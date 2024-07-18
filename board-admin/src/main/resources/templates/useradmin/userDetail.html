@@ -48,13 +48,13 @@
                         </a>
                         <ul class="nav nav-treeview">
                             <li class="nav-item">
-                                <a href="/user-management" class="nav-link">
+                                <a href="/admin" class="nav-link">
                                     <i class="far nav-icon"></i>
                                     <p>관리자</p>
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a href="/user-management/users" class="nav-link active">
+                                <a href="/admin/users" class="nav-link active">
                                     <i class="far fa-circle nav-icon"></i>
                                     <p>회원</p>
                                 </a>
@@ -132,12 +132,12 @@
                             </table>
                         </div>
                         <div class="buttons" id="action-buttons">
-                            <a th:href="@{/user-management/updatepage/user/{userIndex}(userIndex=${user.userIndex})}" class="btn btn-primary">Edit</a>
-                            <form th:id="'deleteForm-' + ${user.userIndex}" method="post" th:action="@{/user-management/delete/user/{userIndex}(userIndex=${user.userIndex})}" style="display:inline;">
+                            <a th:href="@{/admin/updatepage/user/{userIndex}(userIndex=${user.userIndex})}" class="btn btn-primary">Edit</a>
+                            <form th:id="'deleteForm-' + ${user.userIndex}" method="post" th:action="@{/admin/delete/user/{userIndex}(userIndex=${user.userIndex})}" style="display:inline;">
                                 <input type="hidden" name="_csrf" th:value="${_csrf.token}"/>
                                 <button type="button" class="btn btn-danger" th:onclick="'deleteUser(' + ${user.userIndex} + ')'">Delete</button>
                             </form>
-                            <a href="/user-management/users" class="btn btn-secondary">목록</a>
+                            <a href="/admin/users" class="btn btn-secondary">목록</a>
                         </div>
                     </div>
                 </div>
