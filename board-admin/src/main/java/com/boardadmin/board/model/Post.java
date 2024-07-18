@@ -25,7 +25,7 @@ public class Post {
 
     @NotNull
     @Column(nullable = false)
-    private Long authorId;
+    private Long authorId = 1l;
 
     @NotNull
     @Column(nullable = false)

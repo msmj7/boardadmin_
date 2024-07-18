@@ -6,7 +6,7 @@
 	<title>Board List</title>
 	<link rel="stylesheet" th:href="@{/adminlte/plugins/fontawesome-free/css/all.min.css}">
 	<link rel="stylesheet" th:href="@{/adminlte/dist/css/adminlte.min.css}">
-	
+
 </head>
 
 <body class="hold-transition sidebar-mini">
@@ -44,7 +44,7 @@
 						data-accordion="false">
 						<li class="nav-item menu-close">
 							<a href="#" class="nav-link ">
-								<i class="fa fa-user nav-icon" ></i>
+								<i class="fa fa-user nav-icon"></i>
 								<p>
 									사용자 관리
 									<i class="right fas fa-angle-left"></i>
@@ -75,19 +75,26 @@
 							</a>
 							<ul class="nav nav-treeview">
 								<li class="nav-item">
-									<a href="/boards" class="nav-link" th:classappend="${servletPath == '/boards'} ? 'active'">
+									<a href="/boards" class="nav-link"
+										th:classappend="${servletPath == '/boards'} ? 'active'">
 										<i class="far fa-circle nav-icon"></i>
 										<p>게시판 목록</p>
 									</a>
 								</li>
 								<li class="nav-item" th:each="board : ${boards}">
 									<a th:href="@{'/posts/board/' + ${board.boardId}}"
-										class="btn  btn-sm nav-link  text-left" >
+										class="btn  btn-sm nav-link  text-left">
 										<i class="far nav-icon"></i>
 										<p th:text="${board.name}"></p>
 									</a>
 								</li>
 							</ul>
+						</li>
+						<li class="nav-item">
+							<a href="/comments" class="nav-link ">
+								<i class="nav-icon fas fa-comments"></i>
+								<p>댓글 관리</p>
+							</a>
 						</li>
 
 					</ul>

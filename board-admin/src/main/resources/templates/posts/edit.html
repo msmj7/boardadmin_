@@ -33,7 +33,7 @@
 		<aside class="main-sidebar sidebar-dark-primary elevation-4">
 			<!-- Brand Logo -->
 			<a href="#" class="brand-link">
-				<span class="brand-text font-weight-light">Board Management</span>
+				<span class="brand-text font-weight-light">board-admin</span>
 			</a>
 			<!-- Sidebar -->
 			<div class="sidebar">
@@ -77,10 +77,12 @@
 										<p>게시판 목록</p>
 									</a>
 								</li>
-								<li class="nav-item" th:each="board : ${boards}">
-									<a th:href="@{'/posts/board/' + ${board.boardId}}"
-										class="btn  btn-sm nav-link  text-left">
-										<i class="far fa-circle nav-icon"></i>
+								<li class="nav-item" th:each="board : ${boards}"
+									th:with="boardUrl='/posts/board/' + ${board.boardId} , editUrl='/posts/edit/' + ${post.postId}">
+									<a th:href="@{${boardUrl}}" class="btn  btn-sm nav-link  text-left"
+										th:classappend="${servletPath == editUrl} ? 'active'">
+										<i class="far nav-icon"
+											th:classappend="${servletPath == editUrl} ? 'fa-circle'"></i>
 										<p th:text="${board.name}"></p>
 									</a>
 								</li>
@@ -109,7 +111,8 @@
 				<div class="container-fluid">
 					<div class="card">
 						<div class="card-header">
-							<h3 class="card-title">Edit Post</h3>
+							<a th:href="@{'/posts/board/' + ${post.boardId}}" class="btn btn-secondary">Back to
+															Posts</a>
 						</div>
 						<div class="card-body">
 							<form th:action="@{'/posts/edit/' + ${post.postId}}" th:object="${post}" method="post">
@@ -130,7 +133,7 @@
 						</div>
 						<!-- Back Button -->
 						<div class="card-footer">
-						    <a th:href="@{'/posts/board/' + ${post.boardId}}" class="btn btn-secondary">Back to Posts</a>
+							
 						</div>
 					</div>
 				</div><!-- /.container-fluid -->

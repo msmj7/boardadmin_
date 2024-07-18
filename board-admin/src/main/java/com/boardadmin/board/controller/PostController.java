@@ -1,7 +1,9 @@
 package com.boardadmin.board.controller;
 
 import com.boardadmin.board.model.Board;
+import com.boardadmin.board.model.Comment;
 import com.boardadmin.board.model.Post;
+import com.boardadmin.board.service.CommentService;
 import com.boardadmin.board.service.PostService;
 import com.boardadmin.board.service.BoardService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,8 +13,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+import java.util.List;
 
 @Controller
 @RequestMapping("/posts")
@@ -25,6 +27,9 @@ public class PostController {
 
     @Autowired
     private BoardService boardService;
+    
+    @Autowired
+    private CommentService commentService;
 
     @GetMapping("/board/{boardId}")
     public String getPostsByBoardId(@PathVariable Long boardId, @RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "10") int size, Model model) {
@@ -47,6 +52,19 @@ public class PostController {
 
         return "posts/list";
     }
+    
+    @GetMapping("/view/{postId}")
+    public String viewPost( @PathVariable Long postId, Model model) {
+        Post post = postService.getPostById(postId).orElseThrow(() -> new IllegalArgumentException("Invalid post Id:" + postId));
+        List<Comment> comments = commentService.getCommentsByPostId(postId);
+        post.setAuthorId(1L);
+        
+        
+        model.addAttribute("post", post);
+        model.addAttribute("comments", comments);
+        return "posts/view";
+    }
+
 
     @GetMapping("/new")
     public String createPostForm(@RequestParam Long boardId, Model model) {

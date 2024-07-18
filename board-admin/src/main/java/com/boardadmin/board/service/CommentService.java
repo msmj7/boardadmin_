@@ -14,33 +14,26 @@ public class CommentService {
     @Autowired
     private CommentRepository commentRepository;
 
-    public List<Comment> getAllComments() {
-        return commentRepository.findAll();
+    public List<Comment> getCommentsByPostId(Long postId) {
+        return commentRepository.findByPostPostId(postId);
+    }
+
+    public void createComment(Comment comment) {
+        commentRepository.save(comment);
     }
 
     public Optional<Comment> getCommentById(Long id) {
         return commentRepository.findById(id);
     }
 
-    public Comment createComment(Comment comment) {
-        return commentRepository.save(comment);
+    public void deleteComment(Long id) {
+        commentRepository.deleteById(id);
     }
-
-    public Optional<Comment> updateComment(Long id, Comment commentDetails) {
-        return commentRepository.findById(id).map(comment -> {
-            comment.setContent(commentDetails.getContent());
-            comment.setPostId(commentDetails.getPostId());
-            comment.setAuthorId(commentDetails.getAuthorId());
-            return commentRepository.save(comment);
-        });
+    public List<Comment> getAllComments() {
+        return commentRepository.findAll();
     }
-
-    public boolean deleteComment(Long id) {
-        if (commentRepository.existsById(id)) {
-            commentRepository.deleteById(id);
-            return true;
-        } else {
-            return false;
-        }
+    
+    public Comment updateComment(Comment comment) {
+        return commentRepository.save(comment); // updateComment 메서드 구현
     }
 }

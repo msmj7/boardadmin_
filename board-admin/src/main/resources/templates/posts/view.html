@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<meta charset="UTF-8">
+	<title>Post Details</title>
+	<link rel="stylesheet" th:href="@{/adminlte/plugins/fontawesome-free/css/all.min.css}">
+	<link rel="stylesheet" th:href="@{/adminlte/dist/css/adminlte.min.css}">
+</head>
+
+<body class="hold-transition sidebar-mini">
+	<div class="wrapper">
+		<!-- Navbar -->
+		<nav class="main-header navbar navbar-expand navbar-white navbar-light">
+			<!-- Left navbar links -->
+			<ul class="navbar-nav">
+				<li class="nav-item">
+					<a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
+				</li>
+			</ul>
+			<!-- Right navbar links -->
+			<ul class="navbar-nav ml-auto">
+				<li class="nav-item">
+					<form th:action="@{/logout}" method="post" style="display: inline;">
+						<button type="submit" class="nav-link btn btn-link">
+							<i class="fas fa-sign-out-alt"></i> Logout
+						</button>
+					</form>
+				</li>
+			</ul>
+		</nav>
+		<!-- Main Sidebar Container -->
+		<aside class="main-sidebar sidebar-dark-primary elevation-4">
+			<!-- Brand Logo -->
+			<a href="#" class="brand-link">
+				<span class="brand-text font-weight-light">board-admin</span>
+			</a>
+			<!-- Sidebar -->
+			<div class="sidebar">
+				<!-- Sidebar Menu -->
+				<nav class="mt-2">
+					<ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu"
+						data-accordion="false">
+						<li class="nav-item menu-close">
+							<a href="#" class="nav-link ">
+								<i class="fa fa-user nav-icon"></i>
+								<p>
+									사용자 관리
+									<i class="right fas fa-angle-left"></i>
+								</p>
+							</a>
+							<ul class="nav nav-treeview">
+								<li class="nav-item">
+									<a href="/user-management" class="nav-link"
+										th:classappend="${servletPath == '/user-management'} ? 'active'">
+										<i class="far nav-icon"></i>
+										<p>관리자</p>
+									</a>
+								</li>
+								<li class="nav-item">
+										<a href="/user-management/users" class="nav-link"
+											th:classappend="${servletPath == '/user-management/users'} ? 'active'">
+											<i class="far nav-icon"></i>
+											<p>회원</p>
+										</a>
+									</li>
+								</ul>
+							</li>
+							<li class="nav-item menu-open">
+								<a href="#" class="nav-link active">
+									<i class="fa fa-window-maximize nav-icon"></i>
+									<p>
+										게시판 관리
+										<i class="right fas fa-angle-left"></i>
+									</p>
+								</a>
+								<ul class="nav nav-treeview">
+									<li class="nav-item">
+										<a href="/boards" class="nav-link"
+											th:classappend="${servletPath == '/boards'} ? 'active'">
+											<i class="far nav-icon"></i>
+											<p>게시판 목록</p>
+										</a>
+									</li>
+									<li class="nav-item" th:each="board : ${boards}"
+										th:with="boardUrl='/posts/board/' + ${board.boardId}">
+										<a th:href="@{${boardUrl}}" class="btn  btn-sm nav-link  text-left"
+											th:classappend="${servletPath == boardUrl} ? 'active'">
+											<i class="far nav-icon"
+												th:classappend="${servletPath == boardUrl} ? 'fa-circle'"></i>
+											<p th:text="${board.name}"></p>
+										</a>
+									</li>
+								</ul>
+							</li>
+							<li class="nav-item">
+								<a href="/comments" class="nav-link">
+									<i class="nav-icon fas fa-comments"></i>
+									<p>댓글 관리</p>
+								</a>
+							</li>
+						</ul>
+					</nav>
+					<!-- /.sidebar-menu -->
+				</div>
+				<!-- /.sidebar -->
+			</aside>
+			<!-- Content Wrapper. Contains page content -->
+			<div class="content-wrapper">
+				<div class="content-header">
+					<div class="container-fluid">
+						<div class="row mb-2">
+							<div class="col-sm-6">
+								<h1 class="m-0">Post Details</h1>
+							</div><!-- /.col -->
+						</div><!-- /.row -->
+					</div><!-- /.container-fluid -->
+				</div>
+				<!-- Main content -->
+				<div class="content">
+					<div class="container-fluid">
+						<div class="card">
+							<div class="card-header">
+								<h3 class="card-title" th:text="${post.title}">Post Title</h3>
+							</div>
+							<div class="card-body">
+								<p th:text="${post.content}">Post content goes here...</p>
+							</div>
+							<div class="card-footer">
+								<h3>Comments</h3>
+								<ul>
+									<li th:each="comment : ${comments}">
+										<p th:text="${comment.content}">Comment content goes here...</p>
+										<form th:action="@{|/comments/delete/${comment.commentId}|}" method="post"
+											onsubmit="return confirm('Are you sure you want to delete this comment?');">
+											<input type="hidden" name="_method" value="delete" />
+											<input type="hidden" name="postId" th:value="${post.postId}" />
+											<button type="submit" class="btn btn-danger btn-sm">Delete</button>
+										</form>
+										<a th:href="@{|/comments/edit/${comment.commentId}|}" class="btn btn-primary btn-sm">Edit</a>
+									</li>
+								</ul>
+								<form th:action="@{|/comments/post/${post.postId}|}" method="post">
+									<textarea name="content" class="form-control" rows="3"
+										placeholder="Add a comment..."></textarea>
+									<input type="hidden" name="authorId" value="1" /> <!-- 임시로 authorId를 1로 설정 -->
+									<button type="submit" class="btn btn-primary mt-2">Submit</button>
+								</form>
+							</div>
+						</div>
+					</div><!-- /.container-fluid -->
+				</div>
+				<!-- /.content -->
+			</div>
+			<!-- /.content-wrapper -->
+			<footer class="main-footer">
+				<div class="float-right d-none d-sm-inline">
+					Anything you want
+				</div>
+				<strong>Copyright &copy; 2023 <a href="#">Company</a>.</strong> All rights reserved.
+			</footer>
+		</div>
+		<!-- ./wrapper -->
+
+		<script th:src="@{/adminlte/plugins/jquery/jquery.min.js}"></script>
+		<script th:src="@{/adminlte/plugins/bootstrap/js/bootstrap.bundle.min.js}"></script>
+		<script th:src="@{/adminlte/dist/js/adminlte.min.js}"></script>
+	</body>
+
+	</html>
