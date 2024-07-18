@@ -19,7 +19,7 @@
         <!-- Right navbar links -->
         <ul class="navbar-nav ml-auto">
             <li class="nav-item">
-                <form th:action="@{/logout}" method="post" style="display: inline;">
+                <form th:action="@{/admin/logout}" method="post" style="display: inline;">
                     <button type="submit" class="nav-link btn btn-link">
                         <i class="fas fa-sign-out-alt"></i> Logout
                     </button>
@@ -49,15 +49,15 @@
 										</a>
 										<ul class="nav nav-treeview">
 											<li class="nav-item">
-												<a href="/user-management" class="nav-link"
-													th:classappend="${servletPath == '/user-management'} ? 'active'">
+												<a href="/admin" class="nav-link"
+													th:classappend="${servletPath == '/admin'} ? 'active'">
 													<i class="far nav-icon"></i>
 													<p>관리자</p>
 												</a>
 											</li>
 											<li class="nav-item">
-												<a href="/user-management/users" class="nav-link"
-													th:classappend="${servletPath == '/user-management/users'} ? 'active'">
+												<a href="/admin/users" class="nav-link"
+													th:classappend="${servletPath == '/admin/users'} ? 'active'">
 													<i class="far nav-icon"></i>
 													<p>회원</p>
 												</a>
@@ -122,7 +122,7 @@
                         <h3 class="card-title">Edit Comment</h3>
                     </div>
                     <div class="card-body">
-                        <form th:action="@{'/comments/edit/' + ${comment.commentId}}" method="post">
+                        <form th:action="@{'/admin/comments/edit/' + ${comment.commentId}}" method="post">
                             <div class="form-group">
                                 <label for="content">Content</label>
                                 <textarea class="form-control" id="content" name="content" rows="3" th:text="${comment.content}"></textarea>

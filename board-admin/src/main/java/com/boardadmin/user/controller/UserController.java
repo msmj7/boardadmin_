@@ -23,7 +23,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
 @Controller
-@RequestMapping("/user-management")
+@RequestMapping
 public class UserController {
 
     private final UserService userService;
@@ -35,7 +35,7 @@ public class UserController {
         this.userService = userService;
     }
 
-    @GetMapping
+    @GetMapping("/admin")
     public String getAdminsPage(@RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "10") int size, @RequestParam(required = false) Long boardId, @RequestParam(required = false) String search ,Model model) {
         Pageable pageable = PageRequest.of(page - 1, size);
         Page<User> adminPage = userService.getUsersByRole("ADMIN", pageable);
@@ -63,7 +63,7 @@ public class UserController {
         return "useradmin/admins";
     }
 
-    @GetMapping("/users")
+    @GetMapping("/admin/users")
     public String getUsersPage(@RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "10") int size, @RequestParam(required = false) Long boardId, @RequestParam(required = false) String search, Model model) {
         Pageable pageable = PageRequest.of(page - 1, size);
         Page<User> userPage = userService.getUsersByRole("USER", pageable);
@@ -109,7 +109,7 @@ public class UserController {
         return "useradmin/adminDetail";
     }
 
-    @GetMapping("/user/{userIndex}")
+    @GetMapping("/admin/users/{userIndex}")
     public String getUserDetailPage(@PathVariable Integer userIndex, @RequestParam(required = false) Long boardId, Model model) {
         User user = userService.getUserByUserIndex(userIndex);
         model.addAttribute("user", user);
@@ -124,7 +124,7 @@ public class UserController {
         return "useradmin/userDetail";
     }
     
-    @GetMapping("/newAdmin")
+    @GetMapping("/admin/newAdmin")
     public String getAdminCreatePage(@RequestParam(required = false) Long boardId, Model model) {
         model.addAttribute("user", new User());
 
@@ -138,7 +138,7 @@ public class UserController {
         return "useradmin/newAdmin";
     }
 
-    @GetMapping("/newUser")
+    @GetMapping("/admin/newUser")
     public String getUserCreatePage(@RequestParam(required = false) Long boardId, Model model) {
         model.addAttribute("user", new User());
 
@@ -152,7 +152,7 @@ public class UserController {
         return "useradmin/newUser";
     }
 
-    @PostMapping("/create/admin")
+    @PostMapping("/admin/create/admin")
     public String createAdmin(@ModelAttribute User user, Model model) {
         if (userService.userExists(user.getUserId())) {
             model.addAttribute("error", "이미 존재하는 아이디입니다.");
@@ -164,10 +164,10 @@ public class UserController {
         roles.add(userService.getRoleByName("ADMIN"));
         user.setRoles(roles);
         userService.saveUser(user);
-        return "redirect:/user-management";
+        return "redirect:/admin";
     }
 
-    @PostMapping("/create/user")
+    @PostMapping("/admin/create/user")
     public String createUser(@ModelAttribute User user, Model model) {
         if (userService.userExists(user.getUserId())) {
             model.addAttribute("error", "이미 존재하는 아이디입니다.");
@@ -180,17 +180,17 @@ public class UserController {
         roles.add(userService.getRoleByName("USER"));
         user.setRoles(roles);
         userService.saveUser(user);
-        return "redirect:/user-management/users";
+        return "redirect:/admin/users";
     }
     
-    @GetMapping("/updatepage/admin/{userIndex}")
+    @GetMapping("/admin/updatepage/admin/{userIndex}")
     public String getAdminEditPage(@PathVariable Integer userIndex, Model model) {
         User admin = userService.getUserByUserIndex(userIndex);
         model.addAttribute("admin", admin);
         return "useradmin/adminEdit";
     }
 
-    @PostMapping("/update/admin/{userIndex}")
+    @PostMapping("/admin/update/admin/{userIndex}")
     public String updateAdmin(@PathVariable Integer userIndex, @ModelAttribute User user, @RequestParam(required = false) Long boardId, Model model) {
         User existingUser = userService.getUserByUserIndex(userIndex);
         if (existingUser != null) {
@@ -213,19 +213,19 @@ public class UserController {
         }
 
         if (boardId != null) {
-            return "redirect:/user-management?boardId=" + boardId;
+            return "redirect:/admin?boardId=" + boardId;
         } else {
-            return "redirect:/user-management";
+            return "redirect:/admin";
         }
     }
 
-    @PostMapping("/delete/admin/{userIndex}")
+    @PostMapping("/admin/delete/admin/{userIndex}")
     public String deleteAdmin(@PathVariable Integer userIndex) {
         userService.deleteUserByUserIndex(userIndex);
-        return "redirect:/user-management";
+        return "redirect:/admin";
     }
     
-    @GetMapping("/updatepage/user/{userIndex}")
+    @GetMapping("/admin/updatepage/user/{userIndex}")
     public String getUserEditPage(@PathVariable Integer userIndex, Model model) {
         User user = userService.getUserByUserIndex(userIndex);
         model.addAttribute("user", user);
@@ -233,7 +233,7 @@ public class UserController {
     }
     
 
-    @PostMapping("/update/user/{userIndex}")
+    @PostMapping("/admin/update/user/{userIndex}")
     public String updateUser(@PathVariable Integer userIndex, @ModelAttribute User user, @RequestParam(required = false) Long boardId, Model model) {
         User existingUser = userService.getUserByUserIndex(userIndex);
         if (existingUser != null) {
@@ -255,16 +255,16 @@ public class UserController {
         }
 
         if (boardId != null) {
-            return "redirect:/user-management/users?boardId=" + boardId;
+            return "redirect:/admin/users?boardId=" + boardId;
         } else {
-            return "redirect:/user-management/users";
+            return "redirect:/admin/users";
         }
         
     }
 
-    @PostMapping("/delete/user/{userIndex}")
+    @PostMapping("/admin/delete/user/{userIndex}")
     public String deleteUser(@PathVariable Integer userIndex) {
         userService.deleteUserByUserIndex(userIndex);
-        return "redirect:/user-management/users";
+        return "redirect:/admin/users";
     }
 }
