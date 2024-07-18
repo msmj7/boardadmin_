@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Create Post</title>
+    <title>Create Comment</title>
     <link rel="stylesheet" th:href="@{/adminlte/plugins/fontawesome-free/css/all.min.css}">
     <link rel="stylesheet" th:href="@{/adminlte/dist/css/adminlte.min.css}">
 </head>
@@ -99,7 +99,7 @@
                 <div class="container-fluid">
                     <div class="row mb-2">
                         <div class="col-sm-6">
-                            <h1 class="m-0">Create Post</h1>
+                            <h1 class="m-0">Create Comment</h1>
                         </div><!-- /.col -->
                     </div><!-- /.row -->
                 </div><!-- /.container-fluid -->
@@ -109,25 +109,20 @@
                 <div class="container-fluid">
                     <div class="card">
                         <div class="card-header">
-                            <h3 class="card-title">Create New Post</h3>
+                            <h3 class="card-title">Create New Comment</h3>
                         </div>
                         <div class="card-body">
-                            <form th:action="@{/posts/new}" method="post">
-                                <input type="hidden" name="boardId" th:value="${boardId}" />
+                            <form th:action="@{/comments/new}" method="post">
+                                <input type="hidden" name="postId" th:value="${postId}" />
                                 <div class="form-group">
-                                    <label for="title">Title</label>
-                                    <input type="text" name="title" class="form-control" id="title"
-                                        placeholder="Enter post title" required>
+                                    <label for="authorName">Author Name</label>
+                                    <input type="text" name="authorName" class="form-control" id="authorName"
+                                        placeholder="Enter author name" required>
                                 </div>
                                 <div class="form-group">
                                     <label for="content">Content</label>
                                     <textarea name="content" class="form-control" id="content"
                                         placeholder="Enter content" required></textarea>
-                                </div>
-                                <div class="form-group">
-                                    <label for="authorName">Author Name</label>
-                                    <input type="text" name="authorName" class="form-control" id="authorName"
-                                        placeholder="Enter author name" required>
                                 </div>
                                 <button type="submit" class="btn btn-primary">Submit</button>
                             </form>

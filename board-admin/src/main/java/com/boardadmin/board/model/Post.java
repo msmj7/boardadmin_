@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
+
 import java.time.LocalDateTime;
 
 @Entity
@@ -24,12 +25,13 @@ public class Post {
     private String content;
 
     @NotNull
+    @Size(min = 1, max = 100)
     @Column(nullable = false)
-    private Long authorId = 1l;
+    private String authorName;
 
-    @NotNull
-    @Column(nullable = false)
-    private Long boardId;
+    @ManyToOne
+    @JoinColumn(name = "board_id", nullable = false)
+    private Board board;
 
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
@@ -40,5 +42,13 @@ public class Post {
     @PreUpdate
     public void preUpdate() {
         updatedAt = LocalDateTime.now();
+    }
+
+    public Board getBoard() {
+        return board;
+    }
+
+    public void setBoard(Board board) {
+        this.board = board;
     }
 }

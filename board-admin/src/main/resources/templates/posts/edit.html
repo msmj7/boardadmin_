@@ -111,8 +111,7 @@
 				<div class="container-fluid">
 					<div class="card">
 						<div class="card-header">
-							<a th:href="@{'/posts/board/' + ${post.boardId}}" class="btn btn-secondary">Back to
-															Posts</a>
+							<a th:href="@{'/posts/board/' + ${post.board.boardId}}" class="btn btn-secondary">Back to Posts</a>
 						</div>
 						<div class="card-body">
 							<form th:action="@{'/posts/edit/' + ${post.postId}}" th:object="${post}" method="post">
@@ -124,8 +123,11 @@
 									<label for="content">Content</label>
 									<textarea id="content" class="form-control" th:field="*{content}"></textarea>
 								</div>
-								<input type="hidden" th:field="*{authorId}" /> <!-- hidden 필드 추가 -->
-								<input type="hidden" th:field="*{boardId}" /> <!-- hidden 필드 추가 -->
+								<div class="form-group">
+									<label for="authorName">Author Name</label>
+									<input type="text" id="authorName" class="form-control" th:field="*{authorName}" />
+								</div>
+								<input type="hidden" th:field="*{board.boardId}" /> <!-- hidden 필드 추가 -->
 								<div class="form-group">
 									<button type="submit" class="btn btn-primary">Save</button>
 								</div>

@@ -21,28 +21,30 @@ CREATE TABLE user_role (
 );
 
 -- Board 테이블 생성
-CREATE TABLE Board (
+CREATE TABLE board (
     board_id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(100) UNIQUE NOT NULL,
     description TEXT
 );
 
 -- Post 테이블 생성
-CREATE TABLE Post (
+CREATE TABLE post (
     post_id INT AUTO_INCREMENT PRIMARY KEY,
     title VARCHAR(255) NOT NULL,
     content TEXT NOT NULL,
-    author_id INT NOT NULL,
+    author_name VARCHAR(100) NOT NULL,
     board_id INT NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (board_id) REFERENCES board(board_id)
 );
 
 -- Comment 테이블 생성
-CREATE TABLE Comment (
+CREATE TABLE comment (
     comment_id INT AUTO_INCREMENT PRIMARY KEY,
     post_id INT NOT NULL,
-    author_id INT NOT NULL,
+    author_name VARCHAR(100) NOT NULL,
     content TEXT NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (post_id) REFERENCES post(post_id)
 );
