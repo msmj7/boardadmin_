@@ -170,7 +170,7 @@
                             </div>
                             <div class="buttons">
                                 <button type="submit" class="btn btn-success">Save</button>
-                                <a href="/user-management" class="btn btn-secondary">Cancel</a>
+                                <a th:href="@{/user-management/admin/{userIndex}(userIndex=${admin.userIndex})}" class="btn btn-secondary">Cancel</a>
                             </div>
                         </form>
                     </div>
