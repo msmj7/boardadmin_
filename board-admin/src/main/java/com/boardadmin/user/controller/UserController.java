@@ -22,9 +22,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
-@Controller
-@RequestMapping
-public class UserController {
+
+@RequestMapping("/admin")
+	public class UserController {
 
     private final UserService userService;
     
@@ -224,6 +224,7 @@ public class UserController {
         userService.deleteUserByUserIndex(userIndex);
         return "redirect:/admin";
     }
+
     
     @GetMapping("/admin/updatepage/user/{userIndex}")
     public String getUserEditPage(@PathVariable Integer userIndex, Model model) {

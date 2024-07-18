@@ -51,15 +51,15 @@
 							</a>
 							<ul class="nav nav-treeview">
 								<li class="nav-item">
-									<a href="/user-management" class="nav-link"
-										th:classappend="${servletPath == '/user-management'} ? 'active'">
+									<a href="/admin" class="nav-link"
+										th:classappend="${servletPath == '/admin'} ? 'active'">
 										<i class="far nav-icon"></i>
 										<p>관리자</p>
 									</a>
 								</li>
 								<li class="nav-item">
-									<a href="/user-management/users" class="nav-link"
-										th:classappend="${servletPath == '/user-management/users'} ? 'active'">
+									<a href="/admin/users" class="nav-link"
+										th:classappend="${servletPath == '/admin/users'} ? 'active'">
 										<i class="far nav-icon"></i>
 										<p>회원</p>
 									</a>
@@ -112,6 +112,10 @@
 					<div class="row mb-2">
 						<div class="col-sm-6">
 							<h1 class="m-0">All Comments</h1>
+							<form th:action="@{/comments/search}" method="get">
+							    <input type="text" name="keyword" placeholder="Search comments" />
+							    <button type="submit">Search</button>
+							</form>
 						</div><!-- /.col -->
 					</div><!-- /.row -->
 				</div><!-- /.container-fluid -->
@@ -129,7 +133,7 @@
 									<tr>
 										<th>ID</th>
 										<th>Content</th>
-										<th>Author ID</th>
+										<th>Author Name</th>
 										<th>Post ID</th>
 										<th>Actions</th>
 									</tr>
@@ -138,7 +142,7 @@
 									<tr th:each="comment : ${comments}">
 										<td th:text="${comment.commentId}"></td>
 										<td th:text="${comment.content}"></td>
-										<td th:text="${comment.authorId}"></td>
+										<td th:text="${comment.authorName}"></td>
 										<td th:text="${comment.post.postId}"></td>
 										<td>
 											<a th:href="@{|/comments/edit/${comment.commentId}|}" class="btn btn-primary btn-sm">Edit</a>

@@ -28,6 +28,19 @@ public class PostController {
     
     @Autowired
     private CommentService commentService;
+    
+    @GetMapping("/search")
+    public String searchPosts(@RequestParam String keyword, @RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "10") int size, Model model) {
+        Pageable pageable = PageRequest.of(page - 1, size);
+        Page<Post> postPage = postService.searchPosts(keyword, pageable);
+        
+        model.addAttribute("posts", postPage.getContent());
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", postPage.getTotalPages());
+        model.addAttribute("keyword", keyword);
+
+        return "posts/searchResults";
+    }
 
     @GetMapping("/board/{boardId}")
     public String getPostsByBoardId(@PathVariable Long boardId, @RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "10") int size, Model model) {

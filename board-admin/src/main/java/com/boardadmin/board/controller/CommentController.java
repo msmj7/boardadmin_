@@ -1,6 +1,9 @@
 package com.boardadmin.board.controller;
 
 import com.boardadmin.board.model.Comment;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import com.boardadmin.board.model.Post;
 import com.boardadmin.board.service.CommentService;
 import com.boardadmin.board.service.PostService;
@@ -20,6 +23,19 @@ public class CommentController {
 
     @Autowired
     private PostService postService;
+    
+    @GetMapping("/search")
+    public String searchComments(@RequestParam String keyword, @RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "10") int size, Model model) {
+        Pageable pageable = PageRequest.of(page - 1, size);
+        Page<Comment> commentPage = commentService.searchComments(keyword, pageable);
+        
+        model.addAttribute("comments", commentPage.getContent());
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", commentPage.getTotalPages());
+        model.addAttribute("keyword", keyword);
+
+        return "comments/searchResults";
+    }
 
     @GetMapping
     public String getAllComments(Model model) {
