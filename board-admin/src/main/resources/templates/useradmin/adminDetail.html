@@ -25,6 +25,7 @@
         .form-group label {
             width: 100px;
             text-align: right;
+            margin-top: 10px;
             margin-right: 10px;
             font-size: 0.9em;
         }
@@ -32,6 +33,9 @@
             width: 200px;
             font-size: 0.9em;
             text-align: center;
+            border: 1px solid gray;
+            border-radius: 4px;
+            padding: 5px;
         }
         .buttons {
             display: flex;
@@ -47,6 +51,9 @@
             justify-content: center;
             margin-top: 10px;
         }
+        .form-control:disabled, .form-control[readonly] {
+    	background-color: white;
+		}
     </style>
 </head>
 <body class="hold-transition sidebar-mini">
@@ -91,7 +98,7 @@
 							<ul class="nav nav-treeview">
 								<li class="nav-item">
 									<a href="/user-management" class="nav-link active">
-										<i class="far  nav-icon"></i>
+										<i class="far fa-circle nav-icon"></i>
 										<p>관리자</p>
 									</a>
 								</li>
@@ -161,6 +168,15 @@
                                 <label for="active">Active</label>
                                 <input type="checkbox" class="form-control" id="active" th:checked="${admin.active}" disabled>
                             </div>
+                            <div class="form-group">
+                                <label for="createdAt">Created at</label>
+                                <span id="createdAt" th:text="${admin.createdAt}"></span>
+                            </div>
+                            <div class="form-group">
+                                <label for="updatedAt">Updated at</label>
+                                <span id="updatedAt" th:text="${admin.updatedAt}"></span>
+                            </div>
+                           
                         </div>
                         <div class="buttons" id="action-buttons">
                             <a th:href="@{/user-management/updatepage/admin/{userIndex}(userIndex=${admin.userIndex})}" class="btn btn-primary">Edit</a>
@@ -198,6 +214,23 @@ function deleteUser(userIndex) {
         }
     }
 }
+
+
+document.addEventListener('DOMContentLoaded', function () {
+    function formatDate(dateString) {
+        return dateString.replace('T', ' ');
+    }
+
+    const createdAtElement = document.getElementById('createdAt');
+    if (createdAtElement) {
+        createdAtElement.textContent = formatDate(createdAtElement.textContent);
+    }
+
+    const updatedAtElement = document.getElementById('updatedAt');
+    if (updatedAtElement) {
+        updatedAtElement.textContent = formatDate(updatedAtElement.textContent);
+    }
+});
 </script>
 </body>
 </html>
