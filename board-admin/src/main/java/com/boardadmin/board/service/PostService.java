@@ -14,6 +14,10 @@ public class PostService {
 
     @Autowired
     private PostRepository postRepository;
+    
+    public Page<Post> searchPosts(String keyword, Pageable pageable) {
+        return postRepository.findByTitleContainingOrContentContaining(keyword, keyword, pageable);
+    }
 
     public Page<Post> getPostsByBoardId(Long boardId, Pageable pageable) {
         return postRepository.findByBoard_BoardId(boardId, pageable);

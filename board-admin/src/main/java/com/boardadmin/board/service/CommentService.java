@@ -1,6 +1,8 @@
 package com.boardadmin.board.service;
 
 import com.boardadmin.board.model.Comment;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import com.boardadmin.board.repository.CommentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -13,6 +15,10 @@ public class CommentService {
 
     @Autowired
     private CommentRepository commentRepository;
+    
+    public Page<Comment> searchComments(String keyword, Pageable pageable) {
+        return commentRepository.findByContentContaining(keyword, pageable);
+    }
 
     public List<Comment> getCommentsByPostId(Long postId) {
         return commentRepository.findByPostPostId(postId);

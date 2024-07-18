@@ -3,7 +3,7 @@
 
 <head>
 	<meta charset="UTF-8">
-	<title>Post List</title>
+	<title>Search Results</title>
 	<link rel="stylesheet" th:href="@{/adminlte/plugins/fontawesome-free/css/all.min.css}">
 	<link rel="stylesheet" th:href="@{/adminlte/dist/css/adminlte.min.css}">
 </head>
@@ -41,28 +41,6 @@
 				<nav class="mt-2">
 					<ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu"
 						data-accordion="false">
-						<li class="nav-item menu-close">
-							<a href="#" class="nav-link ">
-								<p>
-									사용자 관리
-									<i class="right fas fa-angle-left"></i>
-								</p>
-							</a>
-							<ul class="nav nav-treeview">
-								<li class="nav-item">
-									<a href="/user-management" class="nav-link ">
-										<i class="far fa-circle nav-icon"></i>
-										<p>관리자</p>
-									</a>
-								</li>
-								<li class="nav-item">
-									<a href="/user-management/users" class="nav-link">
-										<i class="far fa-circle nav-icon"></i>
-										<p>회원</p>
-									</a>
-								</li>
-							</ul>
-						</li>
 						<li class="nav-item menu-open">
 							<a href="/boards" class="nav-link active">
 								<p>
@@ -79,14 +57,13 @@
 								</li>
 								<li class="nav-item" th:each="board : ${boards}">
 									<a th:href="@{'/posts/board/' + ${board.boardId}}"
-										class="btn  btn-sm nav-link  text-left">
+										class="btn btn-sm nav-link text-left">
 										<i class="far fa-circle nav-icon"></i>
 										<p th:text="${board.name}"></p>
 									</a>
 								</li>
 							</ul>
 						</li>
-
 					</ul>
 				</nav>
 				<!-- /.sidebar-menu -->
@@ -95,16 +72,16 @@
 		</aside>
 		<!-- Content Wrapper. Contains page content -->
 		<div class="content-wrapper">
+			<!-- Content Header (Page header) -->
 			<div class="content-header">
 				<div class="container-fluid">
 					<div class="row mb-2">
 						<div class="col-sm-6">
-							<h1 class="m-0">Post List</h1>
-							<form th:action="@{/posts/search}" method="get">
-							    <input type="text" name="keyword" placeholder="Search posts" />
-							    <button type="submit">Search</button>
+							<h1 class="m-0">Search Results</h1>
+							<form th:action="@{/comments/search}" method="get">
+								<input type="text" name="keyword" placeholder="Search comments" />
+								<button type="submit">Search</button>
 							</form>
-
 						</div><!-- /.col -->
 					</div><!-- /.row -->
 				</div><!-- /.container-fluid -->
@@ -114,61 +91,30 @@
 				<div class="container-fluid">
 					<div class="card">
 						<div class="card-header">
-							<!-- Back Button -->
-							<a th:href="@{'/boards'}" class="btn btn-secondary">Back to
-								boards</a>
-							<div class="card-tools">
-								<a th:href="@{'/posts/new?boardId=' + ${boardId}}" class="btn btn-success btn-sm">Create
-									New Post</a>
-							</div>
+							<h3 class="card-title">Search Results for: "<span th:text="${keyword}"></span>"</h3>
 						</div>
 						<div class="card-body">
-							<table class="table table-bordered">
+							<table class="table table-bordered table-striped">
 								<thead>
 									<tr>
-										<th>Title</th>
-										<th>Author</th>
+
 										<th>Content</th>
-										<th>Actions</th>
+										<th>Author</th>
+
 									</tr>
 								</thead>
 								<tbody>
-									<tr th:each="post : ${posts}">
-										<td th:text="${post.title}"></td>
-										<td th:text="${post.authorName}"></td>
-										<td th:text="${post.content}"></td>
-										<td>
-											<a th:href="@{'/posts/view/' + ${post.postId}}"
-												class="btn btn-primary btn-sm">View</a>
-											<a th:href="@{'/posts/edit/' + ${post.postId}}"
-												class="btn btn-secondary btn-sm">Edit</a>
-											<a th:href="@{'/posts/delete/' + ${post.postId}}"
-												class="btn btn-danger btn-sm">Delete</a>
-										</td>
+									<tr th:each="comment : ${comments}">
+
+										<td th:text="${comment.content}">comment Content</td>
+										<td th:text="${comment.authorName}">Author Name</td>
 									</tr>
 								</tbody>
 							</table>
 						</div>
-						<div class="card-footer">
-							<nav aria-label="Page navigation">
-								<ul class="pagination justify-content-center">
-									<li class="page-item" th:classappend="${currentPage == 1} ? 'disabled'">
-										<a class="page-link"
-											th:href="@{'/posts/board/' + ${boardId} + '?page=' + ${currentPage - 1}}">Previous</a>
-									</li>
-									<li class="page-item" th:each="i : ${#numbers.sequence(1, totalPages)}"
-										th:classappend="${i == currentPage} ? 'active'">
-										<a class="page-link" th:href="@{'/posts/board/' + ${boardId} + '?page=' + ${i}}"
-											th:text="${i}">1</a>
-									</li>
-									<li class="page-item" th:classappend="${currentPage == totalPages} ? 'disabled'">
-										<a class="page-link"
-											th:href="@{'/posts/board/' + ${boardId} + '?page=' + ${currentPage + 1}}">&nbsp; &nbsp; Next&nbsp; &nbsp; </a>
-									</li>
-								</ul>
-							</nav>
-						</div>
+						<!-- /.card-body -->
 					</div>
+					<!-- /.card -->
 				</div><!-- /.container-fluid -->
 			</div>
 			<!-- /.content -->
