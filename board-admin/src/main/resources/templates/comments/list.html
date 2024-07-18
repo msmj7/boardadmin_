@@ -129,7 +129,7 @@
 									<tr>
 										<th>ID</th>
 										<th>Content</th>
-										<th>Author ID</th>
+										<th>Author Name</th>
 										<th>Post ID</th>
 										<th>Actions</th>
 									</tr>
@@ -138,7 +138,7 @@
 									<tr th:each="comment : ${comments}">
 										<td th:text="${comment.commentId}"></td>
 										<td th:text="${comment.content}"></td>
-										<td th:text="${comment.authorId}"></td>
+										<td th:text="${comment.authorName}"></td>
 										<td th:text="${comment.post.postId}"></td>
 										<td>
 											<a th:href="@{|/comments/edit/${comment.commentId}|}" class="btn btn-primary btn-sm">Edit</a>
