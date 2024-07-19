@@ -41,7 +41,7 @@
                     </div>
                     <div class="row">
                        <p class="mb-0"style = "width : 180px">
-                    <a th:href="@{/login/signUp}" class="text-center" style= "padding-left: 20px; padding-top: 20px;" >회원 가입</a>
+                    <a th:href="@{/signup}" class="text-center" style= "padding-left: 20px; padding-top: 20px;" >회원 가입</a>
                 		</p>
                         <div class="col-4">
                             <button type="submit" class="btn btn-primary btn-block">Sign In</button>
@@ -50,7 +50,7 @@
                 </form>
                 
                 <p class="mb-1">
-                    <a th:href="@{/login/forgot}">아이디, 비밀번호 찾기</a>
+                    <a th:href="@{/forgot}">비밀번호 찾기</a>
                 </p>
 
 				<div th:if="${param.error}" class="alert alert-danger mt-3">

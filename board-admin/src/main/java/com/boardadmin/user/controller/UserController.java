@@ -5,7 +5,6 @@ import com.boardadmin.board.service.BoardService;
 import com.boardadmin.user.model.Role;
 import com.boardadmin.user.model.User;
 import com.boardadmin.user.service.UserService;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
@@ -13,40 +12,27 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 
 @Controller
 @RequestMapping
-	public class UserController {
+public class UserController {
 
     private final UserService userService;
-    
-    @Autowired
-    private BoardService boardService;
+    private final BoardService boardService;
 
-    public UserController(UserService userService, PasswordEncoder passwordEncoder) {
+    public UserController(UserService userService, BoardService boardService) {
         this.userService = userService;
+        this.boardService = boardService;
     }
 
     @GetMapping("/admin/admins")
-    public String getAdminsPage(@RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "10") int size, @RequestParam(required = false) Long boardId, @RequestParam(required = false) String search ,Model model) {
-        Pageable pageable = PageRequest.of(page - 1, size);
-        Page<User> adminPage = userService.getUsersByRole("ADMIN", pageable);
+    public String getAdminsPage(@RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "10") int size, @RequestParam(required = false) Long boardId, @RequestParam(required = false) String search, Model model) {
+        Page<User> adminPage = userService.getAdminsPage(page, size, search);
 
-        if (search != null && !search.isEmpty()) {
-        	adminPage = userService.searchAdmins(search, pageable);
-        } else {
-        	adminPage = userService.getUsersByRole("ADMIN", pageable);
-        }
-        
-        int totalPages = adminPage.getTotalPages() > 0 ? adminPage.getTotalPages() : 1; // 최소 1페이지를 유지
+        int totalPages = adminPage.getTotalPages() > 0 ? adminPage.getTotalPages() : 1;
 
         if (boardId != null) {
             Board board = boardService.getBoardById(boardId)
@@ -65,17 +51,9 @@ import org.springframework.data.domain.Pageable;
 
     @GetMapping("/admin/users")
     public String getUsersPage(@RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "10") int size, @RequestParam(required = false) Long boardId, @RequestParam(required = false) String search, Model model) {
-        Pageable pageable = PageRequest.of(page - 1, size);
-        Page<User> userPage = userService.getUsersByRole("USER", pageable);
+        Page<User> userPage = userService.getUsersPage(page, size, search);
 
-        if (search != null && !search.isEmpty()) {
-        	userPage = userService.searchUsers(search, pageable);
-        } else {
-        	userPage = userService.getUsersByRole("USER", pageable);
-        }
-        
-        
-        int totalPages = userPage.getTotalPages() > 0 ? userPage.getTotalPages() : 1; // 최소 1페이지를 유지
+        int totalPages = userPage.getTotalPages() > 0 ? userPage.getTotalPages() : 1;
 
         if (boardId != null) {
             Board board = boardService.getBoardById(boardId)
@@ -92,8 +70,6 @@ import org.springframework.data.domain.Pageable;
         return "useradmin/users";
     }
 
-
-    
     @GetMapping("/admin/{userIndex}")
     public String getAdminDetailPage(@PathVariable Integer userIndex, @RequestParam(required = false) Long boardId, Model model) {
         User admin = userService.getUserByUserIndex(userIndex);
@@ -123,7 +99,7 @@ import org.springframework.data.domain.Pageable;
         model.addAttribute("boards", boardService.getAllBoards());
         return "useradmin/userDetail";
     }
-    
+
     @GetMapping("/admin/newAdmin")
     public String getAdminCreatePage(@RequestParam(required = false) Long boardId, Model model) {
         model.addAttribute("user", new User());
@@ -182,7 +158,7 @@ import org.springframework.data.domain.Pageable;
         userService.saveUser(user);
         return "redirect:/admin/users";
     }
-    
+
     @GetMapping("/admin/updatepage/admin/{userIndex}")
     public String getAdminEditPage(@PathVariable Integer userIndex, Model model) {
         User admin = userService.getUserByUserIndex(userIndex);
@@ -192,26 +168,11 @@ import org.springframework.data.domain.Pageable;
 
     @PostMapping("/admin/update/admin/{userIndex}")
     public String updateAdmin(@PathVariable Integer userIndex, @ModelAttribute User user, @RequestParam(required = false) Long boardId, Model model) {
-        User existingUser = userService.getUserByUserIndex(userIndex);
-        if (existingUser != null) {
-            // Check if the userId already exists and it's not the same as the current user's userId
-            if (!existingUser.getUserId().equals(user.getUserId()) && userService.userExists(user.getUserId())) {
-                model.addAttribute("error", "이미 존재하는 아이디입니다.");
-                existingUser.setUserId("");
-                model.addAttribute("admin", user); 
-                return "admin/adminEdit";
-            } else {
-                existingUser.setUserId(user.getUserId());
-                existingUser.setEmail(user.getEmail());
-                existingUser.setActive(user.isActive());
-            }
-
-            if (user.getPassword() != null && !user.getPassword().isEmpty()) {
-                existingUser.setPassword(user.getPassword());
-            }
-            userService.updateUser(existingUser);
+        if (!userService.updateUser(userIndex, user)) {
+            model.addAttribute("error", "이미 존재하는 아이디입니다.");
+            model.addAttribute("admin", user);
+            return "admin/adminEdit";
         }
-
         if (boardId != null) {
             return "redirect:/admin?boardId=" + boardId;
         } else {
@@ -225,42 +186,25 @@ import org.springframework.data.domain.Pageable;
         return "redirect:/admin/admins";
     }
 
-    
     @GetMapping("/admin/updatepage/user/{userIndex}")
     public String getUserEditPage(@PathVariable Integer userIndex, Model model) {
         User user = userService.getUserByUserIndex(userIndex);
         model.addAttribute("user", user);
         return "useradmin/userEdit";
     }
-    
 
     @PostMapping("/admin/update/user/{userIndex}")
     public String updateUser(@PathVariable Integer userIndex, @ModelAttribute User user, @RequestParam(required = false) Long boardId, Model model) {
-        User existingUser = userService.getUserByUserIndex(userIndex);
-        if (existingUser != null) {
-            if (!existingUser.getUserId().equals(user.getUserId()) && userService.userExists(user.getUserId())) {
-                model.addAttribute("error", "이미 존재하는 아이디입니다.");
-                existingUser.setUserId("");
-                model.addAttribute("user", user); 
-                return "useradmin/userEdit";
-            } else {
-                existingUser.setUserId(user.getUserId());
-                existingUser.setEmail(user.getEmail());
-                existingUser.setActive(user.isActive());
-            }
-            
-            if (user.getPassword() != null && !user.getPassword().isEmpty()) {
-                existingUser.setPassword(user.getPassword());
-            }
-            userService.updateUser(existingUser);
+        if (!userService.updateUser(userIndex, user)) {
+            model.addAttribute("error", "이미 존재하는 아이디입니다.");
+            model.addAttribute("user", user);
+            return "useradmin/userEdit";
         }
-
         if (boardId != null) {
             return "redirect:/admin/users?boardId=" + boardId;
         } else {
             return "redirect:/admin/users";
         }
-        
     }
 
     @PostMapping("/admin/delete/user/{userIndex}")
