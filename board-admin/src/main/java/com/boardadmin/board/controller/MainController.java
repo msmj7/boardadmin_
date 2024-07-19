@@ -24,12 +24,16 @@ public class MainController {
     public String mainPage(Model model) {
         List<Board> boards = boardService.getAllBoards();
         List<Post> recentPosts = postService.getRecentPosts();
-        
-        
+                
         model.addAttribute("boards", boards);
         model.addAttribute("recentPosts", recentPosts);
         
         
-        return "main";
+        return "main/main";
     }
+
+	@GetMapping("/mypage")
+	public String myPage(Model model) {
+		return "main/myPage";
+	}
 }
