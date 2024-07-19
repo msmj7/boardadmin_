@@ -19,6 +19,11 @@ public class MainController {
     public String mainPage(Model model) {
         List<Board> boards = boardService.getAllBoards();
         model.addAttribute("boards", boards);
-        return "main";
+        return "main/main";
+    }
+    
+    @GetMapping("/mypage")
+    public String myPage(Model model) {
+        return "main/myPage";
     }
 }
