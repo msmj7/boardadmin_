@@ -2,24 +2,32 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>로그인</title>
     <link rel="stylesheet" th:href="@{/adminlte/plugins/fontawesome-free/css/all.min.css}">
     <link rel="stylesheet" th:href="@{/adminlte/dist/css/adminlte.min.css}">
+    <!-- icheck bootstrap -->
+	<link th:href="@{/adminlte/plugins/icheck-bootstrap/icheck-bootstrap.min.css}" rel="stylesheet">
+		<!-- Google Font: Source Sans Pro -->
+	<link rel="stylesheet"
+		href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
 </head>
+
 <body class="hold-transition login-page">
     <div class="login-box">
-        <div class="login-logo">
-            <b>로그인</b>
-        </div>
+		<div class="login-logo">
+			<a href="/"><b>Pangpany</b></a>
+		</div>
         <div class="card">
             <div class="card-body login-card-body">
-                <p class="login-box-msg"></p>
+                <p class="login-box-msg">로그인</p>
+                
                 <form th:action="@{/login}" method="post">
                     <div class="input-group mb-3">
-                        <input type="text" class="form-control" name="username" placeholder="Username" required>
+                        <input type="text" class="form-control" name="username" placeholder="ID" required>
                         <div class="input-group-append">
                             <div class="input-group-text">
-                                <span class="fas fa-envelope"></span>
+                                <span class="fas fa-user"></span>
                             </div>
                         </div>
                     </div>
@@ -40,10 +48,17 @@
                         </div>
                     </div>
                 </form>
+                
                 <p class="mb-1">
                     <a th:href="@{/forgot-password}">아이디, 비밀번호 찾기</a>
                 </p>
 
+				<div th:if="${param.error}" class="alert alert-danger mt-3">
+					Invalid username or password.
+				</div>
+				<div th:if="${param.logout}" class="alert alert-info mt-3">
+					You have been logged out.
+				</div>
             </div>
         </div>
     </div>

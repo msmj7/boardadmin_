@@ -3,6 +3,7 @@ package com.boardadmin.common.config;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -32,50 +33,66 @@ public class SecurityConfig {
         this.passwordEncoder = passwordEncoder;
     }
 
+    @Autowired
+    public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
+        auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder);
+    }
+
     @Bean
-    SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    @Order(1)
+    SecurityFilterChain adminSecurityFilterChain(HttpSecurity http) throws Exception {
         http
+            .securityMatcher("/admin/**")
             .authorizeHttpRequests(authorize -> authorize
-                .requestMatchers("/", "/login", "/admin/login", "/adminlte/**", "/css/**", "/js/**").permitAll()
-                //.requestMatchers("/admin/**").hasRole("ADMIN")
-                .anyRequest().authenticated()
+                .requestMatchers("/admin/login", "/adminlte/**", "/css/**", "/js/**").permitAll()
+                .anyRequest().hasRole("ADMIN")
             )
-            //.formLogin(form -> form
-            //   .loginPage("/login")
-            //   .defaultSuccessUrl("/user", true)
-            //   .loginProcessingUrl("/login")
-             //  .permitAll()
-           //)
-           //.logout((logout) -> logout
-           //    .logoutUrl("/logout")
-           //    .logoutSuccessUrl("/login?logout")
-           //    .permitAll()
-          //)
-            .formLogin((form) -> form
+            .formLogin(form -> form
                 .loginPage("/admin/login")
                 .defaultSuccessUrl("/admin/admins", true)
                 .loginProcessingUrl("/admin/login")
                 .permitAll()
             )
-            .logout((logout) -> logout
+            .logout(logout -> logout
                 .logoutUrl("/admin/logout")
                 .logoutSuccessUrl("/admin/login?logout")
                 .permitAll()
             )
-            .exceptionHandling((exceptions) -> exceptions
-                .accessDeniedHandler(accessDeniedHandler())
+            .exceptionHandling(exceptions -> exceptions
+                .accessDeniedHandler(adminAccessDeniedHandler())
             );
 
         return http.build();
     }
 
-    @Autowired
-    public void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder);
+    @Bean
+    @Order(2)
+    SecurityFilterChain userSecurityFilterChain(HttpSecurity http) throws Exception {
+        http
+            .authorizeHttpRequests(authorize -> authorize
+                .requestMatchers("/", "/login",  "/adminlte/**", "/css/**", "/js/**").permitAll()
+                .anyRequest().hasRole("USER")
+            )
+            .formLogin(form -> form
+                .loginPage("/login")
+                .defaultSuccessUrl("/", true)
+                .loginProcessingUrl("/login")
+                .permitAll()
+            )
+            .logout(logout -> logout
+                .logoutUrl("/logout")
+                .logoutSuccessUrl("/")
+                .permitAll()
+            )
+            .exceptionHandling(exceptions -> exceptions
+                .accessDeniedHandler(userAccessDeniedHandler())
+            );
+
+        return http.build();
     }
 
     @Bean
-    AccessDeniedHandler accessDeniedHandler() {
+    AccessDeniedHandler adminAccessDeniedHandler() {
         return new AccessDeniedHandler() {
             @Override
             public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException accessDeniedException) throws IOException, ServletException {
@@ -84,6 +101,20 @@ public class SecurityConfig {
                     new SecurityContextLogoutHandler().logout(request, response, auth);
                 }
                 response.sendRedirect("/admin/login?accessDenied=true");
+            }
+        };
+    }
+
+    @Bean
+    AccessDeniedHandler userAccessDeniedHandler() {
+        return new AccessDeniedHandler() {
+            @Override
+            public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException accessDeniedException) throws IOException, ServletException {
+                Authentication auth = org.springframework.security.core.context.SecurityContextHolder.getContext().getAuthentication();
+                if (auth != null) {
+                    new SecurityContextLogoutHandler().logout(request, response, auth);
+                }
+                response.sendRedirect("/login?accessDenied=true");
             }
         };
     }

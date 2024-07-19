@@ -114,8 +114,8 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String userId) throws UsernameNotFoundException {
         User user = userRepository.findByUserId(userId);
-        if (user == null || !user.isActive() || !hasRole(user, "ADMIN")) {
-            throw new UsernameNotFoundException("User not found or not active or not an admin");
+        if (user == null || !user.isActive() ) {
+            throw new UsernameNotFoundException("User not found or not active");
         }
         return new org.springframework.security.core.userdetails.User(user.getUserId(), user.getPassword(), getAuthorities(user));
     }
