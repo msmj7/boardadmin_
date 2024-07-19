@@ -8,4 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface PostRepository extends JpaRepository<Post, Long> {
     Page<Post> findByBoard_BoardId(Long boardId, Pageable pageable);
     Page<Post> findByTitleContainingOrContentContaining(String title, String content, Pageable pageable);
+    
+    Page<Post> findByOrderByCreatedAtDesc(Pageable pageable);
+    
 }
