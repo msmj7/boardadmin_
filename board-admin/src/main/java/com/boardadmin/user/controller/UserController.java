@@ -22,8 +22,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
-
-@RequestMapping("/admin")
+@Controller
+@RequestMapping
 	public class UserController {
 
     private final UserService userService;
@@ -35,7 +35,7 @@ import org.springframework.data.domain.Pageable;
         this.userService = userService;
     }
 
-    @GetMapping("/admin")
+    @GetMapping("/admin/admins")
     public String getAdminsPage(@RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "10") int size, @RequestParam(required = false) Long boardId, @RequestParam(required = false) String search ,Model model) {
         Pageable pageable = PageRequest.of(page - 1, size);
         Page<User> adminPage = userService.getUsersByRole("ADMIN", pageable);
@@ -164,7 +164,7 @@ import org.springframework.data.domain.Pageable;
         roles.add(userService.getRoleByName("ADMIN"));
         user.setRoles(roles);
         userService.saveUser(user);
-        return "redirect:/admin";
+        return "redirect:/admin/admins";
     }
 
     @PostMapping("/admin/create/user")
@@ -215,14 +215,14 @@ import org.springframework.data.domain.Pageable;
         if (boardId != null) {
             return "redirect:/admin?boardId=" + boardId;
         } else {
-            return "redirect:/admin";
+            return "redirect:/admin/admins";
         }
     }
 
     @PostMapping("/admin/delete/admin/{userIndex}")
     public String deleteAdmin(@PathVariable Integer userIndex) {
         userService.deleteUserByUserIndex(userIndex);
-        return "redirect:/admin";
+        return "redirect:/admin/admins";
     }
 
     
