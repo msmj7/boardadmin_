@@ -5,9 +5,12 @@ import com.boardadmin.board.repository.PostRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
+import java.util.List;
+
 
 @Service
 public class PostService {
@@ -39,4 +42,13 @@ public class PostService {
     public void deletePost(Long postId) {
         postRepository.deleteById(postId);
     }
+    
+   
+
+    public List<Post> getRecentPosts() {
+        Pageable pageable = PageRequest.of(0, 5); // 최근 게시글 5개 가져오기
+        return postRepository.findByOrderByCreatedAtDesc(pageable).getContent();
+    }
+
+    
 }
