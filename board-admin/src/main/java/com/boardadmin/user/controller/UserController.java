@@ -60,7 +60,7 @@ import org.springframework.data.domain.Pageable;
         model.addAttribute("totalPages", totalPages);
         model.addAttribute("search", search);
 
-        return "useradmin/admins";
+        return "admin/admins";
     }
 
     @GetMapping("/admin/users")
@@ -106,7 +106,7 @@ import org.springframework.data.domain.Pageable;
         }
 
         model.addAttribute("boards", boardService.getAllBoards());
-        return "useradmin/adminDetail";
+        return "admin/adminDetail";
     }
 
     @GetMapping("/admin/users/{userIndex}")
@@ -135,7 +135,7 @@ import org.springframework.data.domain.Pageable;
         }
 
         model.addAttribute("boards", boardService.getAllBoards());
-        return "useradmin/newAdmin";
+        return "admin/newAdmin";
     }
 
     @GetMapping("/admin/newUser")
@@ -158,7 +158,7 @@ import org.springframework.data.domain.Pageable;
             model.addAttribute("error", "이미 존재하는 아이디입니다.");
             user.setUserId(""); // 사용자 ID 필드를 비웁니다.
             model.addAttribute("user", user); // 나머지 입력값을 유지합니다.
-            return "useradmin/newAdmin";
+            return "admin/newAdmin";
         }
         Set<Role> roles = new HashSet<>();
         roles.add(userService.getRoleByName("ADMIN"));
@@ -187,7 +187,7 @@ import org.springframework.data.domain.Pageable;
     public String getAdminEditPage(@PathVariable Integer userIndex, Model model) {
         User admin = userService.getUserByUserIndex(userIndex);
         model.addAttribute("admin", admin);
-        return "useradmin/adminEdit";
+        return "admin/adminEdit";
     }
 
     @PostMapping("/admin/update/admin/{userIndex}")
@@ -199,7 +199,7 @@ import org.springframework.data.domain.Pageable;
                 model.addAttribute("error", "이미 존재하는 아이디입니다.");
                 existingUser.setUserId("");
                 model.addAttribute("admin", user); 
-                return "useradmin/adminEdit";
+                return "admin/adminEdit";
             } else {
                 existingUser.setUserId(user.getUserId());
                 existingUser.setEmail(user.getEmail());
