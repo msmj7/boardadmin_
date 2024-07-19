@@ -155,7 +155,7 @@
 										<td th:text="${admin.email}"></td>
 										<td th:text="${admin.active}"></td>
 										<td>
-											<a th:href="@{/admin/admin/{userIndex}(userIndex=${admin.userIndex})}"
+											<a th:href="@{/admin/{userIndex}(userIndex=${admin.userIndex})}"
 												class="btn btn-info">View</a>
 											<a th:href="@{/admin/updatepage/admin/{userIndex}(userIndex=${admin.userIndex})}"
 												class="btn btn-primary">Edit</a>
@@ -175,13 +175,13 @@
                         <nav aria-label="Page navigation">
                             <ul class="pagination justify-content-center">
                                 <li class="page-item" th:classappend="${currentPage == 1} ? 'disabled'">
-                                    <a class="page-link" th:href="@{'/admin' + '?page=' + ${currentPage - 1}}">Previous</a>
+                                    <a class="page-link" th:href="@{'/admin/admins' + '?page=' + ${currentPage - 1}}">Previous</a>
                                 </li>
                                 <li class="page-item" th:each="i : ${#numbers.sequence(1, totalPages)}" th:classappend="${i == currentPage} ? 'active'">
-                                    <a class="page-link" th:href="@{'/admin'  + '?page=' + ${i}}" th:text="${i}">1</a>
+                                    <a class="page-link" th:href="@{'/admin/admins'  + '?page=' + ${i}}" th:text="${i}">1</a>
                                 </li>
                                 <li class="page-item" th:classappend="${currentPage == totalPages} ? 'disabled'">
-                                    <a class="page-link" th:href="@{'/admin' + '?page=' + ${currentPage + 1}}">Next</a>
+                                    <a class="page-link" th:href="@{'/admin/admins' + '?page=' + ${currentPage + 1}}">Next</a>
                                 </li>
                             </ul>
                         </nav>

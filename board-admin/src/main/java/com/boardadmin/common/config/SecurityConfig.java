@@ -65,6 +65,8 @@ public class SecurityConfig {
             .exceptionHandling((exceptions) -> exceptions
                 .accessDeniedHandler(accessDeniedHandler())
             );
+            
+      
 
         return http.build();
     }
