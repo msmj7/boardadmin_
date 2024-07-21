@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<meta charset="UTF-8">
+	<title>공지사항 목록</title>
+	<!-- Font Awesome Icons -->
+	<link rel="stylesheet" th:href="@{/adminlte/plugins/fontawesome-free/css/all.min.css}">
+	<!-- Theme style -->
+	<link rel="stylesheet" th:href="@{/adminlte/dist/css/adminlte.min.css}">
+	<!-- Google Font: Source Sans Pro -->
+	<link rel="stylesheet"
+		href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+	<style>
+		.pagination {
+			display: flex;
+			justify-content: center;
+			margin-top: 20px;
+		}
+
+		.page-item {
+			margin: 0 5px;
+		}
+
+		.page-link {
+			color: #007bff;
+		}
+
+		.page-link:hover {
+			text-decoration: none;
+		}
+
+		.active .page-link {
+			background-color: #007bff;
+			color: white;
+		}
+	</style>
+</head>
+
+<body class="hold-transition layout-top-nav">
+	<div class="wrapper">
+		<!-- Navbar -->
+		<nav class="main-header navbar navbar-expand-md navbar-light navbar-white">
+			<div class="container">
+				<a th:href="@{/}" class="navbar-brand">
+					<img th:src="@{/adminlte/dist/img/AdminLTELogo.png}" alt="AdminLTE 로고"
+						class="brand-image img-circle elevation-3" style="opacity: .8">
+					<span class="brand-text font-weight-light">Pangpany</span>
+				</a>
+				<div class="collapse navbar-collapse order-3" id="navbarCollapse">
+									<ul class="navbar-nav">
+										<li class="nav-item">
+											<a th:href="@{/notices}" class="nav-link">공지사항</a>
+										</li>
+										<li class="nav-item">
+											<a th:href="@{/freeboard}" class="nav-link">자유게시판</a>
+										</li>
+										<li class="nav-item">
+											<a th:href="@{/gallery}" class="nav-link">갤러리</a>
+										</li>
+									</ul>
+									<ul class="navbar-nav ml-auto">
+										<li class="nav-item" sec:authorize="isAnonymous()">
+											<a th:href="@{/login}" class="nav-link">로그인</a>
+										</li>
+										<li class="nav-item" sec:authorize="isAuthenticated()">
+											<a th:href="@{/mypage}" class="nav-link">마이페이지</a>
+										</li>
+										<form th:action="@{/logout}" method="post" style="display: inline;"
+											sec:authorize="isAuthenticated()">
+											<button type="submit" class="nav-link btn btn-link">
+												<i class="fas fa-sign-out-alt"></i> Logout
+											</button>
+										</form>
+									</ul>
+								</div>
+			</div>
+			
+		</nav>
+		<!-- /.navbar -->
+
+		<!-- Content Wrapper. Contains page content -->
+		<div class="content-wrapper">
+			<div class="content-header">
+				<div class="container">
+					<div class="row mb-2">
+						<div class="col-sm-6">
+							<h1 class="m-0"> 공지사항 </h1>
+						</div><!-- /.col -->
+					</div><!-- /.row -->
+				</div><!-- /.container-fluid -->
+			</div>
+			<!-- /.content-header -->
+
+			<!-- Main content -->
+			<div class="content">
+				<div class="row">
+					<div class="col-lg-12">
+						<div class="card">
+							<div class="card-body">
+								<div class="container">
+									<!-- 공지사항 목록 -->
+									<table class="table table-bordered">
+										<thead>
+											<tr>
+												<th>제목</th>
+												<th>작성자</th>
+												<th>작성일</th>
+											</tr>
+										</thead>
+										<tbody>
+											<tr th:each="post : ${posts}">
+												<td><a th:href="@{'/notices/' + ${post.postId}}"
+														th:text="${post.title}">공지사항 제목</a>
+												</td>
+												<td th:text="${post.authorName}">작성자</td>
+												<td th:text="${post.createdAt}">작성일</td>
+											</tr>
+										</tbody>
+									</table>
+									<!-- 페이지 매김 -->
+									<nav>
+										<ul class="pagination">
+											<li class="page-item" th:classappend="${currentPage == 1} ? 'disabled'">
+												<a class="page-link"
+													th:href="@{'/notices?page=' + (${currentPage} - 1) + '&size=' + ${size}}"
+													aria-label="Previous">
+													<span aria-hidden="true">&laquo;</span>
+												</a>
+											</li>
+											<li class="page-item" th:each="i : ${#numbers.sequence(1, totalPages)}"
+												th:classappend="${i == currentPage} ? 'active'">
+												<a class="page-link"
+													th:href="@{'/notices?page=' + ${i} + '&size=' + ${size}}"
+													th:text="${i}">1</a>
+											</li>
+											<li class="page-item"
+												th:classappend="${currentPage == totalPages} ? 'disabled'">
+												<a class="page-link"
+													th:href="@{'/notices?page=' + (${currentPage} + 1) + '&size=' + ${size}}"
+													aria-label="Next">
+													<span aria-hidden="true">&raquo;</span>
+												</a>
+											</li>
+										</ul>
+									</nav>
+								</div><!-- /.container-fluid -->
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<!-- /.content -->
+		</div>
+		<!-- /.content-wrapper -->
+
+		<!-- Main Footer -->
+		<footer class="main-footer">
+			<div class="float-right d-none d-sm-inline">
+				Anything you want
+			</div>
+			<!-- Default to the left -->
+			<strong>Copyright &copy; 2024 <a href="#">Pangpany</a>.</strong> All rights reserved.
+		</footer>
+	</div>
+	<!-- ./wrapper -->
+
+	<!-- REQUIRED SCRIPTS -->
+	<!-- jQuery -->
+	<script th:src="@{/adminlte/plugins/jquery/jquery.min.js}"></script>
+	<!-- Bootstrap 4 -->
+	<script th:src="@{/adminlte/plugins/bootstrap/js/bootstrap.bundle.min.js}"></script>
+	<!-- AdminLTE App -->
+	<script th:src="@{/adminlte/dist/js/adminlte.min.js}"></script>
+</body>
+
+</html>
