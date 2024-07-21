@@ -22,4 +22,6 @@ public interface UserRepository extends JpaRepository<User, Integer> {
     //검색 기능 추가
  // 검색 기능 추가
     Page<User> findByUserIdContainingOrEmailContainingAndRolesRoleName(String userId, String email, String role, Pageable pageable);
+
+    User findByEmail(String email);
 }

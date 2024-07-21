@@ -37,4 +37,7 @@ public interface UserService {
     Page<User> getUsersPage(int page, int size, String search);
 
     boolean updateUser(Integer userIndex, User user);
+    
+    
+    User getUserByEmail(String email);
 }
