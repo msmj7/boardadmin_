@@ -45,6 +45,7 @@ public class UserController {
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", totalPages);
         model.addAttribute("search", search);
+        model.addAttribute("pageSize", size);
 
         return "admin/admins";
     }
@@ -66,6 +67,7 @@ public class UserController {
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", totalPages);
         model.addAttribute("search", search);
+        model.addAttribute("pageSize", size);
 
         return "useradmin/users";
     }
@@ -212,4 +214,6 @@ public class UserController {
         userService.deleteUserByUserIndex(userIndex);
         return "redirect:/admin/users";
     }
+    
+    
 }
