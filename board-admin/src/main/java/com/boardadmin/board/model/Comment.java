@@ -15,6 +15,11 @@ public class Comment {
     private Long commentId;
 
     @NotNull
+    @ManyToOne
+    @JoinColumn(name = "post_id", nullable = false)
+    private Post post;
+
+    @NotNull
     @Column(nullable = false)
     private String content;
 
@@ -23,10 +28,18 @@ public class Comment {
     @Column(nullable = false)
     private String authorName;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "post_id", nullable = false)
-    private Post post;
-
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
+    
+    @PreUpdate
+    public void preUpdate() {
+        createdAt = LocalDateTime.now();
+    }
+
+    public void setPostId(Long postId) {
+        if (this.post == null) {
+            this.post = new Post();
+        }
+        this.post.setPostId(postId);
+    }
 }
