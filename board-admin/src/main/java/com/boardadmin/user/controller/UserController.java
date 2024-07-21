@@ -6,9 +6,7 @@ import com.boardadmin.user.model.Role;
 import com.boardadmin.user.model.User;
 import com.boardadmin.user.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -22,10 +20,9 @@ import org.springframework.data.domain.Page;
 @RequestMapping
 public class UserController {
 
-    protected final UserService userService;
-    protected final BoardService boardService;
+    private final UserService userService;
+    private final BoardService boardService;
 
-    @Autowired
     public UserController(UserService userService, BoardService boardService) {
         this.userService = userService;
         this.boardService = boardService;
@@ -48,7 +45,6 @@ public class UserController {
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", totalPages);
         model.addAttribute("search", search);
-        model.addAttribute("pageSize", size);
 
         return "admin/admins";
     }
@@ -70,7 +66,6 @@ public class UserController {
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", totalPages);
         model.addAttribute("search", search);
-        model.addAttribute("pageSize", size);
 
         return "useradmin/users";
     }
@@ -216,28 +211,5 @@ public class UserController {
     public String deleteUser(@PathVariable Integer userIndex) {
         userService.deleteUserByUserIndex(userIndex);
         return "redirect:/admin/users";
-    }
-
-    protected String getCurrentUserId() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication != null && authentication.getPrincipal() instanceof UserDetails) {
-            return ((UserDetails) authentication.getPrincipal()).getUsername();
-        }
-        return null;
-    }
-
-    protected void addCurrentUserToModel(Model model) {
-        String currentUserId = getCurrentUserId();
-        User user = userService.getUserByUserId(currentUserId);
-        model.addAttribute("user", user);
-    }
-
-    protected String updateUser(Integer userIndex, User user, Model model, String errorView, String successRedirect) {
-        if (!userService.updateUser(userIndex, user)) {
-            model.addAttribute("error", "이미 존재하는 아이디입니다.");
-            model.addAttribute("user", user);
-            return errorView;
-        }
-        return successRedirect;
     }
 }

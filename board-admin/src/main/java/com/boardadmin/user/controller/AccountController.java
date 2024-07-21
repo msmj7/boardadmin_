@@ -9,6 +9,7 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -20,10 +21,12 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Controller
-public class AccountController extends UserController {
+public class AccountController {
+
+    private final UserService userService;
 
     public AccountController(UserService userService) {
-        super(userService, null); // BoardService를 null로 설정
+        this.userService = userService;
     }
 
     @GetMapping("/login")
@@ -50,7 +53,7 @@ public class AccountController extends UserController {
             model.addAttribute("user", user);
             return "login/signup";
         }
-
+        
         Set<Role> roles = new HashSet<>();
         roles.add(userService.getRoleByName("USER"));
         user.setRoles(roles);
@@ -58,13 +61,15 @@ public class AccountController extends UserController {
         userService.saveUser(user);
         return "redirect:/login";
     }
-
+    
     @GetMapping("/account/update")
     public String showUpdateForm(Model model) {
-        addCurrentUserToModel(model);
+        String currentUserId = getCurrentUserId();
+        User user = userService.getUserByUserId(currentUserId);
+        model.addAttribute("user", user);
         return "main/update";
     }
-
+    
     @PostMapping("/account/update")
     public String updateAccount(@ModelAttribute User user, Model model) {
         String currentUserId = getCurrentUserId();
@@ -82,23 +87,42 @@ public class AccountController extends UserController {
 
     @GetMapping("/account/delete")
     public String showDeleteForm(Model model) {
-        addCurrentUserToModel(model);
+        String currentUserId = getCurrentUserId();
+        User user = userService.getUserByUserId(currentUserId);
+        model.addAttribute("user", user);
         return "main/delete";
     }
-
+    
     @PostMapping("/account/delete")
     public String deleteAccount(HttpServletRequest request, HttpServletResponse response) {
         String currentUserId = getCurrentUserId();
         User user = userService.getUserByUserId(currentUserId);
         user.setActive(false);
         userService.saveUser(user);
-
+        
         // 로그아웃 처리
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         if (auth != null) {
             new SecurityContextLogoutHandler().logout(request, response, auth);
         }
-
+        
         return "redirect:/";
+    }
+
+    private String getCurrentUserId() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null && authentication.getPrincipal() instanceof UserDetails) {
+            return ((UserDetails) authentication.getPrincipal()).getUsername();
+        }
+        return null;
+    }
+
+    protected String updateUser(Integer userIndex, User user, Model model, String errorView, String successRedirect) {
+        if (!userService.updateUser(userIndex, user)) {
+            model.addAttribute("error", "이미 존재하는 아이디입니다.");
+            model.addAttribute("user", user);
+            return errorView;
+        }
+        return successRedirect;
     }
 }
