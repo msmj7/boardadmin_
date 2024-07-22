@@ -12,6 +12,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -25,10 +26,12 @@ public class AccountController {
 
     private final UserService userService;
     private final EmailService emailService;
+    private final PasswordEncoder passwordEncoder;
 
-    public AccountController(UserService userService, EmailService emailService) {
+    public AccountController(UserService userService, EmailService emailService, PasswordEncoder passwordEncoder) {
         this.userService = userService;
         this.emailService = emailService;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @GetMapping("/login")
@@ -96,9 +99,15 @@ public class AccountController {
     }
 
     @PostMapping("/account/delete")
-    public String deleteAccount(HttpServletRequest request, HttpServletResponse response) {
+    public String deleteAccount(@RequestParam("password") String password, HttpServletRequest request, HttpServletResponse response, Model model) {
         String currentUserId = getCurrentUserId();
         User user = userService.getUserByUserId(currentUserId);
+
+        if (!passwordEncoder.matches(password, user.getPassword())) {
+            model.addAttribute("error", "비밀번호가 올바르지 않습니다.");
+            return "main/delete";
+        }
+
         user.setActive(false);
         userService.saveUser(user);
 
