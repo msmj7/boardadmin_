@@ -43,6 +43,7 @@
 						data-accordion="false">
 						<li class="nav-item menu-close">
 							<a href="#" class="nav-link ">
+								<i class="fa fa-user nav-icon"></i>
 								<p>
 									사용자 관리
 									<i class="right fas fa-angle-left"></i>
@@ -51,20 +52,21 @@
 							<ul class="nav nav-treeview">
 								<li class="nav-item">
 									<a href="/admin/admins" class="nav-link ">
-										<i class="far fa-circle nav-icon"></i>
+										<i class="far  nav-icon"></i>
 										<p>관리자</p>
 									</a>
 								</li>
 								<li class="nav-item">
 									<a href="/admin/users" class="nav-link">
-										<i class="far fa-circle nav-icon"></i>
+										<i class="far nav-icon"></i>
 										<p>회원</p>
 									</a>
 								</li>
 							</ul>
 						</li>
 						<li class="nav-item menu-open">
-							<a href="/boards" class="nav-link active">
+							<a href="#" class="nav-link active">
+								<i class="fa fa-window-maximize nav-icon"></i>
 								<p>
 									게시판 관리
 									<i class="right fas fa-angle-left"></i>
@@ -72,23 +74,27 @@
 							</a>
 							<ul class="nav nav-treeview">
 								<li class="nav-item">
-									<a href="/boards" class="nav-link">
+									<a href="/admin/boards" class="nav-link"
+										th:classappend="${servletPath == '/boards'} ? 'active'">
 										<i class="far fa-circle nav-icon"></i>
 										<p>게시판 목록</p>
 									</a>
 								</li>
-								<li class="nav-item" th:each="board : ${boards}"
-									th:with="boardUrl='/posts/board/' + ${board.boardId} , editUrl='/posts/edit/' + ${post.postId}">
-									<a th:href="@{${boardUrl}}" class="btn  btn-sm nav-link  text-left"
-										th:classappend="${servletPath == editUrl} ? 'active'">
-										<i class="far nav-icon"
-											th:classappend="${servletPath == editUrl} ? 'fa-circle'"></i>
+								<li class="nav-item" th:each="board : ${boards}">
+									<a th:href="@{'/admin/posts/board/' + ${board.boardId}}"
+										class="btn  btn-sm nav-link  text-left">
+										<i class="far nav-icon"></i>
 										<p th:text="${board.name}"></p>
 									</a>
 								</li>
 							</ul>
 						</li>
-
+						<li class="nav-item">
+							<a href="/admin/comments" class="nav-link ">
+								<i class="nav-icon fas fa-comments"></i>
+								<p>댓글 관리</p>
+							</a>
+						</li>
 					</ul>
 				</nav>
 				<!-- /.sidebar-menu -->
@@ -111,10 +117,11 @@
 				<div class="container-fluid">
 					<div class="card">
 						<div class="card-header">
-							<a th:href="@{'/posts/board/' + ${post.board.boardId}}" class="btn btn-secondary">Back to Posts</a>
+							<a th:href="@{'/admin/posts/board/' + ${post.board.boardId}}" class="btn btn-secondary">Back to
+								Posts</a>
 						</div>
 						<div class="card-body">
-							<form th:action="@{'/posts/edit/' + ${post.postId}}" th:object="${post}" method="post">
+							<form th:action="@{'/admin/posts/edit/' + ${post.postId}}" th:object="${post}" method="post">
 								<div class="form-group">
 									<label for="title">Title</label>
 									<input type="text" id="title" class="form-control" th:field="*{title}" />
@@ -135,7 +142,7 @@
 						</div>
 						<!-- Back Button -->
 						<div class="card-footer">
-							
+
 						</div>
 					</div>
 				</div><!-- /.container-fluid -->

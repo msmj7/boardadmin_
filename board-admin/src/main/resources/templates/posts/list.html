@@ -6,6 +6,15 @@
 	<title>Post List</title>
 	<link rel="stylesheet" th:href="@{/adminlte/plugins/fontawesome-free/css/all.min.css}">
 	<link rel="stylesheet" th:href="@{/adminlte/dist/css/adminlte.min.css}">
+	
+	<style>
+		.post-header {
+			display: flex;
+			justify-content: space-between;
+			flex: 0 0 100%;
+			max-width: 100%;
+		}
+	</style>
 </head>
 
 <body class="hold-transition sidebar-mini">
@@ -43,6 +52,7 @@
 						data-accordion="false">
 						<li class="nav-item menu-close">
 							<a href="#" class="nav-link ">
+								<i class="fa fa-user nav-icon"></i>
 								<p>
 									사용자 관리
 									<i class="right fas fa-angle-left"></i>
@@ -51,20 +61,21 @@
 							<ul class="nav nav-treeview">
 								<li class="nav-item">
 									<a href="/admin/admins" class="nav-link ">
-										<i class="far fa-circle nav-icon"></i>
+										<i class="far  nav-icon"></i>
 										<p>관리자</p>
 									</a>
 								</li>
 								<li class="nav-item">
 									<a href="/admin/users" class="nav-link">
-										<i class="far fa-circle nav-icon"></i>
+										<i class="far nav-icon"></i>
 										<p>회원</p>
 									</a>
 								</li>
 							</ul>
 						</li>
 						<li class="nav-item menu-open">
-							<a href="/boards" class="nav-link active">
+							<a href="#" class="nav-link active">
+								<i class="fa fa-window-maximize nav-icon"></i>
 								<p>
 									게시판 관리
 									<i class="right fas fa-angle-left"></i>
@@ -72,21 +83,27 @@
 							</a>
 							<ul class="nav nav-treeview">
 								<li class="nav-item">
-									<a href="/boards" class="nav-link">
+									<a href="/admin/boards" class="nav-link"
+										th:classappend="${servletPath == '/boards'} ? 'active'">
 										<i class="far fa-circle nav-icon"></i>
 										<p>게시판 목록</p>
 									</a>
 								</li>
 								<li class="nav-item" th:each="board : ${boards}">
-									<a th:href="@{'/posts/board/' + ${board.boardId}}"
+									<a th:href="@{'/admin/posts/board/' + ${board.boardId}}"
 										class="btn  btn-sm nav-link  text-left">
-										<i class="far fa-circle nav-icon"></i>
+										<i class="far nav-icon"></i>
 										<p th:text="${board.name}"></p>
 									</a>
 								</li>
 							</ul>
 						</li>
-
+						<li class="nav-item">
+							<a href="/admin/comments" class="nav-link ">
+								<i class="nav-icon fas fa-comments"></i>
+								<p>댓글 관리</p>
+							</a>
+						</li>
 					</ul>
 				</nav>
 				<!-- /.sidebar-menu -->
@@ -98,11 +115,18 @@
 			<div class="content-header">
 				<div class="container-fluid">
 					<div class="row mb-2">
-						<div class="col-sm-6">
+						<div class="col-sm-6 post-header">
 							<h1 class="m-0">Post List</h1>
-							<form th:action="@{/posts/search}" method="get">
-							    <input type="text" name="keyword" placeholder="Search posts" />
-							    <button type="submit">Search</button>
+							<form th:action="@{/admin/posts/search}" method="get">
+								<div class="input-group input-group-sm">
+									<input type="text" name="keyword" class="form-control" placeholder="Search posts" />
+									<div class="input-group-append">
+										<button type="submit" class="btn btn-default">
+											<i class="fas fa-search"></i>
+										</button>
+									</div>
+								</div>
+
 							</form>
 
 						</div><!-- /.col -->
@@ -115,10 +139,11 @@
 					<div class="card">
 						<div class="card-header">
 							<!-- Back Button -->
-							<a th:href="@{'/boards'}" class="btn btn-secondary">Back to
+							<a th:href="@{'/admin/boards'}" class="btn btn-secondary">Back to
 								boards</a>
 							<div class="card-tools">
-								<a th:href="@{'/posts/new?boardId=' + ${boardId}}" class="btn btn-success btn-sm">Create
+								<a th:href="@{'/admin/posts/new?boardId=' + ${boardId}}"
+									class="btn btn-success btn-sm">Create
 									New Post</a>
 							</div>
 						</div>
@@ -138,11 +163,11 @@
 										<td th:text="${post.authorName}"></td>
 										<td th:text="${post.content}"></td>
 										<td>
-											<a th:href="@{'/posts/view/' + ${post.postId}}"
+											<a th:href="@{'/admin/posts/view/' + ${post.postId}}"
 												class="btn btn-primary btn-sm">View</a>
-											<a th:href="@{'/posts/edit/' + ${post.postId}}"
+											<a th:href="@{'/admin/posts/edit/' + ${post.postId}}"
 												class="btn btn-secondary btn-sm">Edit</a>
-											<a th:href="@{'/posts/delete/' + ${post.postId}}"
+											<a th:href="@{'/admin/posts/delete/' + ${post.postId}}"
 												class="btn btn-danger btn-sm">Delete</a>
 										</td>
 									</tr>
@@ -154,16 +179,18 @@
 								<ul class="pagination justify-content-center">
 									<li class="page-item" th:classappend="${currentPage == 1} ? 'disabled'">
 										<a class="page-link"
-											th:href="@{'/posts/board/' + ${boardId} + '?page=' + ${currentPage - 1}}">Previous</a>
+											th:href="@{'/admin/posts/board/' + ${boardId} + '?page=' + ${currentPage - 1}}">Previous</a>
 									</li>
 									<li class="page-item" th:each="i : ${#numbers.sequence(1, totalPages)}"
 										th:classappend="${i == currentPage} ? 'active'">
-										<a class="page-link" th:href="@{'/posts/board/' + ${boardId} + '?page=' + ${i}}"
+										<a class="page-link"
+											th:href="@{'/admin/posts/board/' + ${boardId} + '?page=' + ${i}}"
 											th:text="${i}">1</a>
 									</li>
 									<li class="page-item" th:classappend="${currentPage == totalPages} ? 'disabled'">
 										<a class="page-link"
-											th:href="@{'/posts/board/' + ${boardId} + '?page=' + ${currentPage + 1}}">&nbsp; &nbsp; Next&nbsp; &nbsp; </a>
+											th:href="@{'/admin/posts/board/' + ${boardId} + '?page=' + ${currentPage + 1}}">&nbsp;
+											&nbsp; Next&nbsp; &nbsp; </a>
 									</li>
 								</ul>
 							</nav>
