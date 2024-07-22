@@ -48,34 +48,34 @@
 					<span class="brand-text font-weight-light">Pangpany</span>
 				</a>
 				<div class="collapse navbar-collapse order-3" id="navbarCollapse">
-									<ul class="navbar-nav">
-										<li class="nav-item">
-											<a th:href="@{/notices}" class="nav-link">공지사항</a>
-										</li>
-										<li class="nav-item">
-											<a th:href="@{/freeboard}" class="nav-link">자유게시판</a>
-										</li>
-										<li class="nav-item">
-											<a th:href="@{/gallery}" class="nav-link">갤러리</a>
-										</li>
-									</ul>
-									<ul class="navbar-nav ml-auto">
-										<li class="nav-item" sec:authorize="isAnonymous()">
-											<a th:href="@{/login}" class="nav-link">로그인</a>
-										</li>
-										<li class="nav-item" sec:authorize="isAuthenticated()">
-											<a th:href="@{/mypage}" class="nav-link">마이페이지</a>
-										</li>
-										<form th:action="@{/logout}" method="post" style="display: inline;"
-											sec:authorize="isAuthenticated()">
-											<button type="submit" class="nav-link btn btn-link">
-												<i class="fas fa-sign-out-alt"></i> Logout
-											</button>
-										</form>
-									</ul>
-								</div>
+					<ul class="navbar-nav">
+						<li class="nav-item">
+							<a th:href="@{/notices}" class="nav-link">공지사항</a>
+						</li>
+						<li class="nav-item">
+							<a th:href="@{/freeboard}" class="nav-link">자유게시판</a>
+						</li>
+						<li class="nav-item">
+							<a th:href="@{/gallery}" class="nav-link">갤러리</a>
+						</li>
+					</ul>
+					<ul class="navbar-nav ml-auto">
+						<li class="nav-item" sec:authorize="isAnonymous()">
+							<a th:href="@{/login}" class="nav-link">로그인</a>
+						</li>
+						<li class="nav-item" sec:authorize="isAuthenticated()">
+							<a th:href="@{/mypage}" class="nav-link">마이페이지</a>
+						</li>
+						<form th:action="@{/logout}" method="post" style="display: inline;"
+							sec:authorize="isAuthenticated()">
+							<button type="submit" class="nav-link btn btn-link">
+								<i class="fas fa-sign-out-alt"></i> Logout
+							</button>
+						</form>
+					</ul>
+				</div>
 			</div>
-			
+
 		</nav>
 		<!-- /.navbar -->
 
@@ -87,6 +87,12 @@
 						<div class="col-sm-6">
 							<h1 class="m-0"> 공지사항 </h1>
 						</div><!-- /.col -->
+						<div class="col-sm-6">
+							<ol class="breadcrumb float-sm-right">
+								<li class="breadcrumb-item"><a th:href="@{/}">Home</a></li>
+								<li class="breadcrumb-item active">공지사항</li>
+							</ol>
+						</div><!-- /.col -->
 					</div><!-- /.row -->
 				</div><!-- /.container-fluid -->
 			</div>
@@ -94,11 +100,12 @@
 
 			<!-- Main content -->
 			<div class="content">
-				<div class="row">
+				<div class="container">
+				<div class="row mb-2">
 					<div class="col-lg-12">
 						<div class="card">
 							<div class="card-body">
-								<div class="container">
+								
 									<!-- 공지사항 목록 -->
 									<table class="table table-bordered">
 										<thead>
@@ -114,7 +121,7 @@
 														th:text="${post.title}">공지사항 제목</a>
 												</td>
 												<td th:text="${post.authorName}">작성자</td>
-												<td th:text="${post.createdAt}">작성일</td>
+												<td th:text="${#temporals.format(post.createdAt, 'yyyy-MM-dd')}">작성일</td>
 											</tr>
 										</tbody>
 									</table>
