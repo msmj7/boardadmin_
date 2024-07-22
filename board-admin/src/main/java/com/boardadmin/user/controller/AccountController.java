@@ -1,6 +1,5 @@
 package com.boardadmin.user.controller;
 
-import com.boardadmin.user.model.Role;
 import com.boardadmin.user.model.User;
 import com.boardadmin.user.service.EmailService;
 import com.boardadmin.user.service.UserService;
@@ -12,13 +11,10 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashSet;
-import java.util.Set;
 import java.util.UUID;
 
 @Controller
@@ -26,12 +22,10 @@ public class AccountController {
 
     private final UserService userService;
     private final EmailService emailService;
-    private final PasswordEncoder passwordEncoder;
 
-    public AccountController(UserService userService, EmailService emailService, PasswordEncoder passwordEncoder) {
+    public AccountController(UserService userService, EmailService emailService) {
         this.userService = userService;
         this.emailService = emailService;
-        this.passwordEncoder = passwordEncoder;
     }
 
     @GetMapping("/login")
@@ -59,9 +53,7 @@ public class AccountController {
             return "login/signup";
         }
         
-        Set<Role> roles = new HashSet<>();
-        roles.add(userService.getRoleByName("USER"));
-        user.setRoles(roles);
+        userService.assignRole(user, "USER");
         user.setActive(true);
         userService.saveUser(user);
         return "redirect:/login";
@@ -103,7 +95,7 @@ public class AccountController {
         String currentUserId = getCurrentUserId();
         User user = userService.getUserByUserId(currentUserId);
 
-        if (!passwordEncoder.matches(password, user.getPassword())) {
+        if (!userService.checkPassword(user, password)) {
             model.addAttribute("error", "비밀번호가 올바르지 않습니다.");
             return "main/delete";
         }
@@ -122,7 +114,6 @@ public class AccountController {
 
     @GetMapping("/password/reset")
     public String showPasswordResetForm() {
-    	
         return "login/findPw";
     }
 
@@ -136,8 +127,7 @@ public class AccountController {
         }
 
         String tempPassword = UUID.randomUUID().toString().substring(0, 8);
-        user.setPassword(tempPassword); // 임시 비밀번호 설정
-        userService.updateUser(user);
+        userService.updateUserPassword(user, tempPassword);
 
         String subject = "[Pangpany] 임시 비밀번호 안내";
         String text = "귀하의 임시 비밀번호는 " + tempPassword + " 입니다. 로그인 후 비밀번호를 변경해주세요.";
@@ -189,7 +179,7 @@ public class AccountController {
         model.addAttribute("success", "아이디가 이메일로 전송되었습니다.");
         return "login/findId";
     }
-    
+
     private String getCurrentUserId() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null && authentication.getPrincipal() instanceof UserDetails) {

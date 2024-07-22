@@ -159,10 +159,42 @@ public class UserServiceImpl implements UserService, UserDetailsService {
                 .map(role -> new org.springframework.security.core.authority.SimpleGrantedAuthority("ROLE_" + role.getRoleName()))
                 .collect(Collectors.toList());
     }
-    
-    
+
     @Override
     public User getUserByEmail(String email) {
         return userRepository.findByEmail(email);
+    }
+
+    @Override
+    public void assignRole(User user, String roleName) {
+        Role role = getRoleByName(roleName);
+        user.getRoles().add(role);
+    }
+
+    @Override
+    public boolean checkPassword(User user, String rawPassword) {
+        return passwordEncoder.matches(rawPassword, user.getPassword());
+    }
+
+    @Override
+    public void initializeRoles() {
+        if (roleRepository.count() == 0) {
+            createRole("ADMIN");
+            createRole("USER");
+        }
+    }
+
+    @Override
+    public void updateUserPassword(User user, String newPassword) {
+        user.setPassword(passwordEncoder.encode(newPassword));
+        userRepository.save(user);
+    }
+
+    private void createRole(String roleName) {
+        if (roleRepository.findByRoleName(roleName) == null) {
+            Role role = new Role();
+            role.setRoleName(roleName);
+            roleRepository.save(role);
+        }
     }
 }

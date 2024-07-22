@@ -37,7 +37,14 @@ public interface UserService {
     Page<User> getUsersPage(int page, int size, String search);
 
     boolean updateUser(Integer userIndex, User user);
-    
-    
+
     User getUserByEmail(String email);
+
+    void assignRole(User user, String roleName);
+
+    boolean checkPassword(User user, String rawPassword);
+
+    void initializeRoles();
+
+    void updateUserPassword(User user, String newPassword);
 }
