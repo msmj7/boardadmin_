@@ -62,7 +62,7 @@
                         </ul>
                     </li>
                     <li class="nav-item menu-close">
-                        <a href="/boards" class="nav-link">
+                        <a href="#" class="nav-link">
                             <i class="fa fa-window-maximize nav-icon"></i>
                             <p>
                                 게시판 관리
@@ -71,13 +71,13 @@
                         </a>
                         <ul class="nav nav-treeview">
                             <li class="nav-item">
-                                <a href="/boards" class="nav-link" th:classappend="${servletPath == '/boards'} ? 'active'">
+                                <a href="/admin/boards" class="nav-link" th:classappend="${servletPath == '/boards'} ? 'active'">
                                     <i class="far fa-circle nav-icon"></i>
                                     <p>게시판 목록</p>
                                 </a>
                             </li>
                             <li class="nav-item" th:each="board : ${boards}">
-                                <a th:href="@{'/posts/board/' + ${board.boardId}}"
+                                <a th:href="@{'/admin/posts/board/' + ${board.boardId}}"
                                    class="btn  btn-sm nav-link  text-left">
                                     <i class="far nav-icon"></i>
                                     <p th:text="${board.name}"></p>
@@ -137,7 +137,7 @@
                                 <input type="hidden" name="_csrf" th:value="${_csrf.token}"/>
                                 <button type="button" class="btn btn-danger" th:onclick="'deleteUser(' + ${user.userIndex} + ')'">Delete</button>
                             </form>
-                            <a href="/admin/users" class="btn btn-secondary">목록</a>
+                            <a href="/admin/users" class="btn btn-secondary">List</a>
                         </div>
                     </div>
                 </div>

@@ -2,7 +2,7 @@
 <html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
 <head>
     <meta charset="UTF-8">
-    <title>관리자 상세</title>
+    <title>사용자관리-관리자</title>
     <link rel="stylesheet" th:href="@{/adminlte/plugins/fontawesome-free/css/all.min.css}">
     <link rel="stylesheet" th:href="@{/adminlte/dist/css/adminlte.min.css}">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
@@ -11,15 +11,15 @@
 <body class="hold-transition sidebar-mini">
     <div class="wrapper">
         <!-- header -->
-        <th:block th:replace="fragments/header :: headerFragment"></th:block>
+        <th:block th:replace="~{fragments/header :: headerFragment}"></th:block>
         <!-- sidebar -->
-        <th:block th:replace="fragments/sidebar :: sidebarFragment"></th:block>
+        <th:block th:replace="~{fragments/sidebar :: sidebarFragment}"></th:block>
         <!-- content -->
         <div class="content-wrapper" layout:fragment="content">
             <!-- Dynamic content goes here -->
         </div>
         <!-- footer -->
-        <th:block th:replace="fragments/footer :: footerFragment"></th:block>
+        <th:block th:replace="~{fragments/footer :: footerFragment}"></th:block>
     </div>
     <script th:src="@{/adminlte/plugins/jquery/jquery.min.js}"></script>
     <script th:src="@{/adminlte/plugins/bootstrap/js/bootstrap.bundle.min.js}"></script>
