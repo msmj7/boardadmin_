@@ -44,7 +44,7 @@ public class AccountController {
     @GetMapping("/signup")
     public String showSignUpForm(Model model) {
         model.addAttribute("user", new User());
-        return "login/signup";
+        return "login/signUp";
     }
 
     @PostMapping("/signup")
@@ -113,12 +113,13 @@ public class AccountController {
 
     @GetMapping("/password/reset")
     public String showPasswordResetForm() {
+    	
         return "login/findPw";
     }
 
     @PostMapping("/password/reset")
     public String resetPassword(@RequestParam("email") String email, Model model) {
-        User user = userService.getUserByUserId(email);
+        User user = userService.getUserByEmail(email);
 
         if (user == null) {
             model.addAttribute("error", "등록된 이메일이 없습니다.");
@@ -126,7 +127,7 @@ public class AccountController {
         }
 
         String tempPassword = UUID.randomUUID().toString().substring(0, 8);
-        user.setPassword(tempPassword);
+        user.setPassword(tempPassword); // 임시 비밀번호 설정
         userService.updateUser(user);
 
         String subject = "임시 비밀번호 안내";

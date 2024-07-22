@@ -6,7 +6,9 @@ import com.boardadmin.user.model.Role;
 import com.boardadmin.user.model.User;
 import com.boardadmin.user.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -20,8 +22,8 @@ import org.springframework.data.domain.Page;
 @RequestMapping
 public class UserController {
 
-    private final UserService userService;
-    private final BoardService boardService;
+    protected final UserService userService;
+    protected final BoardService boardService;
 
     public UserController(UserService userService, BoardService boardService) {
         this.userService = userService;
@@ -45,6 +47,7 @@ public class UserController {
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", totalPages);
         model.addAttribute("search", search);
+        model.addAttribute("pageSize", size);
 
         return "admin/admins";
     }
@@ -66,6 +69,7 @@ public class UserController {
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", totalPages);
         model.addAttribute("search", search);
+        model.addAttribute("pageSize", size);
 
         return "useradmin/users";
     }
