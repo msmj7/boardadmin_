@@ -118,6 +118,6 @@ public class PostController {
     public String deletePost(@PathVariable Long id) {
         Long boardId = postService.getPostById(id).map(Post::getBoard).map(Board::getBoardId).orElse(null);
         postService.deletePost(id);
-        return "redirect:/posts/board/" + (boardId != null ? boardId : "");
+        return "redirect:/admin/posts/board/" + (boardId != null ? boardId : "");
     }
 }
