@@ -109,7 +109,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
     @Override
     public Page<User> getUsersByRole(String role, Pageable pageable) {
-        return userRepository.findByRolesRoleName(role, pageable);
+        return userRepository.findByRolesRoleNameOrderByCreatedAtDesc(role, pageable);
     }
 
     @Override

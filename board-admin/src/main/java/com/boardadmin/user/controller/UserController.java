@@ -13,7 +13,11 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.springframework.data.domain.Page;
@@ -34,6 +38,7 @@ public class UserController {
     public String getAdminsPage(@RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "10") int size, @RequestParam(required = false) Long boardId, @RequestParam(required = false) String search, Model model) {
         Page<User> adminPage = userService.getAdminsPage(page, size, search);
 
+        int totalElements = (int) adminPage.getTotalElements();
         int totalPages = adminPage.getTotalPages() > 0 ? adminPage.getTotalPages() : 1;
 
         if (boardId != null) {
@@ -44,6 +49,7 @@ public class UserController {
 
         model.addAttribute("boards", boardService.getAllBoards());
         model.addAttribute("admins", adminPage.getContent());
+        model.addAttribute("totalElements", totalElements);
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", totalPages);
         model.addAttribute("search", search);
@@ -52,10 +58,13 @@ public class UserController {
         return "admin/admins";
     }
 
+
+
     @GetMapping("/admin/users")
     public String getUsersPage(@RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "10") int size, @RequestParam(required = false) Long boardId, @RequestParam(required = false) String search, Model model) {
         Page<User> userPage = userService.getUsersPage(page, size, search);
 
+        int totalElements = (int) userPage.getTotalElements();
         int totalPages = userPage.getTotalPages() > 0 ? userPage.getTotalPages() : 1;
 
         if (boardId != null) {
@@ -66,6 +75,7 @@ public class UserController {
 
         model.addAttribute("boards", boardService.getAllBoards());
         model.addAttribute("users", userPage.getContent());
+        model.addAttribute("totalElements", totalElements);
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", totalPages);
         model.addAttribute("search", search);
@@ -74,10 +84,20 @@ public class UserController {
         return "useradmin/users";
     }
 
+
+
     @GetMapping("/admin/{userIndex}")
     public String getAdminDetailPage(@PathVariable Integer userIndex, @RequestParam(required = false) Long boardId, Model model) {
         User admin = userService.getUserByUserIndex(userIndex);
+
+        // 날짜 포맷터 설정
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        String formattedCreatedAt = admin.getCreatedAt().format(formatter);
+        String formattedUpdatedAt = admin.getUpdatedAt().format(formatter);
+
         model.addAttribute("admin", admin);
+        model.addAttribute("formattedCreatedAt", formattedCreatedAt);
+        model.addAttribute("formattedUpdatedAt", formattedUpdatedAt);
 
         if (boardId != null) {
             Board board = boardService.getBoardById(boardId)
@@ -89,10 +109,19 @@ public class UserController {
         return "admin/adminDetail";
     }
 
+
     @GetMapping("/admin/users/{userIndex}")
     public String getUserDetailPage(@PathVariable Integer userIndex, @RequestParam(required = false) Long boardId, Model model) {
         User user = userService.getUserByUserIndex(userIndex);
+
+        // 날짜 포맷터 설정
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        String formattedCreatedAt = user.getCreatedAt().format(formatter);
+        String formattedUpdatedAt = user.getUpdatedAt().format(formatter);
+
         model.addAttribute("user", user);
+        model.addAttribute("formattedCreatedAt", formattedCreatedAt);
+        model.addAttribute("formattedUpdatedAt", formattedUpdatedAt);
 
         if (boardId != null) {
             Board board = boardService.getBoardById(boardId)
