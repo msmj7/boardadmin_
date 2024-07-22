@@ -7,6 +7,8 @@ import com.boardadmin.board.service.PostService;
 import com.boardadmin.board.service.CommentService;
 import com.boardadmin.board.service.BoardService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -44,8 +46,11 @@ public class FreeBoardController {
     public String getPost(@PathVariable Long id, Model model) {
         Post post = postService.getPostById(id).orElseThrow(() -> new IllegalArgumentException("Invalid post Id:" + id));
         List<Comment> comments = commentService.getCommentsByPostId(id);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
         model.addAttribute("post", post);
         model.addAttribute("comments", comments);
+        model.addAttribute("currentUserName", username);
         return "freeboard/view";
     }
 
@@ -63,6 +68,9 @@ public class FreeBoardController {
     @GetMapping("/new")
     public String createPostForm(Model model) {
         Post post = new Post();
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String currentUserName = authentication.getName();
+        post.setAuthorName(currentUserName);
         model.addAttribute("post", post);
         return "freeboard/create";
     }

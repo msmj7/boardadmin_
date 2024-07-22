@@ -8,6 +8,9 @@
     <link rel="stylesheet" th:href="@{/adminlte/plugins/fontawesome-free/css/all.min.css}">
     <!-- Theme style -->
     <link rel="stylesheet" th:href="@{/adminlte/dist/css/adminlte.min.css}">
+	<!-- Google Font: Source Sans Pro -->
+		<link rel="stylesheet"
+			href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
 </head>
 
 <body class="hold-transition layout-top-nav">
@@ -113,14 +116,14 @@
                                 <div class="card-footer clearfix">
                                     <ul class="pagination pagination-sm m-0 float-right">
                                         <li class="page-item" th:classappend="${currentPage == 1} ? 'disabled'">
-                                            <a class="page-link" th:href="@{'/freeboard?page=' + (${currentPage - 1})}">&laquo;</a>
+                                            <a class="page-link" th:href="@{'/freeboard?page=' + ${currentPage - 1}}">&laquo;</a>
                                         </li>
                                         <li class="page-item" th:each="i : ${#numbers.sequence(1, totalPages)}"
                                             th:classappend="${currentPage == i} ? 'active'">
                                             <a class="page-link" th:href="@{'/freeboard?page=' + ${i}}" th:text="${i}">1</a>
                                         </li>
                                         <li class="page-item" th:classappend="${currentPage == totalPages} ? 'disabled'">
-                                            <a class="page-link" th:href="@{'/freeboard?page=' + (${currentPage + 1})}">&raquo;</a>
+                                            <a class="page-link" th:href="@{'/freeboard?page=' + ${currentPage + 1}}">&raquo;</a>
                                         </li>
                                     </ul>
                                 </div>
