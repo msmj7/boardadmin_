@@ -11,16 +11,17 @@
 		.btn-danger {
 			margin-left: 0.5rem;
 		}
+
 		.comment-header {
 			display: flex;
 			justify-content: space-between;
 			flex: 0 0 100%;
 			max-width: 100%;
 		}
-		.comment-action{
+
+		.comment-action {
 			display: flex;
 		}
-		
 	</style>
 </head>
 
@@ -133,7 +134,6 @@
 										</button>
 									</div>
 								</div>
-
 							</form>
 						</div><!-- /.col -->
 					</div><!-- /.row -->
@@ -176,12 +176,27 @@
 													<button type="submit" class="btn btn-danger ">Delete</button>
 												</form>
 											</div>
-
 										</td>
 									</tr>
 								</tbody>
 							</table>
 						</div>
+						<!-- 페이지네이션 추가 -->
+						<div class="card-footer clearfix">
+							<ul class="pagination pagination-sm m-0 float-right">
+								<li class="page-item" th:classappend="${currentPage == 1} ? 'disabled'">
+									<a class="page-link" th:href="@{'/admin/comments?page=' + ${currentPage - 1}}">&laquo;</a>
+								</li>
+								<li class="page-item" th:each="i : ${#numbers.sequence(1, totalPages)}"
+									th:classappend="${currentPage == i} ? 'active'">
+									<a class="page-link" th:href="@{'/admin/comments?page=' + ${i}}" th:text="${i}">1</a>
+								</li>
+								<li class="page-item" th:classappend="${currentPage == totalPages} ? 'disabled'">
+									<a class="page-link" th:href="@{'/admin/comments?page=' + ${currentPage + 1}}">&raquo;</a>
+								</li>
+							</ul>
+						</div>
+						<!-- /.페이지네이션 -->
 					</div>
 				</div><!-- /.container-fluid -->
 			</div>

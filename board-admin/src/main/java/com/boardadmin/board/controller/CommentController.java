@@ -23,12 +23,12 @@ public class CommentController {
 
     @Autowired
     private PostService postService;
-    
+
     @GetMapping("/search")
     public String searchComments(@RequestParam String keyword, @RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "10") int size, Model model) {
         Pageable pageable = PageRequest.of(page - 1, size);
         Page<Comment> commentPage = commentService.searchComments(keyword, pageable);
-        
+
         model.addAttribute("comments", commentPage.getContent());
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", commentPage.getTotalPages());
@@ -38,15 +38,19 @@ public class CommentController {
     }
 
     @GetMapping
-    public String getAllComments(Model model) {
-        List<Comment> comments = commentService.getAllComments();
-        model.addAttribute("comments", comments);
+    public String getAllComments(@RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "10") int size, Model model) {
+        Pageable pageable = PageRequest.of(page - 1, size);
+        Page<Comment> commentPage = commentService.getAllComments(pageable);
+
+        model.addAttribute("comments", commentPage.getContent());
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", commentPage.getTotalPages());
         return "comments/list";
     }
 
     @GetMapping("/post/{postId}")
     public String getCommentsByPostId(@PathVariable Long postId, Model model) {
-        List<Comment> comments = commentService.getCommentsByPostId(postId);
+        List<Comment> comments = commentService.getCommentsByPostIdOrderByCreatedAtDesc(postId); // 최신순으로 가져오기
         model.addAttribute("comments", comments);
         model.addAttribute("postId", postId);
         return "comments/list";
@@ -60,13 +64,13 @@ public class CommentController {
         comment.setContent(content);
         comment.setAuthorName(authorName); // 설정
         commentService.createComment(comment);
-        return "redirect:/posts/view/" + postId;
+        return "redirect:/admin/posts/view/" + postId;
     }
 
     @DeleteMapping("/delete/{id}")
     public String deleteComment(@PathVariable Long id, @RequestParam Long postId) {
         commentService.deleteComment(id);
-        return "redirect:/posts/view/" + postId;
+        return "redirect:/admin/posts/view/" + postId;
     }
 
     // 댓글 수정 폼으로 이동하는 메서드
@@ -83,6 +87,6 @@ public class CommentController {
         Comment existingComment = commentService.getCommentById(id).orElseThrow(() -> new IllegalArgumentException("Invalid comment Id:" + id));
         existingComment.setContent(content);
         commentService.updateComment(existingComment);
-        return "redirect:/posts/view/" + postId;
+        return "redirect:/admin/posts/view/" + postId;
     }
 }
