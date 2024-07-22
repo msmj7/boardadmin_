@@ -118,25 +118,37 @@ public class AccountController {
     }
 
     @PostMapping("/password/reset")
-    public String resetPassword(@RequestParam("email") String email, Model model) {
-        User user = userService.getUserByEmail(email);
+    public String resetPassword(@RequestParam("userId") String userId, @RequestParam("email") String email, Model model) {
+        User userById = userService.getUserByUserId(userId);
+        User userByEmail = userService.getUserByEmail(email);
 
-        if (user == null) {
-            model.addAttribute("error", "등록된 이메일이 없습니다.");
+        if (userById == null) {
+            model.addAttribute("error", "등록되지 않은 아이디입니다.");
+            return "login/findPw";
+        }
+
+        if (userByEmail == null) {
+            model.addAttribute("error", "등록되지 않은 이메일입니다.");
+            return "login/findPw";
+        }
+
+        if (!userById.getUserIndex().equals(userByEmail.getUserIndex())) {
+            model.addAttribute("error", "정보를 다시 확인해주세요.");
             return "login/findPw";
         }
 
         String tempPassword = UUID.randomUUID().toString().substring(0, 8);
-        userService.updateUserPassword(user, tempPassword);
+        userService.updateUserPassword(userById, tempPassword);
 
         String subject = "[Pangpany] 임시 비밀번호 안내";
         String text = "귀하의 임시 비밀번호는 " + tempPassword + " 입니다. 로그인 후 비밀번호를 변경해주세요.";
 
-        emailService.sendSimpleMessage(user.getEmail(), subject, text);
+        emailService.sendSimpleMessage(userById.getEmail(), subject, text);
 
         model.addAttribute("success", "임시 비밀번호가 이메일로 전송되었습니다.");
         return "login/findPw";
     }
+
 
     @GetMapping("/findId")
     public String showFindIdForm() {
@@ -148,7 +160,7 @@ public class AccountController {
         User user = userService.getUserByEmail(email);
 
         if (user == null) {
-            model.addAttribute("error", "등록된 이메일이 없습니다.");
+            model.addAttribute("error", "등록되지 않은 이메일입니다.");
             return "login/findId";
         }
 
@@ -167,7 +179,7 @@ public class AccountController {
         User user = userService.getUserByEmail(email);
 
         if (user == null) {
-            model.addAttribute("error", "등록된 이메일이 없습니다.");
+            model.addAttribute("error", "등록되지 않은 이메일입니다.");
             return "login/findId";
         }
 
