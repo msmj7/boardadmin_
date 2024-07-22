@@ -150,7 +150,7 @@
 								</thead>
 								<tbody>
 									<tr th:each="admin, iterStat : ${admins}">
-										<td th:text="${(currentPage - 1) * pageSize + iterStat.index + 1}"></td>
+										<td th:text="${totalElements - (currentPage - 1) * pageSize - iterStat.index}"></td>
 										<td th:text="${admin.userId}"></td>
 										<td th:text="${admin.email}"></td>
 										<td th:text="${admin.active}"></td>
