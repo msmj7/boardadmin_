@@ -139,7 +139,7 @@ public class AccountController {
         user.setPassword(tempPassword); // 임시 비밀번호 설정
         userService.updateUser(user);
 
-        String subject = "임시 비밀번호 안내";
+        String subject = "[Pangpany] 임시 비밀번호 안내";
         String text = "귀하의 임시 비밀번호는 " + tempPassword + " 입니다. 로그인 후 비밀번호를 변경해주세요.";
 
         emailService.sendSimpleMessage(user.getEmail(), subject, text);
@@ -163,7 +163,7 @@ public class AccountController {
         }
 
         String userId = user.getUserId();
-        String maskedId = userId.substring(0, userId.length() -2) + "**";
+        String maskedId = userId.substring(0, userId.length() - 2) + "**";
 
         model.addAttribute("email", email);
         model.addAttribute("maskedId", maskedId);
@@ -181,7 +181,7 @@ public class AccountController {
             return "login/findId";
         }
 
-        String subject = "아이디 찾기 안내";
+        String subject = "[Pangpany] 아이디 찾기 안내";
         String text = "귀하의 아이디는 " + user.getUserId() + " 입니다.";
 
         emailService.sendSimpleMessage(email, subject, text);
@@ -189,7 +189,7 @@ public class AccountController {
         model.addAttribute("success", "아이디가 이메일로 전송되었습니다.");
         return "login/findId";
     }
-
+    
     private String getCurrentUserId() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null && authentication.getPrincipal() instanceof UserDetails) {
