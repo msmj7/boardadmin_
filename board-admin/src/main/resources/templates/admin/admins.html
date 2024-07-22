@@ -1,177 +1,72 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-
+<html xmlns:th="http://www.thymeleaf.org" layout:decorate="~{base.html}">
 <head>
-	<meta charset="UTF-8">
-	<title>사용자관리-관리자</title>
-	<!-- Font Awesome Icons -->
-	<link rel="stylesheet" th:href="@{/adminlte/plugins/fontawesome-free/css/all.min.css}">
-	<!-- Theme style -->
-	<link rel="stylesheet" th:href="@{/adminlte/dist/css/adminlte.min.css}">
-	<!-- Google Font: Source Sans Pro -->
-	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
-	<meta name="_csrf" th:content="${_csrf.token}" />
+    <title>사용자관리 - 관리자</title>
+    <meta name="_csrf" th:content="${_csrf.token}" />
 </head>
-
-<body class="hold-transition sidebar-mini">
-	<div class="wrapper">
-		<!-- Navbar -->
-		<nav class="main-header navbar navbar-expand navbar-white navbar-light">
-			<!-- Left navbar links -->
-			<ul class="navbar-nav">
-				<li class="nav-item">
-					<a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
-				</li>
-			</ul>
-			<!-- Right navbar links -->
-			<ul class="navbar-nav ml-auto">
-				<li class="nav-item">
-					<form th:action="@{/admin/logout}" method="post" style="display: inline;">
-						<button type="submit" class="nav-link btn btn-link">
-							<i class="fas fa-sign-out-alt"></i> Logout
-						</button>
-					</form>
-				</li>
-			</ul>
-		</nav>
-		<!-- /.navbar -->
-
-		<!-- Main Sidebar Container -->
-		<aside class="main-sidebar sidebar-dark-primary elevation-4">
-			<!-- Brand Logo -->
-			<a href="#" class="brand-link text-center">
-				<span class="brand-text font-weight-light">board-admin</span>
-			</a>
-
-			<!-- Sidebar -->
-			<div class="sidebar">
-				<!-- Sidebar Menu -->
-				<nav class="mt-2">
-					<ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu"
-						data-accordion="false">
-						<li class="nav-item menu-open">
-							<a href="#" class="nav-link active">
-								<i class="fa fa-user nav-icon" ></i>
-								<p>
-									사용자 관리
-									<i class="right fas fa-angle-left"></i>
-								</p>
-							</a>
-							<ul class="nav nav-treeview">
-								<li class="nav-item">
-									<a href="/admin/admins" class="nav-link active">
-										<i class="far fa-circle nav-icon"></i>
-										<p>관리자</p>
-									</a>
-								</li>
-								<li class="nav-item">
-									<a href="/admin/users" class="nav-link">
-										<i class="far nav-icon"></i>
-										<p>회원</p>
-									</a>
-								</li>
-							</ul>
-						</li>
-						<li class="nav-item menu-close">
-							<a href="/boards" class="nav-link">
-								<i class="fa fa-window-maximize nav-icon"></i>
-								<p>
-									게시판 관리
-									<i class="right fas fa-angle-left"></i>
-								</p>
-							</a>
-							<ul class="nav nav-treeview">
-								<li class="nav-item">
-									<a href="/boards" class="nav-link" th:classappend="${servletPath == '/boards'} ? 'active'">
-										<i class="far fa-circle nav-icon"></i>
-										<p>게시판 목록</p>
-									</a>
-								</li>
-								<li class="nav-item" th:each="board : ${boards}">
-									<a th:href="@{'/posts/board/' + ${board.boardId}}"
-										class="btn  btn-sm nav-link  text-left" >
-										<i class="far nav-icon"></i>
-										<p th:text="${board.name}"></p>
-									</a>
-								</li>
-							</ul>
-						</li>
-
-					</ul>
-				</nav>
-				<!-- /.sidebar-menu -->
-			</div>
-			<!-- /.sidebar -->
-		</aside>
-
-		<!-- Content Wrapper. Contains page content -->
-		<div class="content-wrapper">
-			<section class="content-header">
-				<div class="container-fluid">
-					<div class="row mb-2">
-						<div class="col-sm-6">
-							<h1>사용자 관리 - 관리자</h1>
-						</div>
-						<div class="col-sm-6">
-							<a th:href="@{/admin/newAdmin}" class="btn btn-primary float-right">Add Admin</a>
-						</div>
-					</div>
-				</div>
-			</section>
-			<!-- Main content -->
-			<section class="content">
-				<div class="container-fluid">
-					<div class="card">
-						<div class="card-header">
-							<h3 class="card-title">관리자 목록</h3>
-							<div class="card-tools">
-                                <form th:action="@{/admin/admins}" method="get" class="form-inline float-right">
-                                    <div class="input-group input-group-sm">
-                                        <input type="text" name="search" class="form-control" placeholder="아이디, 이메일로 검색" th:value="${search}">
-                                        <div class="input-group-append">
-                                            <button type="submit" class="btn btn-default">
-                                                <i class="fas fa-search"></i>
-                                            </button>
-                                        </div>
+<body>
+    <div class="content-wrapper" layout:fragment="content">
+        <section class="content-header">
+            <div class="container-fluid">
+                <div class="row mb-2">
+                    <div class="col-sm-6">
+                        <h1>사용자 관리 - 관리자</h1>
+                    </div>
+                    <div class="col-sm-6">
+                        <a th:href="@{/admin/newAdmin}" class="btn btn-primary float-right">Add Admin</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- Main content -->
+        <section class="content">
+            <div class="container-fluid">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">관리자 목록</h3>
+                        <div class="card-tools">
+                            <form th:action="@{/admin/admins}" method="get" class="form-inline float-right">
+                                <div class="input-group input-group-sm">
+                                    <input type="text" name="search" class="form-control" placeholder="아이디, 이메일로 검색" th:value="${search}">
+                                    <div class="input-group-append">
+                                        <button type="submit" class="btn btn-default">
+                                            <i class="fas fa-search"></i>
+                                        </button>
                                     </div>
-                                </form>
-                            </div>
-						</div>
-						<div class="card-body">
-							<table class="table table-bordered">
-								<thead>
-									<tr>
-										<th>No.</th>
-										<th>ID</th>
-										<th>Email</th>
-										<th>Active</th>
-										<th>Actions</th>
-									</tr>
-								</thead>
-								<tbody>
-									<tr th:each="admin, iterStat : ${admins}">
-										<td th:text="${totalElements - (currentPage - 1) * pageSize - iterStat.index}"></td>
-										<td th:text="${admin.userId}"></td>
-										<td th:text="${admin.email}"></td>
-										<td th:text="${admin.active}"></td>
-										<td>
-											<a th:href="@{/admin/{userIndex}(userIndex=${admin.userIndex})}"
-												class="btn btn-info">View</a>
-											<a th:href="@{/admin/updatepage/admin/{userIndex}(userIndex=${admin.userIndex})}"
-												class="btn btn-primary">Edit</a>
-											<form th:id="'deleteForm-' + ${admin.userIndex}" method="post"
-												th:action="@{/admin/delete/admin/{userIndex}(userIndex=${admin.userIndex})}"
-												style="display:inline;">
-												<input type="hidden" name="_csrf" th:value="${_csrf.token}" />
-												<button type="button" class="btn btn-danger"
-													th:onclick="'deleteUser(' + ${admin.userIndex} + ')'">Delete</button>
-											</form>
-										</td>
-									</tr>
-								</tbody>
-							</table>
-						</div>
-						<div class="card-footer">
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>No.</th>
+                                    <th>ID</th>
+                                    <th>Email</th>
+                                    <th>Active</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="admin, iterStat : ${admins}">
+                                    <td th:text="${totalElements - (currentPage - 1) * pageSize - iterStat.index}"></td>
+                                    <td th:text="${admin.userId}"></td>
+                                    <td th:text="${admin.email}"></td>
+                                    <td th:text="${admin.active}"></td>
+                                    <td>
+                                        <a th:href="@{/admin/{userIndex}(userIndex=${admin.userIndex})}" class="btn btn-info">View</a>
+                                        <a th:href="@{/admin/updatepage/admin/{userIndex}(userIndex=${admin.userIndex})}" class="btn btn-primary">Edit</a>
+                                        <form th:id="'deleteForm-' + ${admin.userIndex}" method="post" th:action="@{/admin/delete/admin/{userIndex}(userIndex=${admin.userIndex})}" style="display:inline;">
+                                            <input type="hidden" name="_csrf" th:value="${_csrf.token}" />
+                                            <button type="button" class="btn btn-danger" th:onclick="'deleteUser(' + ${admin.userIndex} + ')'">Delete</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="card-footer">
                         <nav aria-label="Page navigation">
                             <ul class="pagination justify-content-center">
                                 <li class="page-item" th:classappend="${currentPage == 1} ? 'disabled'">
@@ -187,41 +82,21 @@
                         </nav>
                     </div>
                 </div>
-					</div>
-				</div>
-			</section>
-			<!-- /.content -->
-		</div>
-
-		<!-- Main Footer -->
-		<footer class="main-footer">
-			<div class="float-right d-none d-sm-inline">
-				boardproject
-			</div>
-			<!-- Default to the left -->
-			<strong>Copyright &copy; 2024 <a href="#">Pangpany</a>.</strong> All rights reserved.
-		</footer>
-	</div>
-	<!-- ./wrapper -->
-
-	<!-- REQUIRED SCRIPTS -->
-	<!-- jQuery -->
-	<script th:src="@{/adminlte/plugins/jquery/jquery.min.js}"></script>
-	<!-- Bootstrap 4 -->
-	<script th:src="@{/adminlte/plugins/bootstrap/js/bootstrap.bundle.min.js}"></script>
-	<!-- AdminLTE App -->
-	<script th:src="@{/adminlte/dist/js/adminlte.min.js}"></script>
-	<script>
-		function deleteUser(userIndex) {
-			if (confirm('해당 관리자를 삭제하시겠습니까?')) {
-				const form = document.getElementById('deleteForm-' + userIndex);
-				if (form) {
-					form.submit();
-				} else {
-					console.error('Form not found: deleteForm-' + userIndex);
-				}
-			}
-		}
-	</script>
+            </div>
+        </section>
+        <!-- /.content -->
+    </div>
+    <script>
+        function deleteUser(userIndex) {
+            if (confirm('해당 관리자를 삭제하시겠습니까?')) {
+                const form = document.getElementById('deleteForm-' + userIndex);
+                if (form) {
+                    form.submit();
+                } else {
+                    console.error('Form not found: deleteForm-' + userIndex);
+                }
+            }
+        }
+    </script>
 </body>
 </html>
