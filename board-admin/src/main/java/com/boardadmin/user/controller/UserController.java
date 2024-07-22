@@ -13,6 +13,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.format.DateTimeFormatter;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -77,7 +78,15 @@ public class UserController {
     @GetMapping("/admin/{userIndex}")
     public String getAdminDetailPage(@PathVariable Integer userIndex, @RequestParam(required = false) Long boardId, Model model) {
         User admin = userService.getUserByUserIndex(userIndex);
+
+        // 날짜 포맷터 설정
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        String formattedCreatedAt = admin.getCreatedAt().format(formatter);
+        String formattedUpdatedAt = admin.getUpdatedAt().format(formatter);
+
         model.addAttribute("admin", admin);
+        model.addAttribute("formattedCreatedAt", formattedCreatedAt);
+        model.addAttribute("formattedUpdatedAt", formattedUpdatedAt);
 
         if (boardId != null) {
             Board board = boardService.getBoardById(boardId)
@@ -89,10 +98,19 @@ public class UserController {
         return "admin/adminDetail";
     }
 
+
     @GetMapping("/admin/users/{userIndex}")
     public String getUserDetailPage(@PathVariable Integer userIndex, @RequestParam(required = false) Long boardId, Model model) {
         User user = userService.getUserByUserIndex(userIndex);
+
+        // 날짜 포맷터 설정
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        String formattedCreatedAt = user.getCreatedAt().format(formatter);
+        String formattedUpdatedAt = user.getUpdatedAt().format(formatter);
+
         model.addAttribute("user", user);
+        model.addAttribute("formattedCreatedAt", formattedCreatedAt);
+        model.addAttribute("formattedUpdatedAt", formattedUpdatedAt);
 
         if (boardId != null) {
             Board board = boardService.getBoardById(boardId)
