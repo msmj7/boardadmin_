@@ -94,7 +94,7 @@
                                         </div>
                                         <div class="form-group">
                                             <label for="authorName">작성자 이름</label>
-                                            <input type="text" id="authorName" class="form-control" th:field="*{authorName}" />
+                                            <input type="text" class="form-control" id="authorName" name="authorName" th:value="${post.authorName}" readonly>
                                         </div>
                                         <div class="form-group">
                                             <button type="submit" class="btn btn-primary">작성하기</button>
