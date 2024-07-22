@@ -154,7 +154,7 @@ public class AccountController {
         }
 
         String userId = user.getUserId();
-        String maskedId = userId.substring(0, userId.length() / 2) + "***";
+        String maskedId = userId.substring(0, userId.length() -2) + "**";
 
         model.addAttribute("email", email);
         model.addAttribute("maskedId", maskedId);

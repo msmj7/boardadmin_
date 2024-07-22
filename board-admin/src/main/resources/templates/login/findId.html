@@ -2,22 +2,24 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Find ID</title>
-    <!-- AdminLTE CSS -->
-    <link rel="stylesheet" href="https://adminlte.io/themes/v3/plugins/fontawesome-free/css/all.min.css">
-    <link rel="stylesheet" href="https://adminlte.io/themes/v3/dist/css/adminlte.min.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>아이디 찾기</title>
+    <link rel="stylesheet" th:href="@{/adminlte/plugins/fontawesome-free/css/all.min.css}">
+    <link rel="stylesheet" th:href="@{/adminlte/dist/css/adminlte.min.css}">
 </head>
 <body class="hold-transition login-page">
 <div class="login-box">
-    <div class="card card-outline card-primary">
-        <div class="card-header text-center">
-            <a href="#" class="h1"><b>Find</b>ID</a>
-        </div>
-        <div class="card-body">
-            <p class="login-box-msg">Enter your email to find your ID</p>
+    <div class="login-logo">
+        <a href="/"><b>Pangpany</b></a>
+    </div>
+    <div class="card">
+        <div class="card-body login-card-body">
+            <p class="login-box-msg">아이디 찾기</p>
+
             <form th:action="@{/findId}" method="post">
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
                 <div class="input-group mb-3">
-                    <input type="email" name="email" class="form-control" placeholder="Email" required>
+                    <input type="email" class="form-control" name="email" placeholder="Email" required>
                     <div class="input-group-append">
                         <div class="input-group-text">
                             <span class="fas fa-envelope"></span>
@@ -30,19 +32,29 @@
                     </div>
                 </div>
             </form>
-            <p th:if="${idFound}" class="mt-3">
-                Your ID: <span th:text="${maskedId}"></span>
+            
+            <div th:if="${idFound}" class="mt-3">
+                <p>Your ID: <span th:text="${maskedId}"></span></p>
                 <form th:action="@{/sendIdEmail}" method="post" class="mt-2">
                     <input type="hidden" name="email" th:value="${email}">
                     <button type="submit" class="btn btn-secondary btn-block">Send ID to Email</button>
                 </form>
+            </div>
+
+            <p class="mt-3 mb-1">
+                <a th:href="@{/login}">로그인</a>
             </p>
+            <p class="mb-0">
+                <a th:href="@{/signup}" class="text-center">회원 가입</a>
+            </p>
+
+            <div th:if="${error}" class="alert alert-danger mt-3" th:text="${error}"></div>
+            <div th:if="${success}" class="alert alert-success mt-3" th:text="${success}"></div>
         </div>
     </div>
 </div>
-<!-- AdminLTE JS -->
-<script src="https://adminlte.io/themes/v3/plugins/jquery/jquery.min.js"></script>
-<script src="https://adminlte.io/themes/v3/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
-<script src="https://adminlte.io/themes/v3/dist/js/adminlte.min.js"></script>
+<script th:src="@{/adminlte/plugins/jquery/jquery.min.js}"></script>
+<script th:src="@{/adminlte/plugins/bootstrap/js/bootstrap.bundle.min.js}"></script>
+<script th:src="@{/adminlte/dist/js/adminlte.min.js}"></script>
 </body>
 </html>
