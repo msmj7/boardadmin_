@@ -51,120 +51,117 @@
 							</a>
 							<ul class="nav nav-treeview">
 								<li class="nav-item">
-									<a href="/admin/admins" class="nav-link"
-										th:classappend="${servletPath == '/admin'} ? 'active'">
-										<i class="far nav-icon"></i>
+									<a href="/admin/admins" class="nav-link ">
+										<i class="far  nav-icon"></i>
 										<p>관리자</p>
 									</a>
 								</li>
 								<li class="nav-item">
-										<a href="/admin/users" class="nav-link"
-											th:classappend="${servletPath == '/admin/users'} ? 'active'">
-											<i class="far nav-icon"></i>
-											<p>회원</p>
-										</a>
-									</li>
-								</ul>
-							</li>
-							<li class="nav-item menu-open">
-								<a href="#" class="nav-link active">
-									<i class="fa fa-window-maximize nav-icon"></i>
-									<p>
-										게시판 관리
-										<i class="right fas fa-angle-left"></i>
-									</p>
-								</a>
-								<ul class="nav nav-treeview">
-									<li class="nav-item">
-										<a href="/boards" class="nav-link"
-											th:classappend="${servletPath == '/boards'} ? 'active'">
-											<i class="far nav-icon"></i>
-											<p>게시판 목록</p>
-										</a>
-									</li>
-									<li class="nav-item" th:each="board : ${boards}"
-										th:with="boardUrl='/posts/board/' + ${board.boardId}">
-										<a th:href="@{${boardUrl}}" class="btn  btn-sm nav-link  text-left"
-											th:classappend="${servletPath == boardUrl} ? 'active'">
-											<i class="far nav-icon"
-												th:classappend="${servletPath == boardUrl} ? 'fa-circle'"></i>
-											<p th:text="${board.name}"></p>
-										</a>
-									</li>
-								</ul>
-							</li>
-							<li class="nav-item">
-								<a href="/comments" class="nav-link">
-									<i class="nav-icon fas fa-comments"></i>
-									<p>댓글 관리</p>
-								</a>
-							</li>
-						</ul>
-					</nav>
-					<!-- /.sidebar-menu -->
-				</div>
-				<!-- /.sidebar -->
-			</aside>
-			<!-- Content Wrapper. Contains page content -->
-			<div class="content-wrapper">
-				<div class="content-header">
-					<div class="container-fluid">
-						<div class="row mb-2">
-							<div class="col-sm-6">
-								<h1 class="m-0">Post Details</h1>
-							</div><!-- /.col -->
-						</div><!-- /.row -->
-					</div><!-- /.container-fluid -->
-				</div>
-				<!-- Main content -->
-				<div class="content">
-					<div class="container-fluid">
-						<div class="card">
-							<div class="card-header">
-								<h3 class="card-title" th:text="${post.title}">Post Title</h3>
-							</div>
-							<div class="card-body">
-								<p th:text="${post.content}">Post content goes here...</p>
-							</div>
-							<div class="card-footer">
-								<h3>Comments</h3>
-								<ul>
-									<li th:each="comment : ${comments}">
-										<p th:text="${comment.content}">Comment content goes here...</p>
-										<form th:action="@{|/comments/delete/${comment.commentId}|}" method="post"
-											onsubmit="return confirm('Are you sure you want to delete this comment?');">
-											<input type="hidden" name="_method" value="delete" />
-											<input type="hidden" name="postId" th:value="${post.postId}" />
-											<button type="submit" class="btn btn-danger btn-sm">Delete</button>
-										</form>
-										<a th:href="@{|/comments/edit/${comment.commentId}|}" class="btn btn-primary btn-sm">Edit</a>
-									</li>
-								</ul>
-								<form th:action="@{|/comments/post/${post.postId}|}" method="post">
-									<textarea name="content" class="form-control" rows="3"
-										placeholder="Add a comment..."></textarea>
-									<input type="hidden" name="authorName" value="test" /> <!-- 임시로 authorId를 1로 설정 -->
-									<button type="submit" class="btn btn-primary mt-2">Submit</button>
-								</form>
-							</div>
-						</div>
-					</div><!-- /.container-fluid -->
-				</div>
-				<!-- /.content -->
+									<a href="/admin/users" class="nav-link">
+										<i class="far nav-icon"></i>
+										<p>회원</p>
+									</a>
+								</li>
+							</ul>
+						</li>
+						<li class="nav-item menu-open">
+							<a href="#" class="nav-link active">
+								<i class="fa fa-window-maximize nav-icon"></i>
+								<p>
+									게시판 관리
+									<i class="right fas fa-angle-left"></i>
+								</p>
+							</a>
+							<ul class="nav nav-treeview">
+								<li class="nav-item">
+									<a href="/admin/boards" class="nav-link"
+										th:classappend="${servletPath == '/boards'} ? 'active'">
+										<i class="far fa-circle nav-icon"></i>
+										<p>게시판 목록</p>
+									</a>
+								</li>
+								<li class="nav-item" th:each="board : ${boards}">
+									<a th:href="@{'/admin/posts/board/' + ${board.boardId}}"
+										class="btn  btn-sm nav-link  text-left">
+										<i class="far nav-icon"></i>
+										<p th:text="${board.name}"></p>
+									</a>
+								</li>
+							</ul>
+						</li>
+						<li class="nav-item">
+							<a href="/admin/comments" class="nav-link ">
+								<i class="nav-icon fas fa-comments"></i>
+								<p>댓글 관리</p>
+							</a>
+						</li>
+					</ul>
+				</nav>
+				<!-- /.sidebar-menu -->
 			</div>
-			<!-- /.content-wrapper -->
-			<footer class="main-footer">
-				<div class="float-right d-none d-sm-inline">
-					Anything you want
-				</div>
-				<strong>Copyright &copy; 2023 <a href="#">Company</a>.</strong> All rights reserved.
-			</footer>
+			<!-- /.sidebar -->
+		</aside>
+		<!-- Content Wrapper. Contains page content -->
+		<div class="content-wrapper">
+			<div class="content-header">
+				<div class="container-fluid">
+					<div class="row mb-2">
+						<div class="col-sm-6">
+							<h1 class="m-0">Post Details</h1>
+						</div><!-- /.col -->
+					</div><!-- /.row -->
+				</div><!-- /.container-fluid -->
+			</div>
+			<!-- Main content -->
+			<div class="content">
+				<div class="container-fluid">
+					<div class="card">
+						<div class="card-header">
+							<h3 class="card-title" th:text="${post.title}">Post Title</h3>
+						</div>
+						<div class="card-body">
+							<p th:text="${post.content}">Post content goes here...</p>
+						</div>
+						<div class="card-footer">
+							<h3>Comments</h3>
+							<ul>
+								<li th:each="comment : ${comments}">
+									<p th:text="${comment.content}">Comment content goes here...</p>
+									<form th:action="@{|/comments/delete/${comment.commentId}|}" method="post"
+										onsubmit="return confirm('Are you sure you want to delete this comment?');">
+										<input type="hidden" name="_method" value="delete" />
+										<input type="hidden" name="postId" th:value="${post.postId}" />
+										<button type="submit" class="btn btn-danger btn-sm">Delete</button>
+									</form>
+									<a th:href="@{|/comments/edit/${comment.commentId}|}"
+										class="btn btn-primary btn-sm">Edit</a>
+								</li>
+							</ul>
+							<form th:action="@{|/comments/post/${post.postId}|}" method="post">
+								<textarea name="content" class="form-control" rows="3"
+									placeholder="Add a comment..."></textarea>
+								<input type="hidden" name="authorName" value="test" /> <!-- 임시로 authorId를 1로 설정 -->
+								<button type="submit" class="btn btn-primary mt-2">Submit</button>
+							</form>
+						</div>
+					</div>
+				</div><!-- /.container-fluid -->
+			</div>
+			<!-- /.content -->
 		</div>
-		<!-- ./wrapper -->
+		<!-- /.content-wrapper -->
+		<footer class="main-footer">
+			<div class="float-right d-none d-sm-inline">
+				Anything you want
+			</div>
+			<strong>Copyright &copy; 2023 <a href="#">Company</a>.</strong> All rights reserved.
+		</footer>
+	</div>
+	<!-- ./wrapper -->
 
-		<script th:src="@{/adminlte/plugins/jquery/jquery.min.js}"></script>
-		<script th:src="@{/adminlte/plugins/bootstrap/js/bootstrap.bundle.min.js}"></script>
-		<script th:src="@{/adminlte/dist/js/adminlte.min.js}"></script>
-	</body>
+	<script th:src="@{/adminlte/plugins/jquery/jquery.min.js}"></script>
+	<script th:src="@{/adminlte/plugins/bootstrap/js/bootstrap.bundle.min.js}"></script>
+	<script th:src="@{/adminlte/dist/js/adminlte.min.js}"></script>
+</body>
 
-	</html>
+</html>

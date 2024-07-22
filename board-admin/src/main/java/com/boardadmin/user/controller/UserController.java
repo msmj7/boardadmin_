@@ -5,13 +5,19 @@ import com.boardadmin.board.service.BoardService;
 import com.boardadmin.user.model.Role;
 import com.boardadmin.user.model.User;
 import com.boardadmin.user.service.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import jakarta.servlet.http.HttpServletRequest;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.springframework.data.domain.Page;
@@ -29,7 +35,7 @@ public class UserController {
     }
 
     @GetMapping("/admin/admins")
-    public String getAdminsPage(@RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "10") int size, @RequestParam(required = false) Long boardId, @RequestParam(required = false) String search, Model model, HttpServletRequest request) {
+    public String getAdminsPage(@RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "10") int size, @RequestParam(required = false) Long boardId, @RequestParam(required = false) String search, Model model) {
         Page<User> adminPage = userService.getAdminsPage(page, size, search);
 
         int totalElements = (int) adminPage.getTotalElements();
@@ -48,13 +54,14 @@ public class UserController {
         model.addAttribute("totalPages", totalPages);
         model.addAttribute("search", search);
         model.addAttribute("pageSize", size);
-        model.addAttribute("currentUri", request.getRequestURI());
 
         return "admin/admins";
     }
 
+
+
     @GetMapping("/admin/users")
-    public String getUsersPage(@RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "10") int size, @RequestParam(required = false) Long boardId, @RequestParam(required = false) String search, Model model, HttpServletRequest request) {
+    public String getUsersPage(@RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "10") int size, @RequestParam(required = false) Long boardId, @RequestParam(required = false) String search, Model model) {
         Page<User> userPage = userService.getUsersPage(page, size, search);
 
         int totalElements = (int) userPage.getTotalElements();
@@ -73,13 +80,14 @@ public class UserController {
         model.addAttribute("totalPages", totalPages);
         model.addAttribute("search", search);
         model.addAttribute("pageSize", size);
-        model.addAttribute("currentUri", request.getRequestURI());
 
         return "useradmin/users";
     }
 
+
+
     @GetMapping("/admin/{userIndex}")
-    public String getAdminDetailPage(@PathVariable Integer userIndex, @RequestParam(required = false) Long boardId, Model model, HttpServletRequest request) {
+    public String getAdminDetailPage(@PathVariable Integer userIndex, @RequestParam(required = false) Long boardId, Model model) {
         User admin = userService.getUserByUserIndex(userIndex);
 
         // 날짜 포맷터 설정
@@ -98,12 +106,12 @@ public class UserController {
         }
 
         model.addAttribute("boards", boardService.getAllBoards());
-        model.addAttribute("currentUri", request.getRequestURI());
         return "admin/adminDetail";
     }
 
+
     @GetMapping("/admin/users/{userIndex}")
-    public String getUserDetailPage(@PathVariable Integer userIndex, @RequestParam(required = false) Long boardId, Model model, HttpServletRequest request) {
+    public String getUserDetailPage(@PathVariable Integer userIndex, @RequestParam(required = false) Long boardId, Model model) {
         User user = userService.getUserByUserIndex(userIndex);
 
         // 날짜 포맷터 설정
@@ -122,12 +130,11 @@ public class UserController {
         }
 
         model.addAttribute("boards", boardService.getAllBoards());
-        model.addAttribute("currentUri", request.getRequestURI());
         return "useradmin/userDetail";
     }
 
     @GetMapping("/admin/newAdmin")
-    public String getAdminCreatePage(@RequestParam(required = false) Long boardId, Model model, HttpServletRequest request) {
+    public String getAdminCreatePage(@RequestParam(required = false) Long boardId, Model model) {
         model.addAttribute("user", new User());
 
         if (boardId != null) {
@@ -137,12 +144,11 @@ public class UserController {
         }
 
         model.addAttribute("boards", boardService.getAllBoards());
-        model.addAttribute("currentUri", request.getRequestURI());
         return "admin/newAdmin";
     }
 
     @GetMapping("/admin/newUser")
-    public String getUserCreatePage(@RequestParam(required = false) Long boardId, Model model, HttpServletRequest request) {
+    public String getUserCreatePage(@RequestParam(required = false) Long boardId, Model model) {
         model.addAttribute("user", new User());
 
         if (boardId != null) {
@@ -152,7 +158,6 @@ public class UserController {
         }
 
         model.addAttribute("boards", boardService.getAllBoards());
-        model.addAttribute("currentUri", request.getRequestURI());
         return "useradmin/newUser";
     }
 
@@ -188,19 +193,17 @@ public class UserController {
     }
 
     @GetMapping("/admin/updatepage/admin/{userIndex}")
-    public String getAdminEditPage(@PathVariable Integer userIndex, Model model, HttpServletRequest request) {
+    public String getAdminEditPage(@PathVariable Integer userIndex, Model model) {
         User admin = userService.getUserByUserIndex(userIndex);
         model.addAttribute("admin", admin);
-        model.addAttribute("currentUri", request.getRequestURI());
         return "admin/adminEdit";
     }
 
     @PostMapping("/admin/update/admin/{userIndex}")
-    public String updateAdmin(@PathVariable Integer userIndex, @ModelAttribute User user, @RequestParam(required = false) Long boardId, Model model, HttpServletRequest request) {
+    public String updateAdmin(@PathVariable Integer userIndex, @ModelAttribute User user, @RequestParam(required = false) Long boardId, Model model) {
         if (!userService.updateUser(userIndex, user)) {
             model.addAttribute("error", "이미 존재하는 아이디입니다.");
             model.addAttribute("admin", user);
-            model.addAttribute("currentUri", request.getRequestURI());
             return "admin/adminEdit";
         }
         if (boardId != null) {
@@ -217,19 +220,17 @@ public class UserController {
     }
 
     @GetMapping("/admin/updatepage/user/{userIndex}")
-    public String getUserEditPage(@PathVariable Integer userIndex, Model model, HttpServletRequest request) {
+    public String getUserEditPage(@PathVariable Integer userIndex, Model model) {
         User user = userService.getUserByUserIndex(userIndex);
         model.addAttribute("user", user);
-        model.addAttribute("currentUri", request.getRequestURI());
         return "useradmin/userEdit";
     }
 
     @PostMapping("/admin/update/user/{userIndex}")
-    public String updateUser(@PathVariable Integer userIndex, @ModelAttribute User user, @RequestParam(required = false) Long boardId, Model model, HttpServletRequest request) {
+    public String updateUser(@PathVariable Integer userIndex, @ModelAttribute User user, @RequestParam(required = false) Long boardId, Model model) {
         if (!userService.updateUser(userIndex, user)) {
             model.addAttribute("error", "이미 존재하는 아이디입니다.");
             model.addAttribute("user", user);
-            model.addAttribute("currentUri", request.getRequestURI());
             return "useradmin/userEdit";
         }
         if (boardId != null) {

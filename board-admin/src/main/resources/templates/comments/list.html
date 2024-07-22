@@ -6,6 +6,22 @@
 	<title>All Comments</title>
 	<link rel="stylesheet" th:href="@{/adminlte/plugins/fontawesome-free/css/all.min.css}">
 	<link rel="stylesheet" th:href="@{/adminlte/dist/css/adminlte.min.css}">
+
+	<style>
+		.btn-danger {
+			margin-left: 0.5rem;
+		}
+		.comment-header {
+			display: flex;
+			justify-content: space-between;
+			flex: 0 0 100%;
+			max-width: 100%;
+		}
+		.comment-action{
+			display: flex;
+		}
+		
+	</style>
 </head>
 
 <body class="hold-transition sidebar-mini">
@@ -51,15 +67,13 @@
 							</a>
 							<ul class="nav nav-treeview">
 								<li class="nav-item">
-									<a href="/admin/admins" class="nav-link"
-										th:classappend="${servletPath == '/admin'} ? 'active'">
-										<i class="far nav-icon"></i>
+									<a href="/admin/admins" class="nav-link ">
+										<i class="far  nav-icon"></i>
 										<p>관리자</p>
 									</a>
 								</li>
 								<li class="nav-item">
-									<a href="/admin/users" class="nav-link"
-										th:classappend="${servletPath == '/admin/users'} ? 'active'">
+									<a href="/admin/users" class="nav-link">
 										<i class="far nav-icon"></i>
 										<p>회원</p>
 									</a>
@@ -76,25 +90,23 @@
 							</a>
 							<ul class="nav nav-treeview">
 								<li class="nav-item">
-									<a href="/boards" class="nav-link"
+									<a href="/admin/boards" class="nav-link"
 										th:classappend="${servletPath == '/boards'} ? 'active'">
-										<i class="far nav-icon"></i>
+										<i class="far fa-circle nav-icon"></i>
 										<p>게시판 목록</p>
 									</a>
 								</li>
-								<li class="nav-item" th:each="board : ${boards}"
-									th:with="boardUrl='/posts/board/' + ${board.boardId}">
-									<a th:href="@{${boardUrl}}" class="btn  btn-sm nav-link  text-left"
-										th:classappend="${servletPath == boardUrl} ? 'active'">
-										<i class="far nav-icon"
-											th:classappend="${servletPath == boardUrl} ? 'fa-circle'"></i>
+								<li class="nav-item" th:each="board : ${boards}">
+									<a th:href="@{'/admin/posts/board/' + ${board.boardId}}"
+										class="btn  btn-sm nav-link  text-left">
+										<i class="far nav-icon"></i>
 										<p th:text="${board.name}"></p>
 									</a>
 								</li>
 							</ul>
 						</li>
 						<li class="nav-item">
-							<a href="/comments" class="nav-link active">
+							<a href="/admin/comments" class="nav-link active">
 								<i class="nav-icon fas fa-comments"></i>
 								<p>댓글 관리</p>
 							</a>
@@ -110,11 +122,18 @@
 			<div class="content-header">
 				<div class="container-fluid">
 					<div class="row mb-2">
-						<div class="col-sm-6">
+						<div class="col-sm-6 comment-header">
 							<h1 class="m-0">All Comments</h1>
-							<form th:action="@{/comments/search}" method="get">
-							    <input type="text" name="keyword" placeholder="Search comments" />
-							    <button type="submit">Search</button>
+							<form th:action="@{/admin/comments/search}" method="get">
+								<div class="input-group input-group-sm">
+									<input type="text" name="keyword" class="form-control" placeholder="Search posts" />
+									<div class="input-group-append">
+										<button type="submit" class="btn btn-default">
+											<i class="fas fa-search"></i>
+										</button>
+									</div>
+								</div>
+
 							</form>
 						</div><!-- /.col -->
 					</div><!-- /.row -->
@@ -145,13 +164,19 @@
 										<td th:text="${comment.authorName}"></td>
 										<td th:text="${comment.post.postId}"></td>
 										<td>
-											<a th:href="@{|/comments/edit/${comment.commentId}|}" class="btn btn-primary btn-sm">Edit</a>
-											<form th:action="@{|/comments/delete/${comment.commentId}|}" method="post"
-												onsubmit="return confirm('Are you sure you want to delete this comment?');">
-												<input type="hidden" name="_method" value="delete" />
-												<input type="hidden" name="postId" th:value="${comment.post.postId}" />
-												<button type="submit" class="btn btn-danger btn-sm">Delete</button>
-											</form>
+											<div class="comment-action">
+												<a th:href="@{|/admin/comments/edit/${comment.commentId}|}"
+													class="btn btn-primary ">Edit</a>
+												<form th:action="@{|/admin/comments/delete/${comment.commentId}|}"
+													method="post"
+													onsubmit="return confirm('Are you sure you want to delete this comment?');">
+													<input type="hidden" name="_method" value="delete" />
+													<input type="hidden" name="postId"
+														th:value="${comment.post.postId}" />
+													<button type="submit" class="btn btn-danger ">Delete</button>
+												</form>
+											</div>
+
 										</td>
 									</tr>
 								</tbody>

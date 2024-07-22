@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
-
 <head>
     <meta charset="UTF-8">
     <title>자유게시판</title>
@@ -9,8 +8,7 @@
     <!-- Theme style -->
     <link rel="stylesheet" th:href="@{/adminlte/dist/css/adminlte.min.css}">
 	<!-- Google Font: Source Sans Pro -->
-		<link rel="stylesheet"
-			href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
 </head>
 
 <body class="hold-transition layout-top-nav">
@@ -104,7 +102,7 @@
                                         </thead>
                                         <tbody>
                                             <tr th:each="post, iterStat : ${posts}">
-                                                <td th:text="${iterStat.count}">1</td>
+                                                <td th:text="${totalPosts - (currentPage - 1) * 10 - iterStat.index}">1</td>
                                                 <td><a th:href="@{'/freeboard/' + ${post.postId}}"
                                                         th:text="${post.title}">Sample Title</a></td>
                                                 <td th:text="${post.authorName}">Author Name</td>

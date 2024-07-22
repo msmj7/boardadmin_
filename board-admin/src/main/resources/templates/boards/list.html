@@ -66,7 +66,7 @@
 							</ul>
 						</li>
 						<li class="nav-item menu-open">
-							<a href="/boards" class="nav-link active">
+							<a href="#" class="nav-link active">
 								<i class="fa fa-window-maximize nav-icon"></i>
 								<p>
 									게시판 관리
@@ -75,14 +75,14 @@
 							</a>
 							<ul class="nav nav-treeview">
 								<li class="nav-item">
-									<a href="/boards" class="nav-link"
+									<a href="/admin/boards" class="nav-link"
 										th:classappend="${servletPath == '/boards'} ? 'active'">
 										<i class="far fa-circle nav-icon"></i>
 										<p>게시판 목록</p>
 									</a>
 								</li>
 								<li class="nav-item" th:each="board : ${boards}">
-									<a th:href="@{'/posts/board/' + ${board.boardId}}"
+									<a th:href="@{'/admin/posts/board/' + ${board.boardId}}"
 										class="btn  btn-sm nav-link  text-left">
 										<i class="far nav-icon"></i>
 										<p th:text="${board.name}"></p>
@@ -91,7 +91,7 @@
 							</ul>
 						</li>
 						<li class="nav-item">
-							<a href="/comments" class="nav-link ">
+							<a href="/admin/comments" class="nav-link ">
 								<i class="nav-icon fas fa-comments"></i>
 								<p>댓글 관리</p>
 							</a>
@@ -140,9 +140,9 @@
 										<td th:text="${board.name}"></td>
 										<td th:text="${board.description}"></td>
 										<td>
-											<a th:href="@{'/posts/board/' + ${board.boardId}}"
+											<a th:href="@{'/admin/posts/board/' + ${board.boardId}}"
 												class="btn btn-primary btn-sm">View Posts</a>
-											<a th:href="@{'/boards/delete/' + ${board.boardId}}"
+											<a th:href="@{'/admin/boards/delete/' + ${board.boardId}}"
 												class="btn btn-danger btn-sm">Delete</a>
 										</td>
 									</tr>

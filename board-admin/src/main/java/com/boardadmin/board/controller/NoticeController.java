@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,17 +22,18 @@ public class NoticeController {
     private PostService postService;
 
     @GetMapping
-    public String getNotices(@RequestParam(defaultValue = "1", required = false) int page, 
-                             @RequestParam(defaultValue = "10", required = false) int size, 
-                             Model model) {
-        Pageable pageable = PageRequest.of(page - 1, size);
+    public String getNotices(@RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "10") int size, Model model) {
+        page = (page < 1) ? 1 : page;
+        Pageable pageable = PageRequest.of(page - 1, size, Sort.by(Sort.Direction.DESC, "createdAt"));
         Page<Post> postPage = postService.getPostsByBoardId(1L, pageable); // Assuming board ID 1 is for notices
+        long totalPosts = postPage.getTotalElements(); // 전체 게시글 수
         model.addAttribute("posts", postPage.getContent());
         model.addAttribute("currentPage", page);
-        model.addAttribute("totalPages", postPage.getTotalPages());
-        model.addAttribute("size", size);
+        model.addAttribute("totalPages", postPage.getTotalPages() > 0 ? postPage.getTotalPages() : 1);
+        model.addAttribute("totalPosts", totalPosts); // 전체 게시글 수를 모델에 추가
         return "notices/list";
     }
+
 
     @GetMapping("/{id}")
     public String getNotice(@PathVariable Long id, Model model) {

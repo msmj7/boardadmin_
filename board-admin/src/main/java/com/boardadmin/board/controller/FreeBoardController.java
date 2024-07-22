@@ -12,6 +12,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -34,13 +35,16 @@ public class FreeBoardController {
     @GetMapping
     public String getPosts(@RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "10") int size, Model model) {
         page = (page < 1) ? 1 : page;
-        Pageable pageable = PageRequest.of(page - 1, size);
+        Pageable pageable = PageRequest.of(page - 1, size, Sort.by(Sort.Direction.DESC, "createdAt"));
         Page<Post> postPage = postService.getPostsByBoardId(2L, pageable); // Assuming board ID 2 is for freeboard
+        long totalPosts = postPage.getTotalElements(); // 전체 게시글 수
         model.addAttribute("posts", postPage.getContent());
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", postPage.getTotalPages() > 0 ? postPage.getTotalPages() : 1);
+        model.addAttribute("totalPosts", totalPosts); // 전체 게시글 수를 모델에 추가
         return "freeboard/list";
     }
+
 
     @GetMapping("/{id}")
     public String getPost(@PathVariable Long id, Model model) {
