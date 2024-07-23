@@ -92,7 +92,7 @@ public class PostController {
         Board board = boardService.getBoardById(boardId).orElseThrow(() -> new IllegalArgumentException("Invalid board Id:" + boardId));
         post.setBoard(board);
         postService.createPost(post);
-        return "redirect:/posts/board/" + boardId;
+        return "redirect:/admin/posts/board/" + boardId;
     }
 
     @GetMapping("/edit/{id}")
@@ -111,7 +111,7 @@ public class PostController {
     public String updatePost(@PathVariable Long id, @ModelAttribute Post post) {
         Board board = post.getBoard();
         postService.updatePost(id, post);
-        return "redirect:/posts/board/" + board.getBoardId();
+        return "redirect:/admin/posts/board/" + board.getBoardId();
     }
 
     @GetMapping("/delete/{id}")

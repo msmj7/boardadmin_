@@ -34,7 +34,7 @@ public class BoardController {
     @PostMapping
     public String createBoard(@ModelAttribute Board board) {
         boardService.createBoard(board);
-        return "redirect:/boards";
+        return "redirect:/admin/boards";
     }
 
     @GetMapping("/{id}")
@@ -55,6 +55,6 @@ public class BoardController {
     @GetMapping("/delete/{id}")
     public String deleteBoard(@PathVariable Long id) {
         boardService.deleteBoard(id);
-        return "redirect:/boards";
+        return "redirect:/admin/boards";
     }
 }
