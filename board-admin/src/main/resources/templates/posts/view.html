@@ -127,17 +127,17 @@
 							<ul>
 								<li th:each="comment : ${comments}">
 									<p th:text="${comment.content}">Comment content goes here...</p>
-									<form th:action="@{|/comments/delete/${comment.commentId}|}" method="post"
+									<form th:action="@{|/admin/comments/delete/${comment.commentId}|}" method="post"
 										onsubmit="return confirm('Are you sure you want to delete this comment?');">
 										<input type="hidden" name="_method" value="delete" />
 										<input type="hidden" name="postId" th:value="${post.postId}" />
 										<button type="submit" class="btn btn-danger btn-sm">Delete</button>
 									</form>
-									<a th:href="@{|/comments/edit/${comment.commentId}|}"
+									<a th:href="@{|/admin/comments/edit/${comment.commentId}|}"
 										class="btn btn-primary btn-sm">Edit</a>
 								</li>
 							</ul>
-							<form th:action="@{|/comments/post/${post.postId}|}" method="post">
+							<form th:action="@{|/admin/comments/post/${post.postId}|}" method="post">
 								<textarea name="content" class="form-control" rows="3"
 									placeholder="Add a comment..."></textarea>
 								<input type="hidden" name="authorName" value="test" /> <!-- 임시로 authorId를 1로 설정 -->
