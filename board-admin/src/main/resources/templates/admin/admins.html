@@ -9,7 +9,8 @@
 	<!-- Theme style -->
 	<link rel="stylesheet" th:href="@{/adminlte/dist/css/adminlte.min.css}">
 	<!-- Google Font: Source Sans Pro -->
-	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+	<link rel="stylesheet"
+		href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
 	<meta name="_csrf" th:content="${_csrf.token}" />
 </head>
 
@@ -82,14 +83,15 @@
 							</a>
 							<ul class="nav nav-treeview">
 								<li class="nav-item">
-									<a href="/admin/boards" class="nav-link" th:classappend="${servletPath == '/boards'} ? 'active'">
+									<a href="/admin/boards" class="nav-link"
+										th:classappend="${servletPath == '/boards'} ? 'active'">
 										<i class="far fa-circle nav-icon"></i>
 										<p>게시판 목록</p>
 									</a>
 								</li>
 								<li class="nav-item" th:each="board : ${boards}">
 									<a th:href="@{'/admin/posts/board/' + ${board.boardId}}"
-										class="btn  btn-sm nav-link  text-left" >
+										class="btn  btn-sm nav-link  text-left">
 										<i class="far nav-icon"></i>
 										<p th:text="${board.name}"></p>
 									</a>
@@ -97,11 +99,11 @@
 							</ul>
 						</li>
 						<li class="nav-item">
-													<a href="/admin/comments" class="nav-link ">
-														<i class="nav-icon fas fa-comments"></i>
-														<p>댓글 관리</p>
-													</a>
-												</li>
+							<a href="/admin/comments" class="nav-link ">
+								<i class="nav-icon fas fa-comments"></i>
+								<p>댓글 관리</p>
+							</a>
+						</li>
 					</ul>
 				</nav>
 				<!-- /.sidebar-menu -->
@@ -137,10 +139,10 @@
                                             <button type="submit" class="btn btn-default">
                                                 <i class="fas fa-search"></i>
                                             </button>
-                                        </div>
-                                    </div>
-                                </form>
-                            </div>
+										</div>
+									</div>
+								</form>
+							</div>
 						</div>
 						<div class="card-body">
 							<table class="table table-bordered">
@@ -155,7 +157,8 @@
 								</thead>
 								<tbody>
 									<tr th:each="admin, iterStat : ${admins}">
-										<td th:text="${totalElements - (currentPage - 1) * pageSize - iterStat.index}"></td>
+										<td th:text="${totalElements - (currentPage - 1) * pageSize - iterStat.index}">
+										</td>
 										<td th:text="${admin.userId}"></td>
 										<td th:text="${admin.email}"></td>
 										<td th:text="${admin.active}"></td>
@@ -191,7 +194,6 @@
                             </ul>
                         </nav>
                     </div>
-                </div>
 					</div>
 				</div>
 			</section>
@@ -229,4 +231,5 @@
 		}
 	</script>
 </body>
+
 </html>
