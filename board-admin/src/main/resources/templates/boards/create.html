@@ -112,7 +112,7 @@
 							<h3 class="card-title">Create New Board</h3>
 						</div>
 						<div class="card-body">
-							<form th:action="@{/boards}" th:object="${board}" method="post">
+							<form th:action="@{/admin/boards}" th:object="${board}" method="post">
 								<div class="form-group">
 									<label for="name">Name</label>
 									<input type="text" th:field="*{name}" class="form-control" id="name"
