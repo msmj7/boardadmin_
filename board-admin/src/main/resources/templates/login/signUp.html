@@ -2,18 +2,20 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Sign Up</title>
-    <!-- AdminLTE CSS -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/admin-lte/3.1.0/css/adminlte.min.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>회원가입</title>
+    <link rel="stylesheet" th:href="@{/adminlte/plugins/fontawesome-free/css/all.min.css}">
+    <link rel="stylesheet" th:href="@{/adminlte/dist/css/adminlte.min.css}">
 </head>
 <body class="hold-transition register-page">
 <div class="register-box">
-    <div class="card card-outline card-primary">
-        <div class="card-header text-center">
-            <a href="#" class="h1">Sign Up</a>
-        </div>
-        <div class="card-body">
-            <p class="login-box-msg"></p>
+    <div class="register-logo">
+        <a href="/"><b>Pangpany</b></a>
+    </div>
+    <div class="card">
+        <div class="card-body register-card-body">
+            <p class="login-box-msg">회원가입</p>
+
             <form th:action="@{/signup}" method="post" th:object="${user}">
                 <div class="input-group mb-3">
                     <input type="text" class="form-control" placeholder="ID" th:field="*{userId}" required>
@@ -40,19 +42,23 @@
                     </div>
                 </div>
                 <div class="row">
-                <a href="/login" class="text-center">I already have a membership</a>
+                    <div class="col-8">
+                        <a th:href="@{/login}" class="text-center">이미 회원이신가요?</a>
+                    </div>
                     <div class="col-4">
-                        <button type="submit" class="btn btn-primary btn-block">Sign Up</button>
+                        <button type="submit" class="btn btn-primary btn-block">Sign up</button>
                     </div>
                 </div>
             </form>
+
             <div th:if="${error}" class="alert alert-danger mt-3">
                 <span th:text="${error}"></span>
             </div>
         </div>
     </div>
 </div>
-<!-- AdminLTE JS -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/admin-lte/3.1.0/js/adminlte.min.js"></script>
+<script th:src="@{/adminlte/plugins/jquery/jquery.min.js}"></script>
+<script th:src="@{/adminlte/plugins/bootstrap/js/bootstrap.bundle.min.js}"></script>
+<script th:src="@{/adminlte/dist/js/adminlte.min.js}"></script>
 </body>
 </html>
