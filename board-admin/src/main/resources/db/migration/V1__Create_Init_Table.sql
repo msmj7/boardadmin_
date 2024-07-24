@@ -22,18 +22,18 @@ CREATE TABLE user_role (
 
 -- Board 테이블 생성
 CREATE TABLE board (
-    board_id INT AUTO_INCREMENT PRIMARY KEY,
+    board_id BIGINT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(100) UNIQUE NOT NULL,
     description TEXT
 );
 
 -- Post 테이블 생성
 CREATE TABLE post (
-    post_id INT AUTO_INCREMENT PRIMARY KEY,
+    post_id BIGINT AUTO_INCREMENT PRIMARY KEY,
     title VARCHAR(255) NOT NULL,
     content TEXT NOT NULL,
     author_name VARCHAR(100) NOT NULL,
-    board_id INT NOT NULL,
+    board_id BIGINT NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (board_id) REFERENCES board(board_id)
@@ -41,8 +41,8 @@ CREATE TABLE post (
 
 -- Comment 테이블 생성
 CREATE TABLE comment (
-    comment_id INT AUTO_INCREMENT PRIMARY KEY,
-    post_id INT NOT NULL,
+    comment_id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    post_id BIGINT NOT NULL,
     author_name VARCHAR(100) NOT NULL,
     content TEXT NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
