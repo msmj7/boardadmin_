@@ -18,10 +18,6 @@
 			margin-top: 20px;
 		}
 
-		.page-item {
-			
-		}
-
 		.page-link {
 			color: #007bff;
 		}
@@ -93,7 +89,7 @@
                                     </table>
                                 </div>
                                 <div class="card-footer clearfix">
-                                    <ul class="pagination pagination-sm m-0 float-right">
+                                    <ul class="pagination pagination-sm m-0">
                                         <li class="page-item" th:classappend="${currentPage == 1} ? 'disabled'">
                                             <a class="page-link" th:href="@{'/notices?page=' + ${currentPage - 1}}">&laquo;</a>
                                         </li>
