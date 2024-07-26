@@ -59,11 +59,12 @@
             <!-- Main content -->
             <div class="content">
                 <div class="container">
-                    <div class="row mb-2">
-                        <div class="col-12" sec:authorize="isAuthenticated()">
-                            <a th:href="@{/freeboard/new}" class="btn btn-primary mb-2">글 작성</a>
-                        </div>
-                    </div>
+                    <div class="row mb-2 action-buttons">
+					    <div class="col-12 d-flex justify-content-end">
+					        <p sec:authorize="isAnonymous()">글을 작성하시려면 로그인을 하셔야 합니다.</p>
+					        <a th:href="@{/freeboard/new}" class="btn btn-primary" sec:authorize="isAuthenticated()">글 작성</a>
+					    </div>
+					</div>
                     <div class="row">
                         <div class="col-12">
                             <div class="card">
@@ -92,7 +93,6 @@
                                     </table>
                                 </div>
                                 <div class="card-footer clearfix">
-									<p sec:authorize="isAnonymous()">글을 작성하시려면 로그인을 하셔야 합니다.</p>
                                     <ul class="pagination pagination-sm m-0 ">
                                         <li class="page-item" th:classappend="${currentPage == 1} ? 'disabled'">
                                             <a class="page-link" th:href="@{'/freeboard?page=' + ${currentPage - 1}}">&laquo;</a>
