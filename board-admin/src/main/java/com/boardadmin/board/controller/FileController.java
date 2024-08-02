@@ -9,15 +9,14 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.List;
 
 @Controller
 @RequestMapping("/files")
@@ -26,33 +25,28 @@ public class FileController {
     @Autowired
     private FileService fileService;
 
-    @PostMapping("/upload")
-    public String uploadFile(@RequestParam("file") List<MultipartFile> files, @RequestParam("postId") Long postId, Model model) {
-        List<File> existingFiles = fileService.getFilesByPostId(postId);
-        if (existingFiles.size() + files.size() > 3) {
-            model.addAttribute("error", "You can upload up to 3 files.");
-            return "redirect:/freeboard/edit/" + postId;
-        }
-        for (MultipartFile file : files) {
-            try {
-                fileService.storeFile(file, postId);
-            } catch (IOException e) {
-                e.printStackTrace();
-                // 에러 처리 로직 추가
-            }
-        }
-        return "redirect:/freeboard/" + postId;
-    }
-
     @GetMapping("/download/{id}")
     @ResponseBody
     public ResponseEntity<Resource> downloadFile(@PathVariable Long id) throws IOException {
         File file = fileService.getFileById(id);
         Path filePath = Paths.get(file.getFilePath()).toAbsolutePath().normalize();
+        
         Resource resource = new UrlResource(filePath.toUri());
+
+        if (!resource.exists() || !resource.isReadable()) {
+            throw new IOException("File not found: " + filePath);
+        }
+
+        String contentType = Files.probeContentType(filePath);
+        if (contentType == null) {
+            contentType = "application/octet-stream";
+        }
+
+        String encodedFileName = encodeFileName(file.getOriginalName());
+
         return ResponseEntity.ok()
-                .contentType(MediaType.parseMediaType(Files.probeContentType(filePath)))
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + file.getOriginalName() + "\"")
+                .contentType(MediaType.parseMediaType(contentType))
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename*=UTF-8''" + encodedFileName)
                 .body(resource);
     }
 
@@ -60,5 +54,13 @@ public class FileController {
     public String deleteFile(@PathVariable Long id, @RequestParam("postId") Long postId) {
         fileService.deleteFile(id);
         return "redirect:/freeboard/edit/" + postId;
+    }
+
+    private String encodeFileName(String fileName) {
+        try {
+            return URLEncoder.encode(fileName, "UTF-8").replaceAll("\\+", "%20");
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException("Failed to encode file name: " + fileName, e);
+        }
     }
 }

@@ -4,10 +4,12 @@ import com.boardadmin.board.model.Post;
 import com.boardadmin.board.model.Comment;
 import com.boardadmin.board.model.Board;
 import com.boardadmin.board.model.File;
+
 import com.boardadmin.board.service.PostService;
 import com.boardadmin.board.service.CommentService;
 import com.boardadmin.board.service.BoardService;
 import com.boardadmin.board.service.FileService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -37,7 +39,7 @@ public class FreeBoardController {
     private CommentService commentService;
 
     @Autowired
-    private FileService fileService;
+    private FileService fileService; //파일첨부기능 추가
 
     @GetMapping
     public String getPosts(@RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "10") int size, Model model) {
@@ -56,13 +58,16 @@ public class FreeBoardController {
     public String getPost(@PathVariable Long id, Model model) {
         Post post = postService.getPostById(id).orElseThrow(() -> new IllegalArgumentException("Invalid post Id:" + id));
         List<Comment> comments = commentService.getCommentsByPostId(id);
-        List<File> files = fileService.getFilesByPostId(id);
+        List<File> files = fileService.getFilesByPostId(id);//파일 추가
+        
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
+        
         model.addAttribute("post", post);
         model.addAttribute("comments", comments);
-        model.addAttribute("files", files);
         model.addAttribute("currentUserName", username);
+        model.addAttribute("files", files);//파일 추가
+        
         return "freeboard/view";
     }
 
