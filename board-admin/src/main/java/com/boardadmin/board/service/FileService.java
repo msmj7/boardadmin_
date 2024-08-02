@@ -24,7 +24,7 @@ public class FileService {
     @Autowired
     private PostRepository postRepository;
 
-    private final String uploadDir = "C:\\sideproject\\boardadmin\\file"; // 업로드 디렉토리 경로 설정
+    private final String uploadDir = "C:\\sideproject\\boardadmin\\board-admin\\file"; // 업로드 디렉토리 경로 설정
 
     public FileService() {
         // Ensure the upload directory exists
@@ -40,7 +40,7 @@ public class FileService {
 
     public File storeFile(MultipartFile file, Long postId) throws IOException {
         String originalFileName = file.getOriginalFilename();
-        String storedFileName = UUID.randomUUID().toString() + "_" + originalFileName;
+        String storedFileName = UUID.randomUUID().toString().replaceAll("-", "") + "_" + originalFileName;
         Path filePath = Paths.get(uploadDir, storedFileName);
 
         // Save the file to the specified path
