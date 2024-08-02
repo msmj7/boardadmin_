@@ -26,20 +26,32 @@ public class FileService {
 
     private final String uploadDir = "C:\\sideproject\\boardadmin\\file"; // 업로드 디렉토리 경로 설정
 
+    public FileService() {
+        // Ensure the upload directory exists
+        Path path = Paths.get(uploadDir);
+        if (!Files.exists(path)) {
+            try {
+                Files.createDirectories(path);
+            } catch (IOException e) {
+                throw new RuntimeException("Could not create upload directory!", e);
+            }
+        }
+    }
+
     public File storeFile(MultipartFile file, Long postId) throws IOException {
         String originalFileName = file.getOriginalFilename();
         String storedFileName = UUID.randomUUID().toString() + "_" + originalFileName;
-        String filePath = uploadDir + "/" + storedFileName;
+        Path filePath = Paths.get(uploadDir, storedFileName);
 
-        Path destPath = Paths.get(filePath);
-        Files.copy(file.getInputStream(), destPath);
+        // Save the file to the specified path
+        Files.copy(file.getInputStream(), filePath);
 
         Post post = postRepository.findById(postId).orElseThrow(() -> new IllegalArgumentException("Invalid post Id:" + postId));
 
         File fileEntity = new File();
         fileEntity.setOriginalName(originalFileName);
         fileEntity.setSaveName(storedFileName);
-        fileEntity.setFilePath(filePath);
+        fileEntity.setFilePath(filePath.toString());
         fileEntity.setSize(file.getSize());
         fileEntity.setPost(post);
 
@@ -60,7 +72,7 @@ public class FileService {
         try {
             Files.deleteIfExists(filePath);
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new RuntimeException("Could not delete file", e);
         }
         fileRepository.delete(fileEntity);
     }

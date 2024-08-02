@@ -3,9 +3,11 @@ package com.boardadmin.board.controller;
 import com.boardadmin.board.model.Post;
 import com.boardadmin.board.model.Comment;
 import com.boardadmin.board.model.Board;
+import com.boardadmin.board.model.File;
 import com.boardadmin.board.service.PostService;
 import com.boardadmin.board.service.CommentService;
 import com.boardadmin.board.service.BoardService;
+import com.boardadmin.board.service.FileService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -16,7 +18,9 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 @Controller
@@ -32,6 +36,9 @@ public class FreeBoardController {
     @Autowired
     private CommentService commentService;
 
+    @Autowired
+    private FileService fileService;
+
     @GetMapping
     public String getPosts(@RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "10") int size, Model model) {
         page = (page < 1) ? 1 : page;
@@ -45,15 +52,16 @@ public class FreeBoardController {
         return "freeboard/list";
     }
 
-
     @GetMapping("/{id}")
     public String getPost(@PathVariable Long id, Model model) {
         Post post = postService.getPostById(id).orElseThrow(() -> new IllegalArgumentException("Invalid post Id:" + id));
         List<Comment> comments = commentService.getCommentsByPostId(id);
+        List<File> files = fileService.getFilesByPostId(id);
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
         model.addAttribute("post", post);
         model.addAttribute("comments", comments);
+        model.addAttribute("files", files);
         model.addAttribute("currentUserName", username);
         return "freeboard/view";
     }
@@ -80,28 +88,50 @@ public class FreeBoardController {
     }
 
     @PostMapping("/new")
-    public String createPost(@ModelAttribute Post post) {
+    public String createPost(@ModelAttribute Post post, @RequestParam("files") List<MultipartFile> files) {
         // Assuming board ID 2 is for freeboard
         Board board = boardService.getBoardById(2L).orElseThrow(() -> new IllegalArgumentException("Invalid board Id: 2"));
         post.setBoard(board);
-        postService.createPost(post);
+        Post savedPost = postService.createPost(post);
+
+        for (MultipartFile file : files) {
+            try {
+                fileService.storeFile(file, savedPost.getPostId());
+            } catch (IOException e) {
+                e.printStackTrace();
+                // 에러 처리 로직 추가
+            }
+        }
+
         return "redirect:/freeboard";
     }
 
     @GetMapping("/edit/{id}")
     public String editPostForm(@PathVariable Long id, Model model) {
         Post post = postService.getPostById(id).orElseThrow(() -> new IllegalArgumentException("Invalid post Id:" + id));
+        List<File> files = fileService.getFilesByPostId(id);
         model.addAttribute("post", post);
+        model.addAttribute("files", files);
         return "freeboard/edit";
     }
 
     @PostMapping("/edit/{id}")
-    public String updatePost(@PathVariable Long id, @ModelAttribute Post post) {
+    public String updatePost(@PathVariable Long id, @ModelAttribute Post post, @RequestParam("files") List<MultipartFile> files) {
         // Retrieve the original post
         Post existingPost = postService.getPostById(id).orElseThrow(() -> new IllegalArgumentException("Invalid post Id:" + id));
         // Set the board from the original post to the updated post
         post.setBoard(existingPost.getBoard());
         postService.updatePost(id, post);
+
+        for (MultipartFile file : files) {
+            try {
+                fileService.storeFile(file, id);
+            } catch (IOException e) {
+                e.printStackTrace();
+                // 에러 처리 로직 추가
+            }
+        }
+
         return "redirect:/freeboard/" + id;
     }
 }
