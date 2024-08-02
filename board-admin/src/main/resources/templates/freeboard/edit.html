@@ -96,7 +96,8 @@
                                         </li>
                                     </ul>
                                 </div>
-                                <button type="submit" class="btn btn-primary">수정</button>
+                                <a th:href="@{'/freeboard/' + ${post.postId}}" class="btn btn-secondary">취소</a>
+                                <button type="submit" class="btn btn-primary">등록</button>
                             </form>
                         </div>
                     </div>
