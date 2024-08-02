@@ -89,16 +89,16 @@
                                         <div class="form-group custom-file-container">
                                             <label for="files">파일 업로드</label>
                                             <div class="custom-file">
-                                                <input type="file" class="custom-file-input" id="files" name="files" multiple>
+                                                <input type="file" class="custom-file-input" id="files" name="files" multiple onchange="handleFiles(this)">
                                                 <label class="custom-file-label" for="files">파일을 선택하세요</label>
                                             </div>
                                             <div id="fileList" class="mt-2"></div>
                                         </div>
                                         <div class="d-flex">
-	                                        <div class="form-group">
-	                                        	<a th:href="@{/freeboard}" class="btn btn-secondary">취소</a>
-	                                            <button type="submit" class="btn btn-primary mr-2">등록</button>
-	                                        </div>  
+                                            <div class="form-group">
+                                                <a th:href="@{/freeboard}" class="btn btn-secondary">취소</a>
+                                                <button type="submit" class="btn btn-primary mr-2">등록</button>
+                                            </div>
                                         </div>
                                     </form>
                                 </div>
@@ -127,6 +127,7 @@
         $(document).ready(function () {
             let fileCount = 0;
             const fileList = $('#fileList');
+            let selectedFiles = new DataTransfer();
 
             $('#files').on('change', function () {
                 const files = $(this)[0].files;
@@ -145,15 +146,38 @@
                     removeButton.on('click', function () {
                         fileItem.remove();
                         fileCount--;
+                        removeFile(i);
                     });
                     fileItem.append(removeButton);
                     fileList.append(fileItem);
+                    selectedFiles.items.add(files[i]);
                 }
 
+                // Update the input files
+                this.files = selectedFiles.files;
+
                 // Update the custom file input label with the selected file names
-                const fileNames = Array.from(files).map(file => file.name).join(', ');
+                const fileNames = Array.from(selectedFiles.files).map(file => file.name).join(', ');
                 $(this).next('.custom-file-label').html(fileNames);
             });
+
+            function removeFile(index) {
+                let dt = new DataTransfer();
+                let { files } = document.getElementById('files');
+
+                for (let i = 0; i < files.length; i++) {
+                    const file = files[i];
+                    if (index !== i) {
+                        dt.items.add(file);
+                    }
+                }
+                document.getElementById('files').files = dt.files;
+                selectedFiles = dt;
+
+                // Update the custom file input label with the remaining file names
+                const fileNames = Array.from(selectedFiles.files).map(file => file.name).join(', ');
+                $('#files').next('.custom-file-label').html(fileNames);
+            }
         });
     </script>
 </body>
