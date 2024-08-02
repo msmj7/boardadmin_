@@ -1,0 +1,9 @@
+CREATE TABLE file (
+	id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    post_id BIGINT NOT NULL,
+    original_name VARCHAR(255) NOT NULL,
+    save_name VARCHAR(255) NOT NULL,
+    file_path VARCHAR(255) NOT NULL,
+    size BIGINT NOT NULL,
+    created_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);

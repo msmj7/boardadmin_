@@ -43,7 +43,7 @@
                         <div class="col-12">
                             <div class="card">
                                 <div class="card-body">
-                                    <form th:action="@{/freeboard/new}" th:object="${post}" method="post">
+                                    <form th:action="@{/freeboard/new}" th:object="${post}" method="post" enctype="multipart/form-data">
                                         <div class="form-group">
                                             <label for="title">제목</label>
                                             <input type="text" id="title" class="form-control" th:field="*{title}" />
@@ -55,6 +55,10 @@
                                         <div class="form-group">
                                             <label for="authorName">작성자 이름</label>
                                             <input type="text" class="form-control" id="authorName" name="authorName" th:value="${post.authorName}" readonly>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="files">파일 업로드 (최대 3개)</label>
+                                            <input type="file" class="form-control" id="files" name="files" multiple onchange="validateFiles(this)">
                                         </div>
                                         <div class="form-group">
                                             <button type="submit" class="btn btn-primary">작성하기</button>
@@ -82,6 +86,15 @@
     <script th:src="@{/adminlte/plugins/bootstrap/js/bootstrap.bundle.min.js}"></script>
     <!-- AdminLTE App -->
     <script th:src="@{/adminlte/dist/js/adminlte.min.js}"></script>
+
+    <script>
+        function validateFiles(input) {
+            if (input.files.length > 3) {
+                alert("You can only upload a maximum of 3 files.");
+                input.value = '';
+            }
+        }
+    </script>
 </body>
 
 </html>
