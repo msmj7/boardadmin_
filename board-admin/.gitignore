@@ -34,3 +34,6 @@ build/
 
 ### DB ###
 /application-secure.properties
+
+##file
+file/
