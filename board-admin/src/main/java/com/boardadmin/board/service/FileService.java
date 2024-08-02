@@ -40,7 +40,7 @@ public class FileService {
 
     public File storeFile(MultipartFile file, Long postId) throws IOException {
         String originalFileName = file.getOriginalFilename();
-        String storedFileName = UUID.randomUUID().toString() + "_" + originalFileName;
+        String storedFileName = UUID.randomUUID().toString().replaceAll("-", "") + "_" + originalFileName;
         Path filePath = Paths.get(uploadDir, storedFileName);
 
         // Save the file to the specified path
