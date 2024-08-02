@@ -56,7 +56,8 @@ public class FileController {
         return "redirect:/freeboard/edit/" + postId;
     }
 
-    private String encodeFileName(String fileName) {
+    //파일명 인코딩 추가	
+    private String encodeFileName(String fileName) { 
         try {
             return URLEncoder.encode(fileName, "UTF-8").replaceAll("\\+", "%20");
         } catch (UnsupportedEncodingException e) {
