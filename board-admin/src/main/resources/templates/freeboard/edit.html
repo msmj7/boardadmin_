@@ -38,7 +38,6 @@
     </style>
 </head>
 
-
 <body class="hold-transition layout-top-nav">
     <div class="wrapper">
         <!-- Navbar -->
@@ -81,7 +80,7 @@
                                     <div id="file-upload-container">
                                         <div class="input-group mb-3 custom-file-container">
                                             <div class="custom-file">
-                                                <input type="file" class="custom-file-input" id="files" name="files" multiple onchange="validateFiles(this)">
+                                                <input type="file" class="custom-file-input" id="files" name="files" multiple onchange="handleFiles(this)">
                                                 <label class="custom-file-label" for="files">파일 선택</label>
                                             </div>
                                         </div>
@@ -92,10 +91,11 @@
                                     <ul class="list-group" id="file-list">
                                         <li th:each="file : ${files}" class="file-list-item">
                                             <span th:text="${file.originalName}"></span>
-                                            <a th:href="@{'/files/delete/' + ${file.id} + '?postId=' + ${post.postId}}" class="btn btn-danger btn-sm">삭제</a>
+                                            <button type="button" class="btn btn-danger btn-sm" th:attr="onclick='removeExistingFile(this, ' + ${file.id} + ');'">삭제</button>
                                         </li>
                                     </ul>
                                 </div>
+                                <input type="hidden" id="deletedFiles" name="deletedFiles">
                                 <a th:href="@{'/freeboard/' + ${post.postId}}" class="btn btn-secondary">취소</a>
                                 <button type="submit" class="btn btn-primary">등록</button>
                             </form>
@@ -121,40 +121,72 @@
     <script th:src="@{/adminlte/dist/js/adminlte.min.js}"></script>
 
     <script>
-        function validateFiles(input) {
-            const fileList = document.getElementById('file-list');
-            const files = input.files;
-            if (files.length > 3) {
-                alert("최대 3개의 파일만 업로드할 수 있습니다.");
-                input.value = '';
-                return;
+        $(document).ready(function () {
+            let fileCount = 0;
+            const fileList = $('#file-list');
+            let selectedFiles = new DataTransfer();
+            const deletedFiles = new Set();
+
+            $('#files').on('change', function () {
+                const files = $(this)[0].files;
+
+                if (fileCount + files.length > 3) {
+                    alert('최대 3개의 파일만 업로드할 수 있습니다.');
+                    $(this).val('');
+                    return;
+                }
+
+                for (let i = 0; i < files.length; i++) {
+                    fileCount++;
+                    const fileItem = $('<li class="file-list-item"></li>');
+                    fileItem.append('<span>' + files[i].name + '</span>');
+                    const removeButton = $('<button type="button" class="btn btn-danger btn-sm">삭제</button>');
+                    removeButton.on('click', function () {
+                        fileItem.remove();
+                        fileCount--;
+                        removeFile(i);
+                    });
+                    fileItem.append(removeButton);
+                    fileList.append(fileItem);
+                    selectedFiles.items.add(files[i]);
+                }
+
+                // Update the input files
+                this.files = selectedFiles.files;
+
+                // Update the custom file input label with the selected file names
+                const fileNames = Array.from(selectedFiles.files).map(file => file.name).join(', ');
+                $(this).next('.custom-file-label').html(fileNames);
+            });
+
+            window.removeFile = function(index) {
+                let dt = new DataTransfer();
+                let { files } = document.getElementById('files');
+
+                for (let i = 0; i < files.length; i++) {
+                    const file = files[i];
+                    if (index !== i) {
+                        dt.items.add(file);
+                    }
+                }
+                document.getElementById('files').files = dt.files;
+                selectedFiles = dt;
+
+                // Update the custom file input label with the remaining file names
+                const fileNames = Array.from(selectedFiles.files).map(file => file.name).join(', ');
+                $('#files').next('.custom-file-label').html(fileNames);
             }
 
-            fileList.innerHTML = ''; // 기존 파일 목록 초기화
-            for (let i = 0; i < files.length; i++) {
-                const fileItem = document.createElement('li');
-                fileItem.classList.add('file-list-item');
-                fileItem.innerHTML = `
-                    <span>${files[i].name}</span>
-                    <button type="button" class="btn btn-danger btn-sm" onclick="removeFile(${i})">삭제</button>
-                `;
-                fileList.appendChild(fileItem);
-            }
-        }
-
-        function removeFile(index) {
-            const input = document.getElementById('files');
-            const dt = new DataTransfer();
-            const { files } = input;
-
-            for (let i = 0; i < files.length; i++) {
-                const file = files[i];
-                if (index !== i) dt.items.add(file); // 제외할 파일을 제외하고 다시 추가
+            window.removeExistingFile = function(button, fileId) {
+                deletedFiles.add(fileId);
+                $(button).closest('.file-list-item').remove();
+                updateDeletedFilesInput();
             }
 
-            input.files = dt.files;
-            validateFiles(input); // 파일 목록 갱신
-        }
+            function updateDeletedFilesInput() {
+                $('#deletedFiles').val(Array.from(deletedFiles).join(','));
+            }
+        });
     </script>
 </body>
 

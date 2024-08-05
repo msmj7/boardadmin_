@@ -51,9 +51,10 @@ public class FileController {
     }
 
     @DeleteMapping("/delete/{id}")
-    public String deleteFile(@PathVariable Long id, @RequestParam("postId") Long postId) {
+    @ResponseBody
+    public ResponseEntity<String> deleteFile(@PathVariable Long id) {
         fileService.deleteFile(id);
-        return "redirect:/freeboard/edit/" + postId;
+        return ResponseEntity.ok("File deleted successfully");
     }
 
     //파일명 인코딩 추가	

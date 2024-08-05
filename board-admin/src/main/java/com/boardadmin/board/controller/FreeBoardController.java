@@ -121,22 +121,34 @@ public class FreeBoardController {
     }
 
     @PostMapping("/edit/{id}")
-    public String updatePost(@PathVariable Long id, @ModelAttribute Post post, @RequestParam("files") List<MultipartFile> files) {
+    public String updatePost(@PathVariable Long id, @ModelAttribute Post post, @RequestParam("files") List<MultipartFile> files, @RequestParam("deletedFiles") String deletedFiles) {
         // Retrieve the original post
         Post existingPost = postService.getPostById(id).orElseThrow(() -> new IllegalArgumentException("Invalid post Id:" + id));
         // Set the board from the original post to the updated post
         post.setBoard(existingPost.getBoard());
         postService.updatePost(id, post);
 
+        // Delete specified files
+        if (!deletedFiles.isEmpty()) {
+            String[] fileIds = deletedFiles.split(",");
+            for (String fileId : fileIds) {
+                fileService.deleteFile(Long.parseLong(fileId));
+            }
+        }
+
+        // Store new files
         for (MultipartFile file : files) {
-            try {
-                fileService.storeFile(file, id);
-            } catch (IOException e) {
-                e.printStackTrace();
-                // 에러 처리 로직 추가
+            if (!file.isEmpty()) {
+                try {
+                    fileService.storeFile(file, id);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    // 에러 처리 로직 추가
+                }
             }
         }
 
         return "redirect:/freeboard/" + id;
     }
+
 }
