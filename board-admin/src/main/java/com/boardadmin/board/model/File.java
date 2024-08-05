@@ -32,4 +32,14 @@ public class File {
 
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdDate = LocalDateTime.now(); // 등록 일자
+
+    public String getFormattedSize() {
+        if (size >= 1024 * 1024) {
+            return String.format("%.2f MB", (double) size / (1024 * 1024));
+        } else if (size >= 1024) {
+            return String.format("%.2f KB", (double) size / 1024);
+        } else {
+            return size + " Bytes";
+        }
+    }
 }

@@ -5,6 +5,8 @@ import com.boardadmin.board.model.Post;
 import com.boardadmin.board.repository.FileRepository;
 import com.boardadmin.board.repository.PostRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -76,4 +78,10 @@ public class FileService {
         }
         fileRepository.delete(fileEntity);
     }
+    
+    public Page<File> getAllFiles(Pageable pageable) {
+        return fileRepository.findAll(pageable);
+    }
+
+
 }

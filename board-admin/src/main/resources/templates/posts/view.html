@@ -123,6 +123,13 @@
 							<p th:text="${post.content}">Post content goes here...</p>
 						</div>
 						<div class="card-footer">
+							<h3>Files</h3>
+							<ul>
+								<li th:each="file : ${files}">
+									<span th:text="${file.originalName}">File Name</span>
+									<a th:href="@{'/files/download/' + ${file.id}}" class="btn btn-primary btn-sm">Download</a>
+								</li>
+							</ul>
 							<h3>Comments</h3>
 							<ul>
 								<li th:each="comment : ${comments}">

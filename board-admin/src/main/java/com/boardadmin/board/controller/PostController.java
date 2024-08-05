@@ -2,8 +2,10 @@ package com.boardadmin.board.controller;
 
 import com.boardadmin.board.model.Board;
 import com.boardadmin.board.model.Comment;
+import com.boardadmin.board.model.File;
 import com.boardadmin.board.model.Post;
 import com.boardadmin.board.service.CommentService;
+import com.boardadmin.board.service.FileService;
 import com.boardadmin.board.service.PostService;
 import com.boardadmin.board.service.BoardService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +30,9 @@ public class PostController {
     
     @Autowired
     private CommentService commentService;
+
+    @Autowired
+    private FileService fileService;
     
     @GetMapping("/search")
     public String searchPosts(@RequestParam String keyword, @RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "10") int size, Model model) {
@@ -68,9 +73,11 @@ public class PostController {
     public String viewPost(@PathVariable Long postId, Model model) {
         Post post = postService.getPostById(postId).orElseThrow(() -> new IllegalArgumentException("Invalid post Id:" + postId));
         List<Comment> comments = commentService.getCommentsByPostId(postId);
+        List<File> files = fileService.getFilesByPostId(postId); // 파일 목록 추가
         
         model.addAttribute("post", post);
         model.addAttribute("comments", comments);
+        model.addAttribute("files", files); // 파일 목록 추가
         return "posts/view";
     }
 
@@ -98,7 +105,10 @@ public class PostController {
     @GetMapping("/edit/{id}")
     public String editPostForm(@PathVariable Long id, Model model) {
         Post post = postService.getPostById(id).orElseThrow(() -> new IllegalArgumentException("Invalid post Id:" + id));
+        List<File> files = fileService.getFilesByPostId(id); // 파일 목록 추가
+        
         model.addAttribute("post", post);
+        model.addAttribute("files", files); // 파일 목록 추가
 
         Board board = post.getBoard();
         model.addAttribute("board", board);

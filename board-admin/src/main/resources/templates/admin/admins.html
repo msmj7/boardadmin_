@@ -104,6 +104,12 @@
 								<p>댓글 관리</p>
 							</a>
 						</li>
+						<li class="nav-item">
+							<a href="/admin/files" class="nav-link ">
+								<i class="nav-icon fas fa-folder-open"></i>
+								<p>파일 관리</p>
+							</a>
+						</li>
 					</ul>
 				</nav>
 				<!-- /.sidebar-menu -->
@@ -183,13 +189,13 @@
                         <nav aria-label="Page navigation">
                             <ul class="pagination justify-content-center">
                                 <li class="page-item" th:classappend="${currentPage == 1} ? 'disabled'">
-                                    <a class="page-link" th:href="@{'/admin/admins' + '?page=' + ${currentPage - 1}}">Previous</a>
+                                    <a class="page-link" th:href="@{'/admin/admins' + '?page=' + ${currentPage - 1}}">&laquo;</a>
                                 </li>
                                 <li class="page-item" th:each="i : ${#numbers.sequence(1, totalPages)}" th:classappend="${i == currentPage} ? 'active'">
                                     <a class="page-link" th:href="@{'/admin/admins'  + '?page=' + ${i}}" th:text="${i}">1</a>
                                 </li>
                                 <li class="page-item" th:classappend="${currentPage == totalPages} ? 'disabled'">
-                                    <a class="page-link" th:href="@{'/admin/admins' + '?page=' + ${currentPage + 1}}">Next</a>
+                                    <a class="page-link" th:href="@{'/admin/admins' + '?page=' + ${currentPage + 1}}">&raquo;</a>
                                 </li>
                             </ul>
                         </nav>
