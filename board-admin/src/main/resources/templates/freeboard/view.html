@@ -7,8 +7,7 @@
     <link rel="stylesheet" th:href="@{/adminlte/plugins/fontawesome-free/css/all.min.css}">
     <!-- Theme style -->
     <link rel="stylesheet" th:href="@{/adminlte/dist/css/adminlte.min.css}">
-    <!-- Google Font: Source Sans Pro -->
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+    <!-- Custom CSS -->
     <style>
         .post-title {
             font-size: 1.8rem;
@@ -68,6 +67,20 @@
         .file-list-item a {
             color: #007bff;
         }
+        .like-buttons {
+            display: flex;
+            justify-content: flex-end;
+        }
+        .like-buttons i {
+            cursor: pointer;
+            margin-left: 1rem;
+        }
+        .like-buttons i.liked {
+            color: #007bff;
+        }
+        .like-buttons i.disliked {
+            color: #dc3545;
+        }
     </style>
 </head>
 <body class="hold-transition layout-top-nav">
@@ -106,6 +119,10 @@
                                 <div class="post-title" th:text="${post.title}"></div>
                                 <div class="post-meta">
                                     작성자: <span th:text="${post.authorName}"></span> | 작성일: <span th:text="${#temporals.format(post.createdAt, 'yyyy-MM-dd HH:mm:ss')}"></span>
+                                    <div sec:authorize="isAuthenticated()" class="like-buttons">
+                                        <i class="far fa-thumbs-up" id="likeButton"></i>
+                                        <i class="far fa-thumbs-down" id="dislikeButton"></i>
+                                    </div>
                                 </div>
                                 <div class="post-content" th:text="${post.content}"></div>
                                 <div class="mt-3">
@@ -125,7 +142,6 @@
                                         </div>
                                     </div>
                                 </div>
-                                
                             </div>
                         </div>
 
@@ -178,5 +194,34 @@
 <script th:src="@{/adminlte/plugins/bootstrap/js/bootstrap.bundle.min.js}"></script>
 <!-- AdminLTE App -->
 <script th:src="@{/adminlte/dist/js/adminlte.min.js}"></script>
+
+<script>
+    $(document).ready(function() {
+        const postId = /*[[${post.postId}]]*/ 0;
+        const likeButton = $('#likeButton');
+        const dislikeButton = $('#dislikeButton');
+
+        $.get("/likes/status/" + postId, function(data) {
+            if (data.liked) {
+                likeButton.addClass('liked');
+            }
+            if (data.disliked) {
+                dislikeButton.addClass('disliked');
+            }
+        });
+
+        likeButton.click(function() {
+            $.post("/likes/like/" + postId, function() {
+                location.reload();
+            });
+        });
+
+        dislikeButton.click(function() {
+            $.post("/likes/dislike/" + postId, function() {
+                location.reload();
+            });
+        });
+    });
+</script>
 </body>
 </html>
