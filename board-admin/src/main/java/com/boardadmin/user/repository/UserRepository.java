@@ -13,6 +13,8 @@ import java.util.List;
 public interface UserRepository extends JpaRepository<User, Integer> {
     
 	User findByUserId(String userId);
+	
+	User findByEmail(String email);
     
  // 모든 사용자 조회
     List<User> findAll();
@@ -21,8 +23,8 @@ public interface UserRepository extends JpaRepository<User, Integer> {
 
     //검색 기능 추가
     Page<User> findByUserIdContainingOrEmailContainingAndRolesRoleName(String userId, String email, String role, Pageable pageable);
-
-    User findByEmail(String email);
+ 
     
     Page<User> findByRolesRoleNameOrderByCreatedAtDesc(String role, Pageable pageable);
+    
 }

@@ -27,6 +27,8 @@ public interface UserService {
     Page<User> getUsersByRole(String role, Pageable pageable);
 
     boolean userExists(String userId);
+    
+    boolean emailExists(String email);
 
     Page<User> searchUsers(String search, Pageable pageable);
 

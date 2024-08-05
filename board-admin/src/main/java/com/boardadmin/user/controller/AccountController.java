@@ -53,6 +53,13 @@ public class AccountController {
             return "login/signup";
         }
         
+        if (userService.emailExists(user.getEmail())) {
+            model.addAttribute("error", "이미 존재하는 이메일입니다.");
+            user.setEmail("");
+            model.addAttribute("user", user);
+            return "login/signUp";
+        }
+        
         userService.assignRole(user, "USER");
         user.setActive(true);
         userService.saveUser(user);

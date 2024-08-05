@@ -116,6 +116,10 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     public boolean userExists(String userId) {
         return userRepository.findByUserId(userId) != null;
     }
+    
+    public boolean emailExists(String email) {
+        return userRepository.findByEmail(email) != null;
+    }
 
     @Override
     public Page<User> searchUsers(String search, Pageable pageable) {
