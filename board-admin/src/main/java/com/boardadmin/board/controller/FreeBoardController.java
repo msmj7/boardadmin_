@@ -100,13 +100,15 @@ public class FreeBoardController {
         Post savedPost = postService.createPost(post);
 
         for (MultipartFile file : files) {
-            try {
-                fileService.storeFile(file, savedPost.getPostId());
-            } catch (IOException e) {
-                e.printStackTrace();
-                // 에러 처리 로직 추가
-            }
-        }
+        	if (!file.isEmpty()) {
+	            try {
+	                fileService.storeFile(file, savedPost.getPostId());
+	            } catch (IOException e) {
+	                e.printStackTrace();
+	                // 에러 처리 로직 추가
+	            }
+        	}
+        }  	
 
         return "redirect:/freeboard";
     }
