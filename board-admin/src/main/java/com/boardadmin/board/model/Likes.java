@@ -21,7 +21,4 @@ public class Likes {
     @ManyToOne
     @JoinColumn(name = "post_id", nullable = false)
     private Post post;
-
-    private boolean liked;
-    private boolean disliked;
 }
