@@ -1,7 +1,9 @@
 package com.boardadmin.board.controller;
 
+import com.boardadmin.board.model.Likes;
 import com.boardadmin.board.service.LikeService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -12,22 +14,20 @@ public class LikeController {
     private LikeService likeService;
 
     @PostMapping("/{postId}")
-    public void likePost(@PathVariable Long postId, @RequestParam String userId) {
-        likeService.likePost(postId, userId);
+    public ResponseEntity<?> likePost(@PathVariable Long postId, @RequestParam Integer userIndex) {
+        likeService.addLike(postId, userIndex);
+        return ResponseEntity.ok().build();
     }
 
     @DeleteMapping("/{postId}")
-    public void unlikePost(@PathVariable Long postId, @RequestParam String userId) {
-        likeService.unlikePost(postId, userId);
+    public ResponseEntity<?> unlikePost(@PathVariable Long postId, @RequestParam Integer userIndex) {
+        likeService.removeLike(postId, userIndex);
+        return ResponseEntity.ok().build();
     }
 
     @GetMapping("/{postId}")
-    public boolean isPostLikedByUser(@PathVariable Long postId, @RequestParam String userId) {
-        return likeService.isPostLikedByUser(postId, userId);
-    }
-
-    @GetMapping("/count/{postId}")
-    public int countLikes(@PathVariable Long postId) {
-        return likeService.countLikes(postId);
+    public ResponseEntity<Boolean> hasLiked(@PathVariable Long postId, @RequestParam Integer userIndex) {
+        boolean hasLiked = likeService.hasLiked(postId, userIndex);
+        return ResponseEntity.ok(hasLiked);
     }
 }

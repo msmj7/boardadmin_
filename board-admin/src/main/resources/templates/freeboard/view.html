@@ -194,51 +194,51 @@
 <!-- AdminLTE App -->
 <script th:src="@{/adminlte/dist/js/adminlte.min.js}"></script>
 <script>
-    $(document).ready(function () {
-        var postId = $("#postId").val();
-        var userIndex = $("#userIndex").val();
-        var likeButton = $("#likeButton");
-        var likeCount = $("#likeCount");
-
-        // 초기 상태 설정
-        if (userIndex) {
-            $.get("/likes/" + postId, { userId: userIndex }, function (data) {
-                if (data) {
-                    likeButton.addClass("liked");
-                }
-            });
-        }
-
-        likeButton.click(function () {
-            if (userIndex) {
-                if (likeButton.hasClass("liked")) {
-                    $.ajax({
-                        url: "/likes/" + postId,
-                        type: "DELETE",
-                        data: { userId: userIndex },
-                        success: function () {
-                            likeButton.removeClass("liked");
-                            var count = parseInt(likeCount.text());
-                            likeCount.text(count - 1);
-                        }
-                    });
-                } else {
-                    $.ajax({
-                        url: "/likes/" + postId,
-                        type: "POST",
-                        data: { userId: userIndex },
-                        success: function () {
-                            likeButton.addClass("liked");
-                            var count = parseInt(likeCount.text());
-                            likeCount.text(count + 1);
-                        }
-                    });
-                }
-            } else {
-                alert("로그인 후 좋아요를 누를 수 있습니다.");
-            }
-        });
-    });
+	$(document).ready(function () {
+	    var postId = $("#postId").val();
+	    var userIndex = $("#userIndex").val();
+	    var likeButton = $("#likeButton");
+	    var likeCount = $("#likeCount");
+	
+	    // 초기 상태 설정
+	    if (userIndex) {
+	        $.get("/likes/" + postId, { userIndex: userIndex }, function (data) {  // userId를 userIndex로 수정
+	            if (data) {
+	                likeButton.addClass("liked");
+	            }
+	        });
+	    }
+	
+	    likeButton.click(function () {
+	        if (userIndex) {
+	            if (likeButton.hasClass("liked")) {
+	                $.ajax({
+	                    url: "/likes/" + postId,
+	                    type: "DELETE",
+	                    data: { userIndex: userIndex },  // userId를 userIndex로 수정
+	                    success: function () {
+	                        likeButton.removeClass("liked");
+	                        var count = parseInt(likeCount.text());
+	                        likeCount.text(count - 1);
+	                    }
+	                });
+	            } else {
+	                $.ajax({
+	                    url: "/likes/" + postId,
+	                    type: "POST",
+	                    data: { userIndex: userIndex },  // userId를 userIndex로 수정
+	                    success: function () {
+	                        likeButton.addClass("liked");
+	                        var count = parseInt(likeCount.text());
+	                        likeCount.text(count + 1);
+	                    }
+	                });
+	            }
+	        } else {
+	            alert("로그인 후 좋아요를 누를 수 있습니다.");
+	        }
+	    });
+	});
 </script>
 </body>
 </html>

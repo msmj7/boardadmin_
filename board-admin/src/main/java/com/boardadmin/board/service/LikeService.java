@@ -2,55 +2,74 @@ package com.boardadmin.board.service;
 
 import com.boardadmin.board.model.Likes;
 import com.boardadmin.board.model.Post;
-import com.boardadmin.board.repository.LikeRepository;
 import com.boardadmin.user.model.User;
-import com.boardadmin.user.service.UserService;
+import com.boardadmin.board.repository.LikeRepository;
+import com.boardadmin.board.repository.PostRepository;
+import com.boardadmin.user.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class LikeService {
 
     @Autowired
-    private LikeRepository likeRepository;
+    private LikeRepository likesRepository;
 
     @Autowired
-    private UserService userService;
+    private PostRepository postRepository;
 
-    public void likePost(Long postId, String userId) {
-        User user = userService.getUserByUserId(userId);
-        Post post = new Post();
-        post.setPostId(postId);
-        
-        if (likeRepository.findByUserAndPost(user, post).isEmpty()) {
+    @Autowired
+    private UserRepository userRepository;
+
+    @Transactional
+    public void addLike(Long postId, Integer userIndex) {
+        // 사용자를 userIndex로 검색
+        User user = userRepository.findById(userIndex).orElseThrow(() -> new IllegalArgumentException("Invalid user index"));
+
+        // 포스트를 postId로 검색
+        Post post = postRepository.findById(postId).orElseThrow(() -> new IllegalArgumentException("Invalid post ID"));
+
+        // 사용자가 이미 해당 포스트에 좋아요를 눌렀는지 확인
+        if (!likesRepository.existsByUserAndPost(user, post)) {
             Likes like = new Likes();
             like.setUser(user);
             like.setPost(post);
-            likeRepository.save(like);
+            likesRepository.save(like);
+
+            // 포스트의 좋아요 수 증가
+            post.setLikes(post.getLikes() + 1);
+            postRepository.save(post);
         }
     }
 
-    public void unlikePost(Long postId, String userId) {
-        User user = userService.getUserByUserId(userId);
-        Post post = new Post();
-        post.setPostId(postId);
-        
-        likeRepository.findByUserAndPost(user, post).ifPresent(likeRepository::delete);
+    @Transactional
+    public void removeLike(Long postId, Integer userIndex) {
+        // 사용자를 userIndex로 검색
+        User user = userRepository.findById(userIndex).orElseThrow(() -> new IllegalArgumentException("Invalid user index"));
+
+        // 포스트를 postId로 검색
+        Post post = postRepository.findById(postId).orElseThrow(() -> new IllegalArgumentException("Invalid post ID"));
+
+        // 사용자가 해당 포스트에 좋아요를 눌렀는지 확인
+        Likes like = likesRepository.findByUserAndPost(user, post);
+        if (like != null) {
+            likesRepository.delete(like);
+
+            // 포스트의 좋아요 수 감소
+            post.setLikes(post.getLikes() - 1);
+            postRepository.save(post);
+        }
     }
 
-    public boolean isPostLikedByUser(Long postId, String userId) {
-        User user = userService.getUserByUserId(userId);
-        Post post = new Post();
-        post.setPostId(postId);
-        
-        return likeRepository.findByUserAndPost(user, post).isPresent();
-    }
+    public boolean hasLiked(Long postId, Integer userIndex) {
+        // 사용자를 userIndex로 검색
+        User user = userRepository.findById(userIndex).orElseThrow(() -> new IllegalArgumentException("Invalid user index"));
 
-    public int countLikes(Long postId) {
-        Post post = new Post();
-        post.setPostId(postId);
-        post.setLikes(0);
-        
-        return likeRepository.countByPost(post);
+        // 포스트를 postId로 검색
+        Post post = postRepository.findById(postId).orElseThrow(() -> new IllegalArgumentException("Invalid post ID"));
+
+        // 사용자가 해당 포스트에 좋아요를 눌렀는지 확인
+        return likesRepository.existsByUserAndPost(user, post);
     }
 }
