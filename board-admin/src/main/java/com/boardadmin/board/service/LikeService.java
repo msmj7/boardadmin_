@@ -49,6 +49,7 @@ public class LikeService {
     public int countLikes(Long postId) {
         Post post = new Post();
         post.setPostId(postId);
+        post.setLikes(0);
         
         return likeRepository.countByPost(post);
     }

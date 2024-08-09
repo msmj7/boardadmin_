@@ -119,6 +119,7 @@
                                     <div sec:authorize="isAuthenticated()" class="like-buttons">
                                         <i class="far fa-thumbs-up" id="likeButton"></i>
                                         <input type="hidden" id="userIndex" th:if="${userIndex != null}" th:value="${userIndex}" />
+                                        <input type="hidden" id="postId" th:value="${post.postId}" />
                                         <span id="likeCount" th:text="${post.likes}">0</span>
                                     </div>
                                 </div>
@@ -194,14 +195,14 @@
 <script th:src="@{/adminlte/dist/js/adminlte.min.js}"></script>
 <script>
     $(document).ready(function () {
-        var postId = /* post ID */ 0;
-        var userId = /* user ID */ 0;
+        var postId = $("#postId").val();
+        var userIndex = $("#userIndex").val();
         var likeButton = $("#likeButton");
         var likeCount = $("#likeCount");
 
         // 초기 상태 설정
-        if (userId) {
-            $.get("/likes/" + postId, { userId: userId }, function (data) {
+        if (userIndex) {
+            $.get("/likes/" + postId, { userId: userIndex }, function (data) {
                 if (data) {
                     likeButton.addClass("liked");
                 }
@@ -209,12 +210,12 @@
         }
 
         likeButton.click(function () {
-            if (userId) {
+            if (userIndex) {
                 if (likeButton.hasClass("liked")) {
                     $.ajax({
                         url: "/likes/" + postId,
                         type: "DELETE",
-                        data: { userId: userId },
+                        data: { userId: userIndex },
                         success: function () {
                             likeButton.removeClass("liked");
                             var count = parseInt(likeCount.text());
@@ -225,7 +226,7 @@
                     $.ajax({
                         url: "/likes/" + postId,
                         type: "POST",
-                        data: { userId: userId },
+                        data: { userId: userIndex },
                         success: function () {
                             likeButton.addClass("liked");
                             var count = parseInt(likeCount.text());
