@@ -40,6 +40,9 @@ public class Post {
     private LocalDateTime updatedAt = LocalDateTime.now();
     
     @Column(nullable = false)
+    private int views = 0;
+    
+    @Column(nullable = false)
     private int likes = 0;
 
     @PreUpdate

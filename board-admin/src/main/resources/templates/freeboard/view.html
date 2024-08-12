@@ -129,11 +129,12 @@
                                 <div class="post-meta">
                                     <div class="meta-item">작성자: <span th:text="${post.authorName}"></span></div>
     								<div class="meta-item">| 작성일: <span th:text="${#temporals.format(post.createdAt, 'yyyy-MM-dd HH:mm:ss')}"></span></div>
+    								<div class="meta-item">| 조회수: <span th:text="${post.views}"></span></div>
                                     <div class="like-buttons">
                                         <i class="far fa-thumbs-up" id="likeButton"></i>
                                         <input type="hidden" id="userIndex" th:if="${userIndex != null}" th:value="${userIndex}" />
                                         <input type="hidden" id="postId" th:value="${post.postId}" />
-                                        <span id="likeCount" th:text="${post.likes}">0</span>
+                                        <span id="likeCount" th:text="${post.likes}"></span>
                                     </div>
                                 </div>
                                 <div class="post-content" th:text="${post.content}"></div>

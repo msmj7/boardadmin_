@@ -8,6 +8,10 @@ import com.boardadmin.board.model.File;
 import com.boardadmin.board.service.PostService;
 import com.boardadmin.user.model.User;
 import com.boardadmin.user.service.UserService;
+
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+
 import com.boardadmin.board.service.CommentService;
 import com.boardadmin.board.service.BoardService;
 import com.boardadmin.board.service.FileService;
@@ -61,8 +65,12 @@ public class FreeBoardController {
     }
 
     @GetMapping("/{id}")
-    public String getPost(@PathVariable Long id, Model model) {
+    public String getPost(@PathVariable Long id, Model model, HttpServletRequest request, HttpServletResponse response) {
         Post post = postService.getPostById(id).orElseThrow(() -> new IllegalArgumentException("Invalid post Id:" + id));
+
+        // 조회수 증가 처리
+        postService.increaseViewCount(id, request, response);
+
         List<Comment> comments = commentService.getCommentsByPostId(id);
         List<File> files = fileService.getFilesByPostId(id);
 
@@ -78,7 +86,7 @@ public class FreeBoardController {
         model.addAttribute("post", post);
         model.addAttribute("comments", comments);
         model.addAttribute("files", files);
-        
+
         return "freeboard/view";
     }
 
