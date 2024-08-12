@@ -7,6 +7,9 @@
     <link rel="stylesheet" th:href="@{/adminlte/plugins/fontawesome-free/css/all.min.css}">
     <!-- Theme style -->
     <link rel="stylesheet" th:href="@{/adminlte/dist/css/adminlte.min.css}">
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+	<meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+        
         <style>
         /* Custom CSS */
         .post-title {
@@ -194,51 +197,52 @@
 <!-- AdminLTE App -->
 <script th:src="@{/adminlte/dist/js/adminlte.min.js}"></script>
 <script>
-	$(document).ready(function () {
-	    var postId = $("#postId").val();
-	    var userIndex = $("#userIndex").val();
-	    var likeButton = $("#likeButton");
-	    var likeCount = $("#likeCount");
-	
-	    // 초기 상태 설정
-	    if (userIndex) {
-	        $.get("/likes/" + postId, { userIndex: userIndex }, function (data) {  // userId를 userIndex로 수정
-	            if (data) {
-	                likeButton.addClass("liked");
-	            }
-	        });
-	    }
-	
-	    likeButton.click(function () {
-	        if (userIndex) {
-	            if (likeButton.hasClass("liked")) {
-	                $.ajax({
-	                    url: "/likes/" + postId,
-	                    type: "DELETE",
-	                    data: { userIndex: userIndex },  // userId를 userIndex로 수정
-	                    success: function () {
-	                        likeButton.removeClass("liked");
-	                        var count = parseInt(likeCount.text());
-	                        likeCount.text(count - 1);
-	                    }
-	                });
-	            } else {
-	                $.ajax({
-	                    url: "/likes/" + postId,
-	                    type: "POST",
-	                    data: { userIndex: userIndex },  // userId를 userIndex로 수정
-	                    success: function () {
-	                        likeButton.addClass("liked");
-	                        var count = parseInt(likeCount.text());
-	                        likeCount.text(count + 1);
-	                    }
-	                });
-	            }
-	        } else {
-	            alert("로그인 후 좋아요를 누를 수 있습니다.");
-	        }
-	    });
-	});
+$(document).ready(function () {
+    var postId = $("#postId").val();
+    var userIndex = $("#userIndex").val();
+    var likeButton = $("#likeButton");
+    var likeCount = $("#likeCount");
+    var csrfHeaderName = $("meta[name='_csrf_header']").attr("content");
+    var csrfToken = $("meta[name='_csrf']").attr("content");
+
+    // 초기 상태 설정
+    if (userIndex) {
+        $.get("/likes/" + postId, { userIndex: userIndex }, function (data) {
+            if (data) {
+                likeButton.addClass("liked");
+            }
+        });
+    }
+
+    likeButton.click(function () {
+        if (userIndex) {
+            var type = likeButton.hasClass("liked") ? "DELETE" : "POST";
+            $.ajax({
+                url: "/likes/" + postId,
+                type: type,
+                data: $.param({ userIndex: userIndex }),
+                beforeSend: function(xhr) {
+                    xhr.setRequestHeader(csrfHeaderName, csrfToken);
+                },
+                success: function () {
+                    likeButton.toggleClass("liked");
+                    var count = parseInt(likeCount.text());
+                    likeCount.text(likeButton.hasClass("liked") ? count + 1 : count - 1);
+                },
+                error: function (xhr) {
+                    if (xhr.status === 302) {
+                        window.location.href = "/login?accessDenied=true";
+                    }
+                }
+            });
+        } else {
+            alert("로그인 후 좋아요를 누를 수 있습니다.");
+        }
+    });
+});
+
 </script>
+
+
 </body>
 </html>
