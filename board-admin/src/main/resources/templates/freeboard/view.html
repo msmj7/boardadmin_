@@ -129,7 +129,7 @@
                                     <ul class="file-list">
                                         <li th:each="file : ${files}" class="file-list-item">
                                             <span th:text="${file.originalName}"></span>
-                                            <a sec:autorize="isAuthenticated()" th:href="@{'/files/download/' + ${file.id}}" class="btn btn-outline-secondary btn-sm">다운로드</a>
+                                            <a sec:authorize="isAuthenticated()" th:href="@{'/files/download/' + ${file.id}}" class="btn btn-outline-secondary btn-sm">다운로드</a>
                                         </li>
                                     </ul>
                                 </div>
