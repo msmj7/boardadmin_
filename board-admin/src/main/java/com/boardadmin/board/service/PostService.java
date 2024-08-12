@@ -60,11 +60,11 @@ public class PostService {
     
     //조회수 
     public void increaseViewCount(Long postId, HttpServletRequest request, HttpServletResponse response) {
-        // 쿠키에서 조회 여부 확인
         Cookie[] cookies = request.getCookies();
-        boolean hasViewed = false;
         String postViewKey = "postView_" + postId;
+        boolean hasViewed = false;
 
+        // 쿠키에서 조회 여부 확인
         if (cookies != null) {
             for (Cookie cookie : cookies) {
                 if (cookie.getName().equals(postViewKey)) {
@@ -76,16 +76,18 @@ public class PostService {
 
         if (!hasViewed) {
             // 조회수 증가
-            postRepository.findById(postId).ifPresent(post -> {
+            Optional<Post> Post = postRepository.findById(postId);
+            if (Post.isPresent()) {
+                Post post = Post.get();
                 post.setViews(post.getViews() + 1);
                 postRepository.save(post);
 
                 // 조회 쿠키 추가
                 Cookie viewCookie = new Cookie(postViewKey, "true");
                 viewCookie.setMaxAge(24 * 60 * 60); // 1일 동안 유효
-                viewCookie.setPath("/");
+                viewCookie.setPath("/"); // 모든 경로에서 접근 가능
                 response.addCookie(viewCookie);
-            });
+            }
         }
     }
     
