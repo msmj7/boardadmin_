@@ -2,6 +2,9 @@ package com.boardadmin.board.service;
 
 import com.boardadmin.board.model.Post;
 import com.boardadmin.board.repository.PostRepository;
+import com.boardadmin.board.repository.FileRepository;
+import com.boardadmin.board.repository.LikeRepository;
+import com.boardadmin.board.repository.CommentRepository;
 
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -26,6 +29,15 @@ public class PostService {
     @Autowired
     private PostRepository postRepository;
     
+    @Autowired
+    private FileRepository fileRepository;
+    
+    @Autowired
+    private LikeRepository likeRepository;
+    
+    @Autowired
+    private CommentRepository commentRepository;
+    
     public Page<Post> searchPosts(String keyword, Pageable pageable) {
         return postRepository.findByTitleContainingOrContentContaining(keyword, keyword, pageable);
     }
@@ -48,6 +60,12 @@ public class PostService {
     }
 
     public void deletePost(Long postId) {
+        //파일이랑 좋아요도 같이 삭제되게 추가(먼저 삭제되어야함)
+        fileRepository.deleteByPost_PostId(postId);
+        likeRepository.deleteByPost_PostId(postId);
+        //댓글도
+        commentRepository.deleteByPost_PostId(postId);
+    	
         postRepository.deleteById(postId);
     }
     
