@@ -55,10 +55,17 @@ public class PostService {
     }
 
     public void updatePost(Long postId, Post post) {
-        post.setPostId(postId);
+        Optional<Post> exPostOpt = postRepository.findById(postId);
+    	Post exPost = exPostOpt.get();
+       
+    	post.setPostId(postId);
+    	post.setViews(exPost.getViews());
+    	post.setLikes(exPost.getLikes());
+    	
+        
         postRepository.save(post);
     }
-
+    
     public void deletePost(Long postId) {
         //파일이랑 좋아요도 같이 삭제되게 추가(먼저 삭제되어야함)
         fileRepository.deleteByPost_PostId(postId);
