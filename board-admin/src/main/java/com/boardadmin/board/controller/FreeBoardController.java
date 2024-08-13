@@ -150,7 +150,7 @@ public class FreeBoardController {
         post.setBoard(existingPost.getBoard());
         postService.updatePost(id, post);
 
-        // Delete specified files
+        // 파일삭제
         if (!deletedFiles.isEmpty()) {
             String[] fileIds = deletedFiles.split(",");
             for (String fileId : fileIds) {
@@ -158,7 +158,7 @@ public class FreeBoardController {
             }
         }
 
-        // Store new files
+        // 새 파일 리스트 저장
         for (MultipartFile file : files) {
             if (!file.isEmpty()) {
                 try {
