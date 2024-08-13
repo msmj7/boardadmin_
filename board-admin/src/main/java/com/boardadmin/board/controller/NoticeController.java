@@ -2,6 +2,10 @@ package com.boardadmin.board.controller;
 
 import com.boardadmin.board.model.Post;
 import com.boardadmin.board.service.PostService;
+
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -36,8 +40,12 @@ public class NoticeController {
 
 
     @GetMapping("/{id}")
-    public String getNotice(@PathVariable Long id, Model model) {
+    public String getNotice(@PathVariable Long id, Model model, HttpServletRequest request, HttpServletResponse response) {
         Post post = postService.getPostById(id).orElseThrow(() -> new IllegalArgumentException("Invalid post Id:" + id));
+        
+        // 조회수 증가 처리
+        postService.increaseViewCount(id, request, response);
+        
         model.addAttribute("post", post);
         return "notices/view";
     }

@@ -20,6 +20,10 @@
 			font-size: 0.9rem;
 			color: #6c757d;
 			margin-bottom: 1rem;
+			display: flex;
+		}
+		.post-meta .meta-item {
+		    margin-right: 0.5rem; /* 오른쪽 여백을 추가하여 요소 간 간격을 조정 */
 		}
 		.post-content {
 			font-size: 1rem;
@@ -71,7 +75,8 @@
 								<div class="card-body">
 									<div class="post-title" th:text="${post.title}"></div>
 									<div class="post-meta">
-										작성일: <span th:text="${#temporals.format(post.createdAt, 'yyyy-MM-dd HH:mm:ss')}"></span>
+										<div class="meta-item">	작성일: <span th:text="${#temporals.format(post.createdAt, 'yyyy-MM-dd HH:mm:ss')}"></span></div>
+										<div class="meta-item">| 조회수: <span th:text="${post.views}"></span></div>
 									</div>
 									<div class="post-content" th:text="${post.content}"></div>
 									<a th:href="@{/notices}" class="btn btn-secondary">목록</a>
@@ -96,6 +101,55 @@
 	<script th:src="@{/adminlte/plugins/bootstrap/js/bootstrap.bundle.min.js}"></script>
 	<!-- AdminLTE App -->
 	<script th:src="@{/adminlte/dist/js/adminlte.min.js}"></script>
+<script>
+$(document).ready(function () {
+    var postId = $("#postId").val();
+    var userIndex = $("#userIndex").val();
+    var likeButton = $("#likeButton");
+    var likeCount = $("#likeCount");
+    var csrfHeaderName = $("meta[name='_csrf_header']").attr("content");
+    var csrfToken = $("meta[name='_csrf']").attr("content");
+
+    // 초기 상태 설정
+    if (userIndex) {
+        $.get("/likes/" + postId, { userIndex: userIndex }, function (data) {
+            if (data) {
+                likeButton.addClass("liked");
+                likeButton.removeClass("far fa-thumbs-up").addClass("fas fa-thumbs-up");
+            }
+        });
+    }
+
+    likeButton.click(function () {
+        if (userIndex) {
+            var type = likeButton.hasClass("liked") ? "DELETE" : "POST";
+            $.ajax({
+                url: "/likes/" + postId,
+                type: type,
+                data: $.param({ userIndex: userIndex }),
+                beforeSend: function(xhr) {
+                    xhr.setRequestHeader(csrfHeaderName, csrfToken);
+                },
+                success: function () {
+                    likeButton.toggleClass("liked");
+                    var count = parseInt(likeCount.text());
+                    likeCount.text(likeButton.hasClass("liked") ? count + 1 : count - 1);
+                    
+                    // 아이콘 변경도 추가
+                    if (likeButton.hasClass("liked")) {
+                        likeButton.removeClass("far fa-thumbs-up").addClass("fas fa-thumbs-up");
+                    } else {
+                        likeButton.removeClass("fas fa-thumbs-up").addClass("far fa-thumbs-up");
+                    }
+                }
+            });
+        } else {
+		    alert("로그인 후 좋아요를 누를 수 있습니다.");
+		}
+    });
+});
+
+</script>
 </body>
 
 </html>
