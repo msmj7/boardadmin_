@@ -23,7 +23,7 @@
 			display: flex;
 		}
 		.post-meta .meta-item {
-		    margin-right: 0.5rem; /* 오른쪽 여백을 추가하여 요소 간 간격을 조정 */
+		    margin-right: 0.5rem;
 		}
 		.post-content {
 			font-size: 1rem;
@@ -37,6 +37,17 @@
 		.breadcrumb-item a {
 			color: #007bff;
 		}
+		.like-buttons {
+            justify-content: flex-end;
+            margin-left: auto;
+        }
+        .like-buttons i {
+            cursor: pointer;
+            margin-left: 1rem;
+        }
+        .like-buttons i.liked {
+            color: #007bff;
+        }
 	</style>
 </head>
 
@@ -77,6 +88,12 @@
 									<div class="post-meta">
 										<div class="meta-item">	작성일: <span th:text="${#temporals.format(post.createdAt, 'yyyy-MM-dd HH:mm:ss')}"></span></div>
 										<div class="meta-item">| 조회수: <span th:text="${post.views}"></span></div>
+									<div class="like-buttons">
+                                        <i class="far fa-heart" id="likeButton"> 좋아요</i>
+                                        <input type="hidden" id="userIndex" th:if="${userIndex != null}" th:value="${userIndex}" />
+                                        <input type="hidden" id="postId" th:value="${post.postId}" />
+                                        <span id="likeCount" th:text="${post.likes}"></span>
+                                    </div>
 									</div>
 									<div class="post-content" th:text="${post.content}"></div>
 									<a th:href="@{/notices}" class="btn btn-secondary">목록</a>
@@ -115,7 +132,7 @@ $(document).ready(function () {
         $.get("/likes/" + postId, { userIndex: userIndex }, function (data) {
             if (data) {
                 likeButton.addClass("liked");
-                likeButton.removeClass("far fa-thumbs-up").addClass("fas fa-thumbs-up");
+                likeButton.removeClass("far fa-heart").addClass("fas fa-heart");
             }
         });
     }
@@ -137,9 +154,9 @@ $(document).ready(function () {
                     
                     // 아이콘 변경도 추가
                     if (likeButton.hasClass("liked")) {
-                        likeButton.removeClass("far fa-thumbs-up").addClass("fas fa-thumbs-up");
+                        likeButton.removeClass("far fa-heart").addClass("fas fa-heart");
                     } else {
-                        likeButton.removeClass("fas fa-thumbs-up").addClass("far fa-thumbs-up");
+                        likeButton.removeClass("fas fa-heart").addClass("far fa-heart");
                     }
                 }
             });

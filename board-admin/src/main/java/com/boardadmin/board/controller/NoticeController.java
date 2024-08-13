@@ -2,6 +2,8 @@ package com.boardadmin.board.controller;
 
 import com.boardadmin.board.model.Post;
 import com.boardadmin.board.service.PostService;
+import com.boardadmin.user.model.User;
+import com.boardadmin.user.service.UserService;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -11,6 +13,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,6 +29,9 @@ public class NoticeController {
 
     @Autowired
     private PostService postService;
+    
+    @Autowired
+    private UserService userService;
 
     @GetMapping
     public String getNotices(@RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "10") int size, Model model) {
@@ -45,6 +53,15 @@ public class NoticeController {
         
         // 조회수 증가 처리
         postService.increaseViewCount(id, request, response);
+        
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        
+        // 로그인 했을때만 사용자 정보 불러오도록 수정
+        if (authentication != null && authentication.isAuthenticated() && !(authentication instanceof AnonymousAuthenticationToken)) {
+            User currentUser = userService.getUserByUserId(authentication.getName());
+            model.addAttribute("currentUserName", currentUser.getUserId());
+            model.addAttribute("userIndex", currentUser.getUserIndex());
+        }
         
         model.addAttribute("post", post);
         return "notices/view";
