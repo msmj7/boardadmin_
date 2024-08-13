@@ -131,7 +131,7 @@
     								<div class="meta-item">| 작성일: <span th:text="${#temporals.format(post.createdAt, 'yyyy-MM-dd HH:mm:ss')}"></span></div>
     								<div class="meta-item">| 조회수: <span th:text="${post.views}"></span></div>
                                     <div class="like-buttons">
-                                        <i class="far fa-thumbs-up" id="likeButton"></i>
+                                        <i class="far fa-heart" id="likeButton"> 좋아요</i>
                                         <input type="hidden" id="userIndex" th:if="${userIndex != null}" th:value="${userIndex}" />
                                         <input type="hidden" id="postId" th:value="${post.postId}" />
                                         <span id="likeCount" th:text="${post.likes}"></span>
@@ -221,7 +221,7 @@ $(document).ready(function () {
         $.get("/likes/" + postId, { userIndex: userIndex }, function (data) {
             if (data) {
                 likeButton.addClass("liked");
-                likeButton.removeClass("far fa-thumbs-up").addClass("fas fa-thumbs-up");
+                likeButton.removeClass("far fa-heart").addClass("fas fa-heart");
             }
         });
     }
@@ -243,9 +243,9 @@ $(document).ready(function () {
                     
                     // 아이콘 변경도 추가
                     if (likeButton.hasClass("liked")) {
-                        likeButton.removeClass("far fa-thumbs-up").addClass("fas fa-thumbs-up");
+                        likeButton.removeClass("far fa-heart").addClass("fas fa-heart");
                     } else {
-                        likeButton.removeClass("fas fa-thumbs-up").addClass("far fa-thumbs-up");
+                        likeButton.removeClass("fas fa-heart").addClass("far fa-heart");
                     }
                 }
             });
