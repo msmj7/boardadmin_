@@ -160,6 +160,8 @@
 										<th>Title</th>
 										<th>Author</th>
 										<th>Content</th>
+										<th>Views</th>
+										<th>Likes</th>
 										<th>Actions</th>
 									</tr>
 								</thead>
@@ -168,6 +170,8 @@
 										<td th:text="${post.title}"></td>
 										<td th:text="${post.authorName}"></td>
 										<td th:text="${post.content}"></td>
+										<td th:text="${post.views}"></td>
+										<td th:text="${post.likes}"></td>
 										<td>
 											<a th:href="@{'/admin/posts/view/' + ${post.postId}}"
 												class="btn btn-primary btn-sm">View</a>
