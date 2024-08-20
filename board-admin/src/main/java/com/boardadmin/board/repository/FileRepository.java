@@ -17,4 +17,6 @@ public interface FileRepository extends JpaRepository<File, Long> {
     @Modifying
     @Transactional
     void deleteByPost_PostId(Long postId);
+    
+    List<File> findByFilePathEndingWithOrderByCreatedDateDesc(String extension); //확장자 이용해서 필터링, 역순으로 수정
 }

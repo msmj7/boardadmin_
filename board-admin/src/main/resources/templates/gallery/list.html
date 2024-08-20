@@ -25,7 +25,7 @@
 			border-radius: 5px;
 			overflow: hidden;
 			width: 300px;
-			height: 200px;
+			height: 300px;
 		}
 
 		.gallery-item img {
@@ -65,9 +65,11 @@
 			<div class="content">
 				<div class="container">
 					<div class="gallery-container">
-						<div th:each="image : ${images}" class="gallery-item">
-							<img th:src="${image}" alt="Gallery Image">
-						</div>
+					        <div th:each="file : ${jpgFiles}" class="gallery-item">
+					            <a th:href="@{'/freeboard/' + ${file.post.postId}}">
+					                <img th:src="@{'/files/view/' + ${file.saveName}}" alt="Gallery Image">
+					            </a>
+					        </div>
 					</div>
 				</div><!-- /.container-fluid -->
 			</div>
