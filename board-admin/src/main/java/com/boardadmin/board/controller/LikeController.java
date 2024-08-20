@@ -7,7 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/likes/{postId}") //추후 게시판 명 받아오는걸로 수정예정
+@RequestMapping("/likes/{postId}")
 public class LikeController {
 
     @Autowired
